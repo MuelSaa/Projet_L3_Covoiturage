@@ -1,0 +1,22 @@
+{
+  "name": "projet_l3_covoiturage",
+  "version": "1.0.0",
+  "description": "application mobile pour le covoiturage",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuelSaa/Projet_L3_Covoiturage.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MuelSaa/Projet_L3_Covoiturage/issues"
+  },
+  "homepage": "https://github.com/MuelSaa/Projet_L3_Covoiturage#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
