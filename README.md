@@ -2,19 +2,26 @@
 ## Sujet
 [Sujet](https://github.com/MuelSaa/Projet_L3_Covoiturage/blob/main/Sujet.pdf)
 ## Membres :
-Samuel Delacour - @Muelsaa
+[Samuel Delacour - Muelsaa](https://github.com/MuelSaa)  
 [Sami Guetarni]()  
 [Adam Taieb]()  
-Bastien Verrier - @xef1121
-## Installation
+[Bastien Verrier - xef1121](https://github.com/Xef1121)
+## Installation & Run
+### Install
 ```
-npm install
+npm install --production=false
 ```
+### Run
+```
+npm run dev
+npm run start
+```
+
 ## Module npm
 ### Basic
 - Express
-### Autre
-- s
+### Dev
+- nodemon (redemare le serveur)
 ## Liste de tache
 - [] ssd
 1. [] Creation serveur
