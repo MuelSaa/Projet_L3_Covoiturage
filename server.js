@@ -1,3 +1,4 @@
+require('dotenv').config();
 /********************************************************** 
  *              Chargement des modules 
  **********************************************************/
@@ -6,14 +7,21 @@ const express = require('express');
 // path : chemin
 const path = require('path');
 // logger : logger ce qui se passe
-const { logger } = require('./middleware/logger');
+const { logger, logEvents } = require('./middleware/logger');
 // errorHandler : recuperer les erreurs
 const errorHandler = require('./middleware/errorHandler');
+// connectDB : se connecter a la BD
+const connectDB = require('./config/dbConn');
+// mongoose : BD
+const mongoose = require('mongoose');
 /*****************************************************
  *             Lancement du serveur web
  *****************************************************/
 const app = express();
 const PORT = process.env.PORT || 8080;
+console.log(process.env.NODE_ENV)
+
+connectDB();
 
 app.use(logger);
 
@@ -34,8 +42,20 @@ app.all('*', (req, res) => {
     }
 })
 
+
+
 app.use(errorHandler);
 
-app.listen(PORT, function() {
-    console.log(`C'est parti ! En attente de connexion sur le port ${PORT}...`);
+mongoose.connection.once('open', () => {
+    console.log("connecter a mongoDB");
+    app.listen(PORT, function() {
+        console.log(`C'est parti ! En attente de connexion sur le port ${PORT}...`);
+    });
 });
+
+mongoose.connection.on('error', err => {
+    console.log(err);
+    logEvents(`${err.no}: ${err.code}\t${err.syscall}\t   ${err.hostname}`,'mongoError.log');
+})
+
+

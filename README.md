@@ -16,17 +16,29 @@ npm install --production=false
 npm run dev
 npm run start
 ```
-
+### mongoDB
+[Hebergeur](mongodb.com)
+[Tuto](https://youtu.be/CvCiNeLnZ00?t=3687)
+### dotEn
+champs a remplire :
+````
+NODE_ENV=development
+DATABASE_URI=
+```
 ## Module npm
 ### Basic
 - Express
+- mongoose (gerer mongoDB)
 
 ### Ajouté 
 - date-fns (manipulation de date)
+- dotenv (donnée priver)
+### Peut-etre utile
+- mongoose-sequence
 ### Dev
 - nodemon (redemare le serveur)
 ## Liste de tache
-- [] ssd
-1. [] Creation serveur
-    - [] Base de donnée
-2. [] Creation client
+- [ ] ssd
+1. [ ] Creation serveur
+    - [ ] Base de donnée
+2. [ ] Creation client
