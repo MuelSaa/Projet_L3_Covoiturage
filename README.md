@@ -1,12 +1,11 @@
 # Projet_L3_Covoiturage
-## Sujet
-[Sujet](https://github.com/MuelSaa/Projet_L3_Covoiturage/blob/main/Sujet.pdf)
 ## Membres :
 [Samuel Delacour - Muelsaa](https://github.com/MuelSaa)  
 [Sami Guetarni]()  
 [Adam Taieb]()  
 [Bastien Verrier - xef1121](https://github.com/Xef1121)
-## Installation & Run
+## Sujet
+[Sujet](https://github.com/MuelSaa/Projet_L3_Covoiturage/blob/main/Sujet.pdf)## Installation & Run
 ### Install
 ```
 npm install --production=false
@@ -17,11 +16,12 @@ npm run dev
 npm run start
 ```
 ### mongoDB
-[Hebergeur](mongodb.com)
-[Tuto](https://youtu.be/CvCiNeLnZ00?t=3687)
-### dotEn
+[Hebergeur](mongodb.com)  
+[Tuto serveur + code](https://youtu.be/CvCiNeLnZ00?t=3687)
+[comprendre mongoDB](https://www.youtube.com/watch?v=ZvPS5Gx0nnU&ab_channel=Algomius)
+### dotEnv
 champs a remplire :
-````
+```
 NODE_ENV=development
 DATABASE_URI=
 ```
@@ -42,3 +42,5 @@ DATABASE_URI=
 1. [ ] Creation serveur
     - [ ] Base de donnée
 2. [ ] Creation client
+## Liens
+- [Postman](https://www.postman.com/) pour tester les requetes sur le serveur
