@@ -20,6 +20,9 @@ npm run start
 ## Module npm
 ### Basic
 - Express
+
+### Ajouté 
+- date-fns (manipulation de date)
 ### Dev
 - nodemon (redemare le serveur)
 ## Liste de tache

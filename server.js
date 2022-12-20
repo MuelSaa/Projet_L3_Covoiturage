@@ -5,12 +5,19 @@
 const express = require('express');
 // path : chemin
 const path = require('path');
+// logger : logger ce qui se passe
+const { logger } = require('./middleware/logger');
+// errorHandler : recuperer les erreurs
+const errorHandler = require('./middleware/errorHandler');
 /*****************************************************
  *             Lancement du serveur web
  *****************************************************/
 const app = express();
 const PORT = process.env.PORT || 8080;
-app.use(express.json);
+
+app.use(logger);
+
+app.use(express.json());
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 
@@ -27,6 +34,7 @@ app.all('*', (req, res) => {
     }
 })
 
+app.use(errorHandler);
 
 app.listen(PORT, function() {
     console.log(`C'est parti ! En attente de connexion sur le port ${PORT}...`);
