@@ -304,9 +304,11 @@ notification
 ### Dev
 - nodemon (redemare le serveur)
 ## Liste de tache
-- [ ] ssd
 1. [ ] Creation serveur
-    - [ ] Base de donnée
+    - [x] outils pour redemarer tout seuls le serveur
+    - [x] logs + erreur
+    - [ ] Bon modele relationnels
+    - [ ] Creation Base de donnée
 2. [ ] Creation client
 ## Liens
 ### mongoDB
