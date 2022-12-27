@@ -2,7 +2,7 @@
 ## Membres :
 Samuel Delacour - [Muelsaa](https://github.com/MuelSaa)  
 Sami Guetarni - [Ednar17](https://github.com/Ednar17)  
-Adam Taieb - [ ]()  
+Adam Taieb - [polarkit](https://github.com/polarkit)  
 Bastien Verrier - [xef1121](https://github.com/Xef1121)
 ## Sujet
 [Sujet](https://github.com/MuelSaa/Projet_L3_Covoiturage/blob/main/Sujet.pdf)
@@ -309,6 +309,7 @@ notification
     - [x] logs + erreur
     - [ ] Bon modele relationnels
     - [ ] Creation Base de donnée
+    - [ ] Fichier de creation de base de donnée
 2. [ ] Creation client
 ## Liens
 ### mongoDB
