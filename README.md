@@ -313,7 +313,9 @@ User
         "ville":String,
         "departement":int
     },
+    
    "noteEnvoyer": [int,int,int,..] //Id des users noters
+    
     "note":[
     {
         "idNoteur":int,
@@ -322,35 +324,33 @@ User
         "commentaire":String
     },....
     ]
-    notification
-{
+    notification {
     "idUser":int,
     "idNotif":int,
     "info":{
         ...
 	}
+    }
 }
 trajet:{
-		"tid":int,
-		"date":String,
-		"depart": String,
-		"Arrivee" : String,
- 		"Passager":[int,int,int,..],
-		"Conducteur" : {
-			"cid" : int,
-		}		
+	"tid":int,
+	"date":String,
+	"depart": String,
+	"Arrivee" : String,
+ 	"Passager":[int,int,int,..],
+	"Conducteur" : {
+		"cid" : int
+	}		
 }
 Passager {
-	"pid" : int,
 	"tid" : int,
- 	"conducteur":int,
-      "AutrePassager":[int,int,int,..],
+ 	"conducteur": int
 	
 }
 
 GroupeT{
 	"gid":int,
-	"tid: [int,..],
+	"tid": [int,..]
 	
 }
 ```
