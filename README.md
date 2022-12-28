@@ -290,6 +290,66 @@ notification
         ...
     }
 }
+V4(Sami)
+
+User
+{
+    "id": int,
+    "prenom": String,
+    "nom": String,	
+    "age": int,
+    "voiture":{
+        "marque":String,
+        "modele":String,
+        "place":int,
+        "couleur":String,
+        "plaque":String
+    }
+    "addresse":{
+        "rue":String,
+        "ville":String,
+        "departement":int
+    },
+   "noteEnvoyer": [int,int,int,..] //Id des users noters
+    "note":[
+    {
+        "idNoteur":int,
+        "idTrajet":int,
+        "note":int,
+        "commentaire":String
+    },....
+    ]
+    notification
+{
+    "idUser":int,
+    "idNotif":int,
+    "info":{
+        ...
+	}
+}
+trajet:{
+		"tid":int,
+		"date":String,
+		"depart": String,
+		"Arrivee" : String,
+ 		"Passager":[int,int,int,..],
+		"Conducteur" : {
+			"cid" : int,
+		}		
+}
+Passager {
+	"pid" : int,
+	"tid" : int,
+ 	"conducteur":int,
+      "AutrePassager":[int,int,int,..],
+	
+}
+
+GroupeT{
+	"gid":int,
+	"tid: [int,..],
+	
+}
 ```
 ## Module npm
 ### Basic
