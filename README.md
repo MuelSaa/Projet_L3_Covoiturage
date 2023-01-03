@@ -39,17 +39,59 @@ DATABASE_URI=
 ### Dev
 - nodemon (redemare le serveur)
 ## Liste de tache
-1. [ ] Creation serveur
-    - [x] outils pour redemarer tout seuls le serveur
-    - [x] logs + erreur
-    - [ ] Bon modele relationnels
-    - [ ] Creation Base de donnée
-    - [ ] Fichier de creation de base de donnée
-2. [ ] Creation client
+### BackEnd
+1. [ ] DB
+    - [ ] Fonction INSERT,UPDATE, DELETE Users
+    - [ ] Creer modele base de donné
+    - [ ] Fonction INSERT,UPDATE, DELETE pour trajet et associer (GTrajet et Passager)
+    - [ ] Fonction INSERT,UPDATE, DELETE Notes
+    - [ ] Fonction INSERT,UPDATE, DELETE Notification
+    - [ ] Test des fonctions INSERT,UPDATE, DELETE de chaque table
+    - [ ] Fonction INSERT,UPDATE, DELETE Véhicule
+2. [ ] V1
+    - [ ] lier backEnd avec le front pour une premiere version (visionner les trajets disponible) clients => serveur => bd => serveur =>clients
+    - [ ] ajouter des trajets
+    - [ ] s'enregistrer en tant qu'user
+    - [ ] login avec mdp + verification de la connection pour l'ajout de trajet et rejoindre un trajet
+3. [ ] information utilisateur
+    - [ ] ajout/modification des infos utilisateur
+    - [ ] ajouter/modifier/supprimer voiture (en vue d'avoir une liste des voitures disponible)
+4. [ ] Note
+    - [ ] gerer les notes envoyer
+    - [ ] recuperer les notes qu'un clients a recu/emis
+5. [ ] Notification
+    - [ ] ajout de notification
+    - [ ] envoyer les notifications stoquer dans la BD
+    - [ ] traiter les notifications pour un clients en ligne
+### FrontEnd
+1. [ ] V1
+    - [ ] choisir un design pour le mobile
+    - [ ] choisir les couleurs
+    - [ ] creer ce designe
+    - [ ] page des trajets (fonction recherche pour afficher les trajets)
+    - [ ] ajouter un trajet (recurence comprise)
+    - [ ] page d'inscription connexion (juste login/mdp)
+    - [ ] test pour detecter les problemes/ verifier que le design est respecter (V1)
+2. [ ] Profile
+    - [ ] page pour ajouter/modifier les informations utilisateurs
+    - [ ] page profiles des autes utilisateurs
+    - [ ] si page différente page voiture (regarder API pour les plaques d'imatriculation pour aucompletion des informations) si on a le droit de la demander
+    - [ ] Verification
+3. [ ] Note et notification
+    - [ ] page (personels) pour voir les notes recu/envoyer
+    - [ ] a la suite d'un trajet pouvoir noter (le conducteur => les passagers et les passagers => le conducteur)
+    - [ ] emmètre des notifications (passager demande a rejoindre un trajet, conducteur accepte passager, demande de notation...)
+    - [ ] onglet/page notification (pour l'instant recu de la bd)
+    - [ ] gerer notification entre utilisateur connecter
+    - [ ] test + verification
+4. [ ] supplement
+    - [ ] Responsive design pour les ecran d'ordinateur
+5. [ ] Final
+    - [ ] test final regarder que toute les fonctionnalité fonctionne, que aucun bug n'est présent.
+    - [ ] verification que le rendu correspond au sujet
 ## Liens
-### mongoDB
-[Hebergeur](mongodb.com)  
+### PostGreSQl
+[Hebergeur](https://render.com/) - fichier creation BD disponible dans le dossier docs
 [Tuto serveur + code](https://youtu.be/CvCiNeLnZ00?t=3687)  
-[comprendre mongoDB](https://www.youtube.com/watch?v=ZvPS5Gx0nnU&ab_channel=Algomius)
 ### Test
 - [Postman](https://www.postman.com/) pour tester les requetes sur le serveur
