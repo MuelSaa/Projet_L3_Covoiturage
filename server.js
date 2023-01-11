@@ -10,22 +10,111 @@ const path = require('path');
 const { logger, logEvents } = require('./middleware/logger');
 // errorHandler : recuperer les erreurs
 const errorHandler = require('./middleware/errorHandler');
-// connectDB : se connecter a la BD
-const connectDB = require('./config/dbConn');
-// mongoose : BD
-const mongoose = require('mongoose');
+//req->json
+const bodyParser = require('body-parser')
+
+//Non-blocking PostgreSQL client
+const { Client } = require('pg');
+const connectionString =process.env.CONNECTING_STRING+"?sslmode=no-verify";
+var client = new Client(connectionString);
+
+
 /*****************************************************
  *             Lancement du serveur web
  *****************************************************/
 const app = express();
 const PORT = process.env.PORT || 8080;
-console.log(process.env.NODE_ENV)
-
-connectDB();
+console.log("start on port : ",process.env.NODE_ENV);
 
 app.use(logger);
 
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(
+    bodyParser.urlencoded({
+      extended: true,
+    })
+  )
+
+app.get('/Users', function(req, userRes) {
+    console.log("Recu : GET /Users");
+    userRes.setHeader('Content-type', 'application/json');
+    client = new Client(connectionString);
+    client.connect();
+    client.query('SELECT * FROM public."Users"', (dbERR, dbRes) => {
+        if (dbERR) {
+          console.error(dbERR);
+          userRes.send(500, 'Internal Server Error');
+          return;
+        }
+      
+        userRes.json(dbRes.rows);
+        client.end();
+        console.log("here");
+      });
+});
+app.get('/Users/:id', function(req, res) {
+    console.log("Recu : GET /Users/"+req.params.id);
+    res.setHeader('Content-type', 'application/json');
+    if (!req.params.id) {
+      res.send(400, 'Bad Request');
+      return;
+    }
+    client = new Client(connectionString);
+    client.connect();
+    client.query(`SELECT * FROM public."Users" WHERE "Users"."usId" = '${req.params.id}'`, (dbERR, dbRes) => {
+      if (dbERR) {
+        console.error(dbERR);
+        res.send(500, 'Internal Server Error');
+        return;
+      }
+  
+      res.json(dbRes.rows);
+      client.end();
+    });
+  });
+
+  app.post('/Users', function(req, res) {
+    console.log("Recu : POST /Users/");
+    res.setHeader('Content-type', 'application/json');
+
+    console.log("POST user ADD entrer : ",req.body);
+    var {login, mdp, name, prenom, sexe, mail, telephone, bio} = req.body;
+    client = new Client(connectionString);
+    client.connect();
+    console.log()
+    client.query(`INSERT INTO public."Users"(login, mdp, nom, prenom, sexe, mail, telephone, biographie)
+        VALUES ('${login}', '${mdp}', '${name}', '${prenom}', '${sexe}', '${mail}', '${telephone}', '${bio}') RETURNING *`, (dbERR, dbRes) => {
+        if (dbERR) {
+        console.error(dbERR);
+        res.status(500).send('Internal Server Error');
+        return;
+        }
+  
+        console.log("POST user ADD ajouter : ",dbRes.rows);
+        res.status(201).send(`User added with ID: ${dbRes.rows[0].usId}`);
+        client.end();
+    });
+
+  });
+
+  app.delete('/Users/:id', function(req, res) {
+    console.log("Recu : DELETE /Users/"+req.params.id);
+    res.setHeader('Content-type', 'application/json');
+
+    client = new Client(connectionString);
+    client.connect();
+    client.query(`DELETE FROM public."Users"
+	WHERE "Users"."usId"=${req.params.id}`, (dbERR, dbRes) => {
+        if (dbERR) {
+        console.error(dbERR);
+        res.status(500).send('Internal Server Error');
+        return;
+        }
+        res.status(200).send(`User DELETED`);
+        client.end();
+    });
+
+  });
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 
@@ -46,16 +135,4 @@ app.all('*', (req, res) => {
 
 app.use(errorHandler);
 
-mongoose.connection.once('open', () => {
-    console.log("connecter a mongoDB");
-    app.listen(PORT, function() {
-        console.log(`C'est parti ! En attente de connexion sur le port ${PORT}...`);
-    });
-});
-
-mongoose.connection.on('error', err => {
-    console.log(err);
-    logEvents(`${err.no}: ${err.code}\t${err.syscall}\t   ${err.hostname}`,'mongoError.log');
-})
-
-
+app.listen(PORT , () => console.log('Server Runnning actually on port '+PORT));

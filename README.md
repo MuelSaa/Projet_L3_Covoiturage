@@ -64,7 +64,11 @@ DATABASE_URI=
     - [ ] envoyer les notifications stoquer dans la BD
     - [ ] traiter les notifications pour un clients en ligne
 ### FrontEnd
-1. [ ] V1
+1. [ ] Base
+    - [ ] Comprendre comment marche une PWA
+    - [ ] Mettre en place la PWA
+    - [ ] configurer pour que la PWA se mette a jours quand le code change
+2. [ ] V1
     - [ ] choisir un design pour le mobile
     - [ ] choisir les couleurs
     - [ ] creer ce designe
@@ -72,26 +76,26 @@ DATABASE_URI=
     - [ ] ajouter un trajet (recurence comprise)
     - [ ] page d'inscription connexion (juste login/mdp)
     - [ ] test pour detecter les problemes/ verifier que le design est respecter (V1)
-2. [ ] Profile
+3. [ ] Profile
     - [ ] page pour ajouter/modifier les informations utilisateurs
     - [ ] page profiles des autes utilisateurs
     - [ ] si page différente page voiture (regarder API pour les plaques d'imatriculation pour aucompletion des informations) si on a le droit de la demander
     - [ ] Verification
-3. [ ] Note et notification
+4. [ ] Note et notification
     - [ ] page (personels) pour voir les notes recu/envoyer
     - [ ] a la suite d'un trajet pouvoir noter (le conducteur => les passagers et les passagers => le conducteur)
     - [ ] emmètre des notifications (passager demande a rejoindre un trajet, conducteur accepte passager, demande de notation...)
     - [ ] onglet/page notification (pour l'instant recu de la bd)
     - [ ] gerer notification entre utilisateur connecter
     - [ ] test + verification
-4. [ ] supplement
+5. [ ] supplement
     - [ ] Responsive design pour les ecran d'ordinateur
-5. [ ] Final
+6. [ ] Final
     - [ ] test final regarder que toute les fonctionnalité fonctionne, que aucun bug n'est présent.
     - [ ] verification que le rendu correspond au sujet
 ## Liens
 ### PostGreSQl
-[Hebergeur](https://render.com/) - fichier creation BD disponible dans le dossier docs
+[Hebergeur](https://render.com/) - fichier creation BD disponible dans le dossier docs  
 [Tuto serveur + code](https://youtu.be/CvCiNeLnZ00?t=3687)  
 ### Test
 - [Postman](https://www.postman.com/) pour tester les requetes sur le serveur
