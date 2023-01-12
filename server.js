@@ -49,7 +49,6 @@ app.get('/Users', function(req, userRes) {
       
         userRes.json(dbRes.rows);
         client.end();
-        console.log("here");
       });
 });
 app.get('/Users/:id', function(req, res) {
@@ -85,9 +84,9 @@ app.get('/Users/:id', function(req, res) {
     client.query(`INSERT INTO public."Users"(login, mdp, nom, prenom, sexe, mail, telephone, biographie)
         VALUES ('${login}', '${mdp}', '${name}', '${prenom}', '${sexe}', '${mail}', '${telephone}', '${bio}') RETURNING *`, (dbERR, dbRes) => {
         if (dbERR) {
-        console.error(dbERR);
-        res.status(500).send('Internal Server Error');
-        return;
+          console.error(dbERR);
+          res.status(500).send('Internal Server Error');
+          return;
         }
   
         console.log("POST user ADD ajouter : ",dbRes.rows);
@@ -100,21 +99,27 @@ app.get('/Users/:id', function(req, res) {
   app.delete('/Users/:id', function(req, res) {
     console.log("Recu : DELETE /Users/"+req.params.id);
     res.setHeader('Content-type', 'application/json');
-
     client = new Client(connectionString);
     client.connect();
     client.query(`DELETE FROM public."Users"
-	WHERE "Users"."usId"=${req.params.id}`, (dbERR, dbRes) => {
+	WHERE "Users"."usId"=${req.params.id} RETURNING *`, (dbERR, dbRes) => {
         if (dbERR) {
-        console.error(dbERR);
-        res.status(500).send('Internal Server Error');
-        return;
+          console.error(dbERR);
+          res.status(500).send('Internal Server Error');
+          return;
         }
-        res.status(200).send(`User DELETED`);
+
+        if(dbRes.rowCount!=0) {
+          res.status(200).send(`User DELETED ${dbRes.rows[0].usId}`);
+        }else{
+          res.status(200).send(`No User DELETED `);
+
+        }
         client.end();
     });
-
   });
+
+
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 
