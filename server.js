@@ -96,6 +96,9 @@ app.get('/Users/:id', function(req, res) {
 
   });
 
+
+
+
   app.delete('/Users/:id', function(req, res) {
     console.log("Recu : DELETE /Users/"+req.params.id);
     res.setHeader('Content-type', 'application/json');
