@@ -51,22 +51,22 @@ app.get('/Users', function(req, userRes) {
         client.end();
       });
 });
-app.get('/Users/:id', function(req, res) {
-    console.log("Recu : GET /Users/"+req.params.id);
+app.get('/Users/:login', function(req, res) {
+    console.log("Recu : GET /Users/"+req.params.login);
     res.setHeader('Content-type', 'application/json');
-    if (!req.params.id) {
-      res.send(400, 'Bad Request');
+    if (!req.params.login) {
+      res.status(400).send('Bad Request');
       return;
     }
     client = new Client(connectionString);
     client.connect();
-    client.query(`SELECT * FROM public."Users" WHERE "Users"."usId" = '${req.params.id}'`, (dbERR, dbRes) => {
+    client.query(`SELECT * FROM public."Users" WHERE "Users"."login" = '${req.params.login}'`, (dbERR, dbRes) => {
       if (dbERR) {
         console.error(dbERR);
         res.send(500, 'Internal Server Error');
         return;
       }
-  
+      console.log(dbRes);
       res.json(dbRes.rows);
       client.end();
     });
@@ -90,7 +90,7 @@ app.get('/Users/:id', function(req, res) {
         }
   
         console.log("POST user ADD ajouter : ",dbRes.rows);
-        res.status(201).send(`User added with ID: ${dbRes.rows[0].usId}`);
+        res.status(201).send(`User added with login: ${dbRes.rows[0].login}`);
         client.end();
     });
 
@@ -99,13 +99,17 @@ app.get('/Users/:id', function(req, res) {
 
 
 
-  app.delete('/Users/:id', function(req, res) {
-    console.log("Recu : DELETE /Users/"+req.params.id);
+  app.delete('/Users/:login', function(req, res) {
+    console.log("Recu : DELETE /Users/"+req.params.login);
     res.setHeader('Content-type', 'application/json');
+    if (!req.params.login) {
+      res.status(400).send('Bad Request');
+      return;
+    }
     client = new Client(connectionString);
     client.connect();
     client.query(`DELETE FROM public."Users"
-	WHERE "Users"."usId"=${req.params.id} RETURNING *`, (dbERR, dbRes) => {
+	WHERE "Users"."login"='${req.params.login}' RETURNING *`, (dbERR, dbRes) => {
         if (dbERR) {
           console.error(dbERR);
           res.status(500).send('Internal Server Error');
@@ -113,7 +117,7 @@ app.get('/Users/:id', function(req, res) {
         }
 
         if(dbRes.rowCount!=0) {
-          res.status(200).send(`User DELETED ${dbRes.rows[0].usId}`);
+          res.status(200).send(`User DELETED ${dbRes.rows[0].login}`);
         }else{
           res.status(200).send(`No User DELETED `);
 
