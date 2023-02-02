@@ -7,17 +7,19 @@ const express = require('express');
 // path : chemin
 const path = require('path');
 // logger : logger ce qui se passe
-const { logger, logEvents } = require('./middleware/logger');
+const { logger } = require('./middleware/logger');
 // errorHandler : recuperer les erreurs
 const errorHandler = require('./middleware/errorHandler');
 //req->json
 const bodyParser = require('body-parser')
 
-//Non-blocking PostgreSQL client
-const { Client } = require('pg');
-const connectionString =process.env.CONNECTING_STRING+"?sslmode=no-verify";
-var client = new Client(connectionString);
+const { client } = require("./config/serverConnection");
 
+
+/*****************************************************
+ *             Chargement des fonctions/routes
+ *****************************************************/
+const users = require("./Users");
 
 /*****************************************************
  *             Lancement du serveur web
@@ -35,102 +37,19 @@ app.use(
     })
   )
 
-app.get('/Users', function(req, userRes) {
-    console.log("Recu : GET /Users");
-    userRes.setHeader('Content-type', 'application/json');
-    client = new Client(connectionString);
-    client.connect();
-    client.query('SELECT * FROM public."Users"', (dbERR, dbRes) => {
-        if (dbERR) {
-          console.error(dbERR);
-          userRes.send(500, 'Internal Server Error');
-          return;
-        }
-      
-        userRes.json(dbRes.rows);
-        client.end();
-      });
-});
-app.get('/Users/:login', function(req, res) {
-    console.log("Recu : GET /Users/"+req.params.login);
-    res.setHeader('Content-type', 'application/json');
-    if (!req.params.login) {
-      res.status(400).send('Bad Request');
-      return;
-    }
-    client = new Client(connectionString);
-    client.connect();
-    client.query(`SELECT * FROM public."Users" WHERE "Users"."login" = '${req.params.login}'`, (dbERR, dbRes) => {
-      if (dbERR) {
-        console.error(dbERR);
-        res.send(500, 'Internal Server Error');
-        return;
-      }
-      console.log(dbRes);
-      res.json(dbRes.rows);
-      client.end();
-    });
-  });
+app.get('/Users', users.getAllUsers);
 
-  app.post('/Users', function(req, res) {
-    console.log("Recu : POST /Users/");
-    res.setHeader('Content-type', 'application/json');
+app.get('/Users/:login', users.getUsers);
 
-    console.log("POST user ADD entrer : ",req.body);
-    var {login, mdp, name, prenom, sexe, mail, telephone, bio} = req.body;
-    client = new Client(connectionString);
-    client.connect();
-    console.log()
-    client.query(`INSERT INTO public."Users"(login, mdp, nom, prenom, sexe, mail, telephone, biographie)
-        VALUES ('${login}', '${mdp}', '${name}', '${prenom}', '${sexe}', '${mail}', '${telephone}', '${bio}') RETURNING *`, (dbERR, dbRes) => {
-        if (dbERR) {
-          console.error(dbERR);
-          res.status(500).send('Internal Server Error');
-          return;
-        }
-  
-        console.log("POST user ADD ajouter : ",dbRes.rows);
-        res.status(201).send(`User added with login: ${dbRes.rows[0].login}`);
-        client.end();
-    });
+app.post('/Users', users.addUsers);
 
-  });
+app.delete('/Users/:login', users.deleteUsers);
 
 
 
+//app.use('/', express.static(path.join(__dirname, 'public')));
 
-  app.delete('/Users/:login', function(req, res) {
-    console.log("Recu : DELETE /Users/"+req.params.login);
-    res.setHeader('Content-type', 'application/json');
-    if (!req.params.login) {
-      res.status(400).send('Bad Request');
-      return;
-    }
-    client = new Client(connectionString);
-    client.connect();
-    client.query(`DELETE FROM public."Users"
-	WHERE "Users"."login"='${req.params.login}' RETURNING *`, (dbERR, dbRes) => {
-        if (dbERR) {
-          console.error(dbERR);
-          res.status(500).send('Internal Server Error');
-          return;
-        }
-
-        if(dbRes.rowCount!=0) {
-          res.status(200).send(`User DELETED ${dbRes.rows[0].login}`);
-        }else{
-          res.status(200).send(`No User DELETED `);
-
-        }
-        client.end();
-    });
-  });
-
-
-
-app.use('/', express.static(path.join(__dirname, 'public')));
-
-app.use('/', require('./routes/root'));
+//app.use('/', require('./routes/root'));
 
 app.all('*', (req, res) => {
     res.status(404);
