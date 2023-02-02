@@ -24,7 +24,7 @@ var client = new Client(connectionString);
  *****************************************************/
 const app = express();
 const PORT = process.env.PORT || 8080;
-console.log("start on port : ",process.env.NODE_ENV);
+console.log("start on port : ",process.env.PORT);
 
 app.use(logger);
 

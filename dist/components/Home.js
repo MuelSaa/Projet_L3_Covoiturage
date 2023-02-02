@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+//import axios from 'axios'
 import { StyleSheet, Text, TextInput, View, Button, Platform} from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 export default function Home() {
@@ -10,11 +11,17 @@ export default function Home() {
   const [text, setText] = useState('empty');
   
 
-  const search = () => {
-    //  const search = () => {
-    //  const socket = require('socket.io-client')('http://localhost:3000');
-    //  socket.emit('search', { depart, arrivee, date });}
-  }
+  // async function search() {
+  //   try{
+  //     const resp = await axios.get('http://localhost:8080/Users/samu');
+  //     console.log(resp.data);
+  //     return resp.data;
+  //   }
+  //   catch(error){
+  //     console.log(error);
+  //   }
+  // }
+  const search = {};
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS = 'android');

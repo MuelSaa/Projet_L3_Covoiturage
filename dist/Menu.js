@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import About from "./components /About";
-import Home from "./components /Home";
-import Add from "./components /Add";
-import Notifs from "./components /Home";
-import Trajets from "./components /Home";
+import About from "./components/About";
+import Home from "./components/Home";
+import Add from "./components/Add";
+import Notifs from "./components/Home";
+import Trajets from "./components/Home";
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
