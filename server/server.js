@@ -21,6 +21,7 @@ const { client } = require("./config/serverConnection");
  *****************************************************/
 const users = require("./Users");
 
+const trajet = require("./Trajet");
 /*****************************************************
  *             Lancement du serveur web
  *****************************************************/
@@ -45,7 +46,9 @@ app.post('/Users', users.addUsers);
 
 app.delete('/Users/:login', users.deleteUsers);
 
+app.get('/Trajet', trajet.getAllTrajet);
 
+app.post('/Trajet', trajet.addTrajet);
 
 //app.use('/', express.static(path.join(__dirname, 'public')));
 

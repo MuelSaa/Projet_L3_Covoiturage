@@ -8,7 +8,7 @@ exports.getAllUsers = (req, userRes) => {
     userRes.setHeader('Content-type', 'application/json');
     client = new Client(connectionString);
     client.connect();
-    client.query('SELECT * FROM public."Users"', (dbERR, dbRes) => {
+    client.query('SELECT login, nom, prenom, sexe, mail, telephone, biographie, inscrit FROM public."Users"', (dbERR, dbRes) => {
         if (dbERR) {
             console.error(dbERR);
             userRes.send(500, 'Internal Server Error');
@@ -28,14 +28,14 @@ exports.getUsers = (req, res) => {
     }
     client = new Client(connectionString);
     client.connect();
-    client.query(`SELECT * FROM public."Users" WHERE "Users"."login" = '${req.params.login}'`, (dbERR, dbRes) => {
+    client.query(`SELECT login, nom, prenom, sexe, mail, telephone, biographie, inscrit FROM public."Users" WHERE "Users"."login" = '${req.params.login}'`, (dbERR, dbRes) => {
       if (dbERR) {
         console.error(dbERR);
         res.send(500, 'Internal Server Error');
         return;
       }
       console.log(dbRes);
-      res.json(dbRes.rows);
+      res.json(dbRes.rows[0]);
       client.end();
     });
 }
@@ -49,7 +49,6 @@ exports.addUsers = (req, res) => {
     var {login, mdp, name, prenom, sexe, mail, telephone, bio} = req.body;
     client = new Client(connectionString);
     client.connect();
-    console.log()
     client.query(`INSERT INTO public."Users"(login, mdp, nom, prenom, sexe, mail, telephone, biographie)
         VALUES ('${login}', '${mdp}', '${name}', '${prenom}', '${sexe}', '${mail}', '${telephone}', '${bio}') RETURNING *`, (dbERR, dbRes) => {
         if (dbERR) {
