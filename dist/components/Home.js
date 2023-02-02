@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-//import axios from 'axios'
 import { StyleSheet, Text, TextInput, View, Button, Platform} from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 export default function Home() {
@@ -11,17 +10,24 @@ export default function Home() {
   const [text, setText] = useState('empty');
   
 
-  // async function search() {
-  //   try{
-  //     const resp = await axios.get('http://localhost:8080/Users/samu');
-  //     console.log(resp.data);
-  //     return resp.data;
-  //   }
-  //   catch(error){
-  //     console.log(error);
-  //   }
-  // }
-  const search = {};
+  const search = () => {
+    fetch('https://reactnative.dev/movies.json', {
+      method : 'GET',
+        mode : 'no-cors',
+        headers : {
+            'Accept' : 'application/json',
+            'Content-Type' : 'application/x-www-form-urlencoded',
+        },
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    
+  }
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS = 'android');
