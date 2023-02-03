@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, Button, Platform} from 'react-native';
+import { StyleSheet, Modal, Text, TextInput, View, Button, Platform, FlatList} from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 export default function Home() {
   const [depart, setDepart] = useState('');
@@ -8,10 +8,16 @@ export default function Home() {
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [text, setText] = useState('empty');
-  
+  const [trips, setTrips] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
 
+  const handleAddTrip = (trip) => {
+    // ajouter le voyage à la liste de l'user
+    console.log(`Trip ${trip.login} added`);
+  };
+  
   const search = () => {
-    fetch('https://reactnative.dev/movies.json', {
+    fetch('https://covoiturage.onrender.com/users', {
       method : 'GET',
         mode : 'no-cors',
         headers : {
@@ -20,17 +26,14 @@ export default function Home() {
         },
     })
       .then(response => response.json())
-      .then(data => {
-        console.log(data);
-      })
+      .then(data => setTrips(data))
       .catch(error => {
         console.error(error);
       });
-    
+      setModalVisible(true);
   }
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS = 'android');
     setDate(currentDate);
 
     let tempDate = new Date(currentDate);
@@ -46,7 +49,7 @@ export default function Home() {
   
 
     return (
-      <View style={styles.container}>
+      <View style={styles.containers}>
         <Text style={styles.h1}>Bienvenue sur l'application de covoiturage de la fac</Text>
         <Text style={styles.h2}>Remplissez ce formulaire afin de rechercher un trajet </Text>
         <Text style={styles.label}>Départ :</Text>
@@ -84,12 +87,38 @@ export default function Home() {
         <View style={styles.btn}>
           <Button onPress={() => search()} title="Rechercher" />
         </View>
-
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalVisible}
+        >
+          <View style={styles.modalContainer}>
+            {trips.map((trip, index) => (
+              <View key={index} style={styles.tripContainer}>
+                <Text>{trip.nom} - {trip.prenom} - {trip.login}</Text>
+                <Button title="Ajouter ce trajet" onPress={handleAddTrip(trip)} />
+              </View>
+            ))}
+            <Button title="Masquer" onPress={() => setModalVisible(false)} />
+          </View>
+      </Modal>
       </View>
     );
   }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tripContainer: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'black',
+    margin: 10,
+  },
+
   h1: {
     fontSize: 28,
     fontWeight : '800',
@@ -107,7 +136,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row'
   },
-  container: {
+  containers: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
