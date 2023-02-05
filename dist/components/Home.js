@@ -8,17 +8,20 @@ export default function Home() {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
-  const [text, setText] = useState('partir maintenant');
+  const [text, setText] = useState('choisir une date');
   const [trips, setTrips] = useState([]);
   const [checked, setChecked] = React.useState('depart');
   const [listModalVisible, setListModalVisible] = useState(false);
   const [mapModalVisible, setMapModalVisible] = useState(false);
   const [homeLocation, setHomeLocation] = useState('');
+  const [dateFormat, setDateFormat] = useState('');
 
   
   const search = async () => {
+    if(!dateFormat) alert("vous n'avez pas choisi de date...");
     if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     else {
+      console.log(dateFormat);
       const resp = await fetch('https://covoiturage.onrender.com/trajet', {
         method: 'GET',
       })
@@ -36,7 +39,7 @@ export default function Home() {
       //     body: JSON.stringify({
       //       universite: checked,
       //       home: homeLocation,
-      //       date: date,
+      //       date: dateFormat,
       //     })
       //   })
       //   .then(response => response.json())
@@ -53,7 +56,8 @@ export default function Home() {
 
     let tempDate = new Date(currentDate);
     let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
-    let fTime = tempDate.getHours() + 'h ' + tempDate.getMinutes() + 'm'; 
+    let fTime = tempDate.getHours() + 'h ' + tempDate.getMinutes() + 'm';
+    setDateFormat(tempDate.getFullYear()+'-'+(tempDate.getMonth() + 1)+"-"+tempDate.getDate()+' '+tempDate.getHours()+':'+tempDate.getMinutes()+':'+tempDate.getSeconds()+'+00');
     setText(fDate + ' ' + fTime);
     setShow (false)
   }

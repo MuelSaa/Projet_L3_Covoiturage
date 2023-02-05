@@ -15,13 +15,27 @@ export default function Home() {
   const [listModalVisible, setListModalVisible] = useState(false);
   const [mapModalVisible, setMapModalVisible] = useState(false);
   const [homeLocation, setHomeLocation] = useState('');
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [passengerCount, setPassengerCount] = useState('');
 
+  const handlePassengerCountChange = (value) => {
+    setPassengerCount(value);
+  };
+  
+  function showTripAddedModal(){
+    setAddModalVisible(true);
+  }
+  
+  const hideTripAddedModal = () => {
+    setAddModalVisible(false);
+  }
   
   const add = async () => {
     if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     else {
+      showTripAddedModal();
       try {
-        const response = await fetch('https://covoiturage.onrender.com/users', {
+        const response = await fetch('https://covoiturage.onrender.com/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -33,7 +47,6 @@ export default function Home() {
             date: date,
           })
         });
-        <TripAddedModal></TripAddedModal>
       }
       catch(error) {
           console.error(error);
@@ -60,7 +73,11 @@ export default function Home() {
 
     return (
       <View style={styles.containers}>
-        <Text style={styles.h1}>Bienvenue sur l'application de covoiturage de la fac</Text>
+        <Text style={styles.h1}>Remplissez ce formulaire afin d'ajouter un trajet : </Text>
+        <TripAddedModal
+          visible={addModalVisible}
+          onClose={hideTripAddedModal}
+        />
         <Text style={styles.h2}>-------------------</Text>
         {homeLocation ? (
         <TouchableOpacity style={styles.button} onPress={() => setMapModalVisible(true)}>

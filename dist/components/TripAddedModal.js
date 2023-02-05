@@ -34,9 +34,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   checkIcon: {
-    width: 80,
-    height: 80,
-    tintColor: '#4CAF50',
+    width: 50,
+    height: 50
   },
   message: {
     fontSize: 20,
