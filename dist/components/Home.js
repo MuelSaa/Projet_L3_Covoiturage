@@ -1,44 +1,52 @@
-`<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww
-&callback=initMap" async defer></script>`
 
 import React, { useState } from 'react';
 import { StyleSheet, Modal, Text, TextInput, View, Button, TouchableOpacity} from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 import MapView, { Marker } from 'react-native-maps';
-import Geocoder from 'react-native-geocoding';
 import { RadioButton } from 'react-native-paper';
 export default function Home() {
-  const [selectedField, setSelectedField] = useState("");
-  const [depart, setDepart] = useState("");
-  const [arrivee, setArrivee] = useState("");
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
-  const [text, setText] = useState('empty');
+  const [text, setText] = useState('partir maintenant');
   const [trips, setTrips] = useState([]);
-  const [isMapOpen, setIsMapOpen] = useState(false);
-  const [checked, setChecked] = React.useState('first');
-  const [modalVisible, setModalVisible] = useState(false);
-  const [homeLocation, setHomeLocation] = useState({});
-
+  const [checked, setChecked] = React.useState('depart');
+  const [listModalVisible, setListModalVisible] = useState(false);
+  const [mapModalVisible, setMapModalVisible] = useState(false);
+  const [homeLocation, setHomeLocation] = useState('');
 
   
-  const search = () => {
-    fetch('https://covoiturage.onrender.com/users', {
-      method : 'GET',
-        mode : 'no-cors',
-        headers : {
-            'Accept' : 'application/json',
-            'Content-Type' : 'application/x-www-form-urlencoded',
-        },
-    })
+  const search = async () => {
+    if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
+    else {
+      const resp = await fetch('https://covoiturage.onrender.com/trajet', {
+        method: 'GET',
+      })
       .then(response => response.json())
       .then(data => setTrips(data))
-      .catch(error => {
-        console.error(error);
-      });
-      setModalVisible(true);
-  }
+      setListModalVisible(true);
+    }
+  };
+      // try {
+      //   const response = await fetch('https://covoiturage.onrender.com/', {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //     },
+      //     body: JSON.stringify({
+      //       universite: checked,
+      //       home: homeLocation,
+      //       date: date,
+      //     })
+      //   })
+      //   .then(response => response.json())
+      //   .then(data => setTrips(data))
+      //   setListModalVisible(true);
+      // }
+      // catch(error) {
+      //     console.error(error);
+      // }
+    
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setDate(currentDate);
@@ -47,6 +55,7 @@ export default function Home() {
     let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
     let fTime = tempDate.getHours() + 'h ' + tempDate.getMinutes() + 'm'; 
     setText(fDate + ' ' + fTime);
+    setShow (false)
   }
 
   const showMode = (currentMode) => {
@@ -54,49 +63,46 @@ export default function Home() {
     setMode(currentMode);
   }
   
-  function choice(text) {
-    setSelectedField(text);
-    {selectedField === "depart" ? setDepart("Université de sciences") : setDepart("")}
-    {selectedField === "arrivee" ? setArrivee("Université de sciences") : setArrivee("")}
-  }
+  const handleAddTrip = () => {
+    
+  };
 
     return (
       <View style={styles.containers}>
         <Text style={styles.h1}>Bienvenue sur l'application de covoiturage de la fac</Text>
         <Text style={styles.h2}>-------------------</Text>
+        {homeLocation ? (
+        <TouchableOpacity style={styles.button} onPress={() => setMapModalVisible(true)}>
         <Button
-        title="Choisir emplacement domicile"
-        onPress={() => setModalVisible(true)}
+        title="Modifier emplacement domicile"
+        onPress={() => setMapModalVisible(true)}
         />
+      </TouchableOpacity>
+      ) : (
+        <TouchableOpacity style={styles.button} onPress={() => setMapModalVisible(true)}>
+          <Button
+        title="Choisir emplacement domicile"
+        onPress={() => setMapModalVisible(true)}
+        />
+        </TouchableOpacity>
+      )}
+        
         <Text style={styles.label}>Université de sciences : </Text>
         <View style={styles.tab}>
           <Text style={styles.labelRadio}>Départ</Text>
           <RadioButton
-            label="first"
-            value="first"
-            status={ checked === 'first' ? 'checked' : 'unchecked' }
-            onPress={() => setChecked('first')}
+            label="depart"
+            value="depart"
+            status={ checked === 'depart' ? 'checked' : 'unchecked' }
+            onPress={() => setChecked('depart')}
           />
           <Text style={styles.labelRadio}>Arrivée</Text>
           <RadioButton
-            value="second"
-            status={ checked === 'second' ? 'checked' : 'unchecked' }
-            onPress={() => setChecked('second')}
+            value="arrivee"
+            status={ checked === 'arrivee' ? 'checked' : 'unchecked' }
+            onPress={() => setChecked('arrivee')}
           />
         </View>
-    {/* {isMapOpen && (
-      <MapView style={{ flex: 1 }}
-        onPress={event => {
-        if (selectedField === "depart") {
-          setDepart(`${event.nativeEvent.coordinate.latitude}, ${event.nativeEvent.coordinate.longitude}`);
-        } else if (selectedField === "arrivee") {
-          setArrivee(`${event.nativeEvent.coordinate.latitude}, ${event.nativeEvent.coordinate.longitude}`);
-        }
-      }}>
-      <Button title="Close Map" onPress={setIsMapOpen(false)} />
-      </MapView>
-      )} */}
-        <Text style={styles.label}> Date : </Text>
         <View style={styles.tab}>
           <Text style={styles.date}>{text}</Text>
           <Button
@@ -119,54 +125,75 @@ export default function Home() {
         <View style={styles.btn}>
           <Button onPress={() => search()} title="Rechercher" />
         </View>
+
         <Modal
         animationType="slide"
         transparent={false}
-        visible={modalVisible}
+        visible={mapModalVisible}
         onRequestClose={() => {
-          setModalVisible(false);
+          setMapModalVisible(false);
         }}>
         <MapView
           style={{ flex: 1 }}
           initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
+            latitude: 47.25,
+            longitude: 6.0333,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
           onPress={event => {
-            setHomeLocation({
-              latitude: event.nativeEvent.coordinate.latitude,
-              longitude: event.nativeEvent.coordinate.longitude,
-            });
+            setHomeLocation([
+              event.nativeEvent.coordinate.latitude,
+              event.nativeEvent.coordinate.longitude,
+            ]);setMapModalVisible(false);
           }}
         />
         <Button
           title="Fermer"
-          onPress={() => setModalVisible(false)}
+          onPress={() => setMapModalVisible(false)}
           style={{ position: 'absolute', top: 20, right: 20 }}
         />
       </Modal>
-        {/* <Modal
+        <Modal
           animationType="slide"
           transparent={false}
-          visible={modalVisible}
+          visible={listModalVisible}
         >
           <View style={styles.modalContainer}>
             {trips.map((trip, index) => (
               <View key={index} style={styles.tripContainer}>
-                <Text>{trip.nom} - {trip.prenom} - {trip.login}</Text>
+                <Text>{trip.depart} - {trip.destination} - {trip.departHeure}</Text>
                 <Button title="Ajouter ce trajet" onPress={handleAddTrip(trip)} />
               </View>
             ))}
-            <Button title="Masquer" onPress={() => setModalVisible(false)} />
+            <Button title="Masquer" onPress={() => setListModalVisible(false)} />
           </View>
-      </Modal> */}
+      </Modal>
       </View>
     );
   }
 
 const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+    borderRadius: 5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    margin: 10,
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333333'
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
