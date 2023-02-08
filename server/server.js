@@ -38,17 +38,35 @@ app.use(
     })
   )
 
-app.get('/Users', users.getAllUsers);
+/*****************************************************
+ *                      Users
+ *****************************************************/
 
+app.get('/Users', users.getAllUsers);
 app.get('/Users/:login', users.getUsers);
 
 app.post('/Users', users.addUsers);
 
 app.delete('/Users/:login', users.deleteUsers);
 
+/*****************************************************
+ *                      Trajet
+ *****************************************************/
+
 app.get('/Trajet', trajet.getAllTrajet);
+app.get('/Trajet/:trajetID', trajet.getTrajet);
+app.get('/FindTrajet', trajet.findTrajet);
 
 app.post('/Trajet', trajet.addTrajet);
+
+/*****************************************************
+ *                      Notification
+ *****************************************************/
+
+/*****************************************************
+ *                      Notes
+ *****************************************************/
+
 
 //app.use('/', express.static(path.join(__dirname, 'public')));
 

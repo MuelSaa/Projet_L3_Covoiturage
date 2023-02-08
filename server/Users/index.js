@@ -3,6 +3,10 @@ const { Client } = require('pg');
 var {client, connectionString} = require("../config/serverConnection");
 //
 
+/*****************************************************
+ *                      GET
+ *****************************************************/
+
 exports.getAllUsers = (req, userRes) => {
     console.log("Recu : GET /Users");
     userRes.setHeader('Content-type', 'application/json');
@@ -40,6 +44,9 @@ exports.getUsers = (req, res) => {
     });
 }
 
+/*****************************************************
+ *                      POST
+ *****************************************************/
 
 exports.addUsers = (req, res) => {
     console.log("Recu : POST /Users/");
@@ -62,6 +69,10 @@ exports.addUsers = (req, res) => {
         client.end();
     });
 }
+
+/*****************************************************
+ *                      DELETE
+ *****************************************************/
 
 exports.deleteUsers = (req, res) => {
     console.log("Recu : DELETE /Users/"+req.params.login);
