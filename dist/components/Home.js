@@ -14,6 +14,10 @@ export default function Home() {
   const [listModalVisible, setListModalVisible] = useState(false);
   const [mapModalVisible, setMapModalVisible] = useState(false);
   const [homeLocation, setHomeLocation] = useState('');
+  const [lat, setMarkerlat] = useState('');
+  const [long, setMarkelon] = useState('');
+  const [tmp, setTMP] = useState('');
+
   const [dateFormat, setDateFormat] = useState('');
 
   
@@ -140,18 +144,24 @@ export default function Home() {
         <MapView
           style={{ flex: 1 }}
           initialRegion={{
-            latitude: 47.25,
-            longitude: 6.0333,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+          latitude: 47.25,
+          longitude: 6.0333,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
           }}
           onPress={event => {
-            setHomeLocation([
-              event.nativeEvent.coordinate.latitude,
-              event.nativeEvent.coordinate.longitude,
-            ]);setMapModalVisible(false);
+          setMarkerlat(event.nativeEvent.coordinate.latitude)
+          setMarkelon(event.)
+          setHomeLocation([
+            event.nativeEvent.coordinate.latitude,
+            event.nativeEvent.coordinate.longitude,
+          ]);setMapModalVisible(false);
           }}
-        />
+        >
+        {homeLocation !== "" && (
+        <Marker   coordinate={{ latitude, longitude }} pinColor="red" />
+        )}
+        </MapView>
         <Button
           title="Fermer"
           onPress={() => setMapModalVisible(false)}
