@@ -1,26 +1,67 @@
 
 import React, { useState } from 'react';
-import { StyleSheet, Modal, Text, TextInput, View, Button, TouchableOpacity} from 'react-native';
+import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity} from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 import MapView, { Marker } from 'react-native-maps';
 import { RadioButton } from 'react-native-paper';
+import Geocoder from 'react-native-geocoding';
+import * as Location from 'expo-location';
+
+Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", {language : "fr"});
+
 export default function Home() {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [text, setText] = useState('choisir une date');
   const [trips, setTrips] = useState([]);
-  const [checked, setChecked] = React.useState('depart');
+  const [checked, setChecked] = useState('depart');
   const [listModalVisible, setListModalVisible] = useState(false);
   const [mapModalVisible, setMapModalVisible] = useState(false);
   const [homeLocation, setHomeLocation] = useState('');
-  const [lat, setMarkerlat] = useState('');
-  const [long, setMarkelon] = useState('');
-  const [tmp, setTMP] = useState('');
-
+  const [latitude, setMarkerlat] = useState('');
+  const [longitude, setMarkerlon] = useState('');
+  const [address, setAddress] = useState('');
   const [dateFormat, setDateFormat] = useState('');
+  const [addHolder, setHolder] = useState('choisir une adresse');
 
+  function setCompleteLocation(lat, long) {
+    setMarkerlat(lat);
+    setMarkerlon(long);
+    setHomeLocation([lat,long]);
+    Geocoder.from(latitude, longitude)
+    .then(json => {
+            var addressComponent = json.results[0].address_components;
+      setAddress("");
+      setHolder(addressComponent[0].long_name + ' ' + addressComponent[1].long_name + ' ' + addressComponent[2].long_name)
+    })
+    .catch(error => setHolder('adresse inconnue'));
+  }
+
+  const getCurrentLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.log('Permission to access location was denied');
+    }
+    let location = await Location.getCurrentPositionAsync({});
+    console.log(location.coords.latitude, location.coords.longitude);
+    setCompleteLocation(location.coords.latitude, location.coords.longitude);
+  }
   
+  const handleAddressChange = (newAddress) => {
+    setAddress(newAddress);
+    if(newAddress.length > 10){
+    Geocoder.from(newAddress)
+      .then(json => {
+        var location = json.results[0].geometry.location;
+        setCompleteLocation(location.lat, location.lng);
+      })
+      .catch(error => console.log(error));
+    }
+  };
+
+  const handleAddTrip = () => {}
+
   const search = async () => {
     if(!dateFormat) alert("vous n'avez pas choisi de date...");
     if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
@@ -34,25 +75,6 @@ export default function Home() {
       setListModalVisible(true);
     }
   };
-      // try {
-      //   const response = await fetch('https://covoiturage.onrender.com/', {
-      //     method: 'POST',
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     },
-      //     body: JSON.stringify({
-      //       universite: checked,
-      //       home: homeLocation,
-      //       date: dateFormat,
-      //     })
-      //   })
-      //   .then(response => response.json())
-      //   .then(data => setTrips(data))
-      //   setListModalVisible(true);
-      // }
-      // catch(error) {
-      //     console.error(error);
-      // }
     
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -70,55 +92,56 @@ export default function Home() {
     setShow(true);
     setMode(currentMode);
   }
-  
-  const handleAddTrip = () => {
-    
-  };
 
     return (
       <View style={styles.containers}>
         <Text style={styles.h1}>Bienvenue sur l'application de covoiturage de la fac</Text>
         <Text style={styles.h2}>-------------------</Text>
-        {homeLocation ? (
-        <TouchableOpacity style={styles.button} onPress={() => setMapModalVisible(true)}>
-        <Button
-        title="Modifier emplacement domicile"
-        onPress={() => setMapModalVisible(true)}
-        />
-      </TouchableOpacity>
-      ) : (
-        <TouchableOpacity style={styles.button} onPress={() => setMapModalVisible(true)}>
-          <Button
-        title="Choisir emplacement domicile"
-        onPress={() => setMapModalVisible(true)}
-        />
-        </TouchableOpacity>
-      )}
-        
-        <Text style={styles.label}>Université de sciences : </Text>
+        <View style={styles.addressContainer}>
+          <TextInput
+            style={styles.addressInput}
+            value={address}
+            onChangeText={handleAddressChange}
+            placeholder={addHolder}
+          />
+        </View>
+        <View style={{display:'flex', flexDirection:'row'}}>
+          <TouchableOpacity style={styles.button}>
+            <Button title="Afficher carte" onPress={() => setMapModalVisible(true)} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button}>
+            <Button title="Utiliser localisation" onPress={getCurrentLocation} />
+          </TouchableOpacity>
+        </View>
+        <Text style={{marginTop:10, fontSize:18}}>Université de sciences : </Text>
         <View style={styles.tab}>
           <Text style={styles.labelRadio}>Départ</Text>
+          <TouchableOpacity style={styles.button}>
           <RadioButton
-            label="depart"
             value="depart"
             status={ checked === 'depart' ? 'checked' : 'unchecked' }
             onPress={() => setChecked('depart')}
           />
+          </TouchableOpacity>
           <Text style={styles.labelRadio}>Arrivée</Text>
+          <TouchableOpacity style={styles.button}>
           <RadioButton
             value="arrivee"
             status={ checked === 'arrivee' ? 'checked' : 'unchecked' }
             onPress={() => setChecked('arrivee')}
           />
+          </TouchableOpacity>
         </View>
         <View style={styles.tab}>
           <Text style={styles.date}>{text}</Text>
-          <Button
-            style={styles.btn} title = "Date" onPress = { () => showMode('date')}
-          />
-          <Button
-            style={styles.btn} title = "Time" onPress = { () => showMode('time')}
-          />
+          <TouchableOpacity style={styles.button}>
+            <Button
+              style={styles.btn} title = "Date" onPress = { () => showMode('date')}
+            />
+            <Button
+              style={styles.btn} title = "Time" onPress = { () => showMode('time')}
+            />
+          </TouchableOpacity>
         </View>
         {show && (
           <DateTimePicker
@@ -130,9 +153,9 @@ export default function Home() {
           onChange={onChangeDate}
           />
         )}
-        <View style={styles.btn}>
+        <TouchableOpacity style={styles.button}>
           <Button onPress={() => search()} title="Rechercher" />
-        </View>
+        </TouchableOpacity>
 
         <Modal
         animationType="slide"
@@ -150,12 +173,9 @@ export default function Home() {
           longitudeDelta: 0.0421,
           }}
           onPress={event => {
-          setMarkerlat(event.nativeEvent.coordinate.latitude)
-          setMarkelon(event.)
-          setHomeLocation([
-            event.nativeEvent.coordinate.latitude,
-            event.nativeEvent.coordinate.longitude,
-          ]);setMapModalVisible(false);
+            console.log(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
+            setCompleteLocation(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
+            setMapModalVisible(false);
           }}
         >
         {homeLocation !== "" && (
@@ -168,30 +188,34 @@ export default function Home() {
           style={{ position: 'absolute', top: 20, right: 20 }}
         />
       </Modal>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={listModalVisible}
-        >
-          <View style={styles.modalContainer}>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={listModalVisible}
+      >
+        <View style={styles.modalContainer}>
+          <ScrollView>
             {trips.map((trip, index) => (
               <View key={index} style={styles.tripContainer}>
                 <Text>{trip.depart} - {trip.destination} - {trip.departHeure}</Text>
                 <Button title="Ajouter ce trajet" onPress={handleAddTrip(trip)} />
               </View>
             ))}
-            <Button title="Masquer" onPress={() => setListModalVisible(false)} />
-          </View>
+          <Button style={{ position: 'absolute', top: 20, right: 20 }} title="Masquer" onPress={() => setListModalVisible(false)} />
+          </ScrollView>
+        </View>
       </Modal>
+
       </View>
     );
   }
 
 const styles = StyleSheet.create({
   button: {
+    display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
-    padding: 10,
     borderRadius: 5,
     shadowColor: "#000",
     shadowOffset: {
@@ -221,8 +245,7 @@ const styles = StyleSheet.create({
   },
   labelRadio: {
     fontSize: 18,
-    alignContent:'center',
-    paddingTop: 5,
+    paddingTop: 10  
   },
   h1: {
     fontSize: 28,
@@ -238,6 +261,7 @@ const styles = StyleSheet.create({
     color : 'red'
   },
   tab: {
+    margin:10,
     display: 'flex',
     flexDirection: 'row'
   },
@@ -251,13 +275,13 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   date: {
-    textAlignVertical: 'center',
-    fontSize: 18,
+    paddingTop: 15,
     textAlign: 'center',
-    paddingLeft: 5,
-    height: 40,
-    borderColor: 'grey',
+    fontSize: 18,
+    height: 60,
+    borderColor: '#26322b',
     borderWidth: 1,
+    borderRadius: 20,
     width: '50%',
   },
   input: {
@@ -270,5 +294,20 @@ const styles = StyleSheet.create({
   },
   btn: {
     margin : 40
-  }
+  },
+  addressContainer: {
+    height: 40,
+    borderWidth: 3,
+    borderRadius: 10,
+    borderColor: '#ddd',
+    alignContent: 'center',
+    width: '80%',
+    marginBottom: 10
+  },  
+  addressInput: {
+    paddingTop:5,
+    textAlign: 'center',
+    borderColor: '#ddd',
+    fontSize: 16,
+  },
 });

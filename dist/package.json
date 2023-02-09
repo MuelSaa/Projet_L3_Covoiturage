@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/datetimepicker": "6.5.2",
+    "@react-native-community/geolocation": "^3.0.5",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/bottom-tabs": "^6.5.2",
     "@react-navigation/native": "^6.1.1",
@@ -20,6 +21,7 @@
     "date-fns": "^2.29.3",
     "es-abstract": "^1.21.0",
     "expo": "^47.0.13",
+    "expo-location": "^15.0.1",
     "expo-status-bar": "~1.4.2",
     "native-base": "^3.4.25",
     "react": "18.1.0",
@@ -43,6 +45,7 @@
     "react-native-secure-storage": "^0.1.2",
     "react-native-svg": "13.4.0",
     "react-navigation": "^4.4.4",
+    "react-navigation-hooks": "^1.1.0",
     "react-navigation-stack": "^2.10.4",
     "react-router-dom": "^6.6.2"
   },

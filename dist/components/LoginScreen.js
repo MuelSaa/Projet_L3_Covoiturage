@@ -1,23 +1,25 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from 'react-navigation-hooks';
 
 const LoginScreen = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
+  const { navigate } = useNavigation();
 
   const handleLogin = () => {
-    // Envoi des informations de connexion au backend
-    // Vérifie si les informations sont correctes
-    // Si les informations sont correctes, autoriser l'utilisateur à utiliser l'application
-    // Sinon, afficher une erreur
-  };
-
-  const handleRegistration = () => {
-    // Rediriger vers la page d'inscription
+    if(login==='' || password==='') {
+      alert('Veuillez remplir tous les champs');
+    }
+    else if(login === 'admin' && password === 'admin')
+      navigate('Menu');
+    else
+      alert('Identifiants incorrects');
   };
 
   return (
     <View style={styles.container}>
+      <Text style={styles.h1}>Connectez vous avec vos identifiants de l'université</Text>
       <Text>Identifiant de connexion</Text>
       <TextInput
         style={styles.input}
@@ -34,14 +36,18 @@ const LoginScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text>Connexion</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={handleRegistration}>
-        <Text>Inscription</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  h1: {
+    fontSize: 28,
+    fontWeight : '800',
+    color : 'red',
+    textAlign: 'center',
+    paddingBottom: '20%',
+  },
   container: {
     flex: 1,
     alignItems: 'center',

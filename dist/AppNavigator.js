@@ -16,7 +16,7 @@ const AppNavigator = createStackNavigator({
     },
   },
 },{
-  initialRouteName:'Menu'
+  initialRouteName:'Login'
 });
 
 export default AppNavigator;
