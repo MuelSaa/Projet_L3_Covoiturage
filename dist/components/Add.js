@@ -28,6 +28,10 @@ export default function Home() {
   const [addHolder, setHolder] = useState('choisir une adresse');
   const [passengers, setPassengers] = useState(1);
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [champ1, setchamp1] = useState('');
+  const [champ2, setchamp2] = useState('');
+  const [champ3, setchamp3] = useState('');
+  const [champ4, setchamp4] = useState('');
 
 
   function showTripAddedModal(){
@@ -91,20 +95,20 @@ export default function Home() {
     if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     else {
       if(checked==='depart'){
-        const departLat=47.244505;
-        const departLon=5.987401;
-        const destinationLat=latitude;
-        const destinationLon=longitude;
+        setchamp1(47.244505);
+        setchamp2(5.987401);
+        setchamp3(latitude);
+        setchamp4(longitude);
       }
       else {
-        const departLat=latitude;
-        const departLon=longitude;
-        const destinationLat=47.244505;
-        const destinationLon=5.987401;
+        setchamp1(latitude);
+        setchamp2(longitude);
+        setchamp3(47.244505);
+        setchamp4(5.987401);
       }
       showTripAddedModal();
       try {
-        const response = await fetch('https://covoiturage.onrender.com/', {
+        const response = await fetch('https://covoiturage.onrender.com/Trajet', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -112,10 +116,10 @@ export default function Home() {
           body: JSON.stringify({
             conducteur: 'samu',
             //token: '',
-            departLat: departLat,
-            departLon: departLon,
-            destinationLat : destinationLat,
-            destinationLon : destinationLon,
+            departLat: champ1,
+            departLon: champ2,
+            destinationLat : champ3,
+            destinationLon : champ4,
             departHeure: dateFormat,
             arriverHeure: dateFormat2,
             placeDisponible: passengers,
