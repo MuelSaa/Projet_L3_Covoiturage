@@ -24,6 +24,7 @@ export default function Home() {
   const [longitude, setMarkerlon] = useState('');
   const [address, setAddress] = useState('');
   const [dateFormat, setDateFormat] = useState('');
+  const [dateFormat2, setDateFormat2] = useState('');
   const [addHolder, setHolder] = useState('choisir une adresse');
   const [passengers, setPassengers] = useState(1);
   const [addModalVisible, setAddModalVisible] = useState(false);
@@ -89,6 +90,18 @@ export default function Home() {
   const add = async () => {
     if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     else {
+      if(checked==='depart'){
+        const departLat=47.244505;
+        const departLon=5.987401;
+        const destinationLat=latitude;
+        const destinationLon=longitude;
+      }
+      else {
+        const departLat=latitude;
+        const departLon=longitude;
+        const destinationLat=47.244505;
+        const destinationLon=5.987401;
+      }
       showTripAddedModal();
       try {
         const response = await fetch('https://covoiturage.onrender.com/', {
@@ -97,10 +110,16 @@ export default function Home() {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            user: '',
-            universite: checked,
-            home: homeLocation,
-            date: date,
+            conducteur: 'samu',
+            //token: '',
+            departLat: departLat,
+            departLon: departLon,
+            destinationLat : destinationLat,
+            destinationLon : destinationLon,
+            departHeure: dateFormat,
+            arriverHeure: dateFormat2,
+            placeDisponible: passengers,
+            //recurrence:0,
           })
         });
       }
@@ -118,6 +137,7 @@ export default function Home() {
     let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
     let fTime = tempDate.getHours() + 'h ' + tempDate.getMinutes() + 'm';
     setDateFormat(tempDate.getFullYear()+'-'+(tempDate.getMonth() + 1)+"-"+tempDate.getDate()+' '+tempDate.getHours()+':'+tempDate.getMinutes()+':'+tempDate.getSeconds()+'+00');
+    setDateFormat2(tempDate.getFullYear()+'-'+(tempDate.getMonth() + 1)+"-"+tempDate.getDate()+' '+(tempDate.getHours()+1)+':'+tempDate.getMinutes()+':'+tempDate.getSeconds()+'+00');
     setText(fDate + ' ' + fTime);
     setShow (false)
   }
