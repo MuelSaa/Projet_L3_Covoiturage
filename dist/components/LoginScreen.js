@@ -8,13 +8,14 @@ const LoginScreen = () => {
   const { navigate } = useNavigation();
 
   const handleLogin = () => {
-    if(login==='' || password==='') {
-      alert('Veuillez remplir tous les champs');
-    }
-    else if(login === 'admin' && password === 'admin')
-      navigate('Menu');
-    else
-      alert('Identifiants incorrects');
+    navigate('Menu');
+    // if(login==='' || password==='') {
+    //   alert('Veuillez remplir tous les champs');
+    // }
+    // else if(login === 'admin' && password === 'admin')
+    //   navigate('Menu');
+    // else
+    //   alert('Identifiants incorrects');
   };
 
   return (

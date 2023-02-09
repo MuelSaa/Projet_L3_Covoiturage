@@ -94,6 +94,7 @@ export default function Home() {
   }
 
     return (
+      <ScrollView>
       <View style={styles.containers}>
         <Text style={styles.h1}>Bienvenue sur l'application de covoiturage de la fac</Text>
         <Text style={styles.h2}>-------------------</Text>
@@ -205,8 +206,8 @@ export default function Home() {
           </ScrollView>
         </View>
       </Modal>
-
       </View>
+      </ScrollView>
     );
   }
 

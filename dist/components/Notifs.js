@@ -8,8 +8,8 @@ export default class Notifs extends React.Component {
         return (
             <View style={style.view}>
                 <StatusBar hidden />
-                <Text style={style.title}>A propos de moi</Text>
-                <Text>notre projet va etre psm les freros</Text>
+                <Text style={style.title}>A propos de notre groupe</Text>
+                <Text>/que des victimes/</Text>
             </View>
         )
     }

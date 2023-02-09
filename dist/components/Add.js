@@ -10,7 +10,7 @@ import TripAddedModal from './TripAddedModal';
 
 Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", {language : "fr"});
 
-export default function Home() {
+export default function Add() {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
@@ -64,13 +64,13 @@ export default function Home() {
       setAddress("");
       setHolder(addressComponent[0].long_name + ' ' + addressComponent[1].long_name + ' ' + addressComponent[2].long_name)
     })
-    .catch(error => setHolder('adresse inconnue'));
+    .catch(error => setHolder('Adresse non trouvée'));
   }
 
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
-      console.log('Permission to access location was denied');
+      alert('Impossible d\'accéder à votre position');
     }
     let location = await Location.getCurrentPositionAsync({});
     console.log(location.coords.latitude, location.coords.longitude);
@@ -152,7 +152,7 @@ export default function Home() {
   }
 
     return (
-      <View style={styles.containers}>
+      <ScrollView><View style={styles.containers}>
         <Text style={styles.h1}>Remplissez ce formulaire afin d'ajouter un trajet : </Text>
         <TripAddedModal
           visible={addModalVisible}
@@ -272,8 +272,8 @@ export default function Home() {
           </ScrollView>
         </View>
       </Modal>
-
       </View>
+      </ScrollView>
     );
   }
 
