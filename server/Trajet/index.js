@@ -8,10 +8,6 @@ var config = require("../config/defaultValue");
 const Joi = require('joi');
 
 const postSchema = Joi.object({
-    depart : Joi.string()
-        .required(),
-    destination : Joi.string()
-        .required(),
     departLat: Joi.number()
         .min(-90)
         .max(90)
@@ -32,13 +28,9 @@ const postSchema = Joi.object({
         .required(),
     arriverHeure: Joi.date()
         .required(),
-    date: Joi.date()
-        .required(),
     placeDisponible: Joi.number()
         .min(1)
         .max(8-1)
-        .optional(),
-    GroupeTrajet: Joi.number()
         .optional(),
     conducteur: Joi.string()
         .required()
@@ -65,12 +57,6 @@ const findTrajetSchema = Joi.object({
     date: Joi.date()
         .required(),
     heure: Joi.date()
-        .optional(),
-    departRayon: Joi.number()
-        .min(1)
-        .optional(),
-    arriverRayon: Joi.number()
-        .min(1)
         .optional()
 });
 
@@ -125,17 +111,12 @@ exports.findTrajet = (req, res) => {
     client = new Client(connectionString);
     client.connect();
 
-    var { departLat, departLon, arriverLat, arriverLon, date, heure, departRayon, arriverRayon } = req.body;
-    if(!departRayon){
-        departRayon=config.DEFAULT_RAYON;
-    }
-    if(!arriverRayon){
-        departRayon=config.DEFAULT_RAYON;
-    }
+    var { departLat, departLon, arriverLat, arriverLon, date, heure } = req.body;
+
     var myPostgresDate = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
 
-    var whereClause = `(6371 * acos(cos(radians(${departLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${departLon})) + sin(radians(${departLat})) * sin(radians("Trajet"."departLat")))) <= ${departRayon}
-        AND (6371 * acos(cos(radians(${arriverLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${arriverLon})) + sin(radians(${arriverLat})) * sin(radians("Trajet"."departLat")))) <= ${arriverRayon}
+    var whereClause = `(6371 * acos(cos(radians(${departLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${departLon})) + sin(radians(${departLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
+        AND (6371 * acos(cos(radians(${arriverLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${arriverLon})) + sin(radians(${arriverLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
         AND date_trunc('day', "Trajet"."date") = to_date('${myPostgresDate}', 'YYYY-MM-DD')`;
     if(heure){
         whereClause +=` AND "Trajet"."arriverHeure"::time BETWEEN ('${heure}'::timestamp with time zone - interval '1 hour')::time AND '${heure}'::time`;
@@ -177,25 +158,22 @@ exports.addTrajet = async (req, res) => {
         res.status(400).send(result.error);
     }
 
-    var {depart, destination, departLat, departLon, destinationLat, destinationLon, departHeure, arriverHeure, date, placeDisponible, GroupeTrajet, conducteur} = req.body;
+    var {departLat, departLon, destinationLat, destinationLon, departHeure, arriverHeure, placeDisponible,  conducteur} = req.body;
 
     if(departHeure>arriverHeure){
-        res.status(400).send("depart > arriver");
+        res.status(400).send("depart > arrivée");
     }
 
     client = new Client(connectionString);
     client.connect();
-    var request = `"depart", "destination", "departLat", "departLon", "destinationLat", "destinationLon", "departHeure", "arriverHeure", "date", "conducteur"`;
-    var data = `'${depart}', '${destination}', '${departLat}', '${departLon}', '${destinationLat}', '${destinationLon}', '${departHeure}', '${arriverHeure}', '${date}', '${conducteur}'`;
+    var request = `"departLat", "departLon", "destinationLat", "destinationLon", "departHeure", "arriverHeure", "conducteur"`;
+    var data = `'${departLat}', '${departLon}', '${destinationLat}', '${destinationLon}', '${departHeure}', '${arriverHeure}', '${conducteur}'`;
 
     if(placeDisponible){
         request += ', "placeDisponible"';
         data += `, '${placeDisponible}'`;
     }
-    if(GroupeTrajet){
-        request += ', "GroupeTrajet"';
-        data += `, '${GroupeTrajet}'`;
-    }
+
     var results = await client.query(`SELECT 1 FROM public."Users" WHERE "Users"."login" = $1`,[conducteur]);
  
     if(results.rowCount == 1){
