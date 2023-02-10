@@ -217,8 +217,10 @@ export default function Add() {
         <View style={styles.tab}>
           <Text style={styles.label}>Nombre de passagers : </Text>
           <Text style={styles.numberfield}>{passengers}</Text>
+          <TouchableOpacity style={styles.button}>
           <Button title = "  +  " onPress = { () => incrementPassengers()} />
           <Button title = "  -  " onPress = { () => decrementPassengers()} />
+          </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.button}>
           <Button onPress={() => add()} title="Creer le trajet" />

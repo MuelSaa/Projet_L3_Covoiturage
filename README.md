@@ -18,7 +18,7 @@ npm run start
 ```
 
 ### dotEnv
-champs a remplire :
+champs à remplir :
 ```
 NODE_ENV=development
 DATABASE_URI=

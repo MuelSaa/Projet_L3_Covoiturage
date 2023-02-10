@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Animated} from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 import MapView, { Marker } from 'react-native-maps';
 import { RadioButton } from 'react-native-paper';
@@ -19,11 +19,15 @@ const handleAddTrip = () => {}
 function getLocationName(latitude, longitude) {
   // Geocoder.from(latitude, longitude)
   // .then(json => {
-  //   var addressComponent = json.results[0].address_components;
-  //   if (addressComponent != undefined) {
-  //     return 'test';
+  //   if (json.results && json.results[0].address_components) {
+  //     var addressComponent = json.results[0].address_components;
+  //     if (addressComponent[1]) {
+  //       return addressComponent[1].long_name + ' ' + addressComponent[2].long_name;
+  //     } else {
+  //       return 'Composant d\'adresse inconnu';
+  //     }
   //   } else {
-  //     return 'Adresse inconnue';
+  //     return 'Résultat de géolocalisatio$n inconnu';
   //   }
   // })
   // .catch(error => { 
@@ -32,22 +36,6 @@ function getLocationName(latitude, longitude) {
   // });
   return 'test';
 }
-
-const renderTrip =  (trip, index) => {
-  const departLocation = getLocationName(trip.departLat, trip.departLon);
-  const arriveeLocation = getLocationName(trip.destinationLat, trip.destinationLat);
-  return (
-    <View key={index} style={styles.tripContainer}>
-      <Text>Depart : {departLocation}</Text>
-      <Text>Arrivee : {arriveeLocation}</Text>
-      <Text>Date : {moment(trip.departHeure).format('DD/MM/YYYY')}</Text>
-      <Text>Heure : {moment(trip.departHeure).format('HH:mm')}</Text>
-      <TouchableOpacity style={styles.button} onPress={handleAddTrip}>
-        <Text style={styles.buttonText}>Se désinscrire</Text>
-      </TouchableOpacity>    
-    </View>
-  );
-};
 
 export default function Trajets() {
     return (
@@ -72,12 +60,54 @@ export default function Trajets() {
       console.error(error);
       }
       }
-      
-      
-      
-      
     if (isFocused) {myTrips()}    
 
+    const [animation, setAnimation] = useState(new Animated.Value(0));
+
+useEffect(() => {
+  Animated.timing(animation, {
+    toValue: 1,
+    duration: 1000,
+    useNativeDriver: true,
+  }).start();
+}, []);
+
+const renderTrip = (trip, index) => {
+  const departLocation = getLocationName(trip.departLat, trip.departLon);
+  const arriveeLocation = getLocationName(trip.destinationLat, trip.destinationLat);
+
+  return (
+    <Animated.View
+      key={index}
+      style={[
+        styles.tripContainer,
+        {
+          opacity: animation,
+          transform: [
+            {
+              translateY: animation.interpolate({
+                inputRange: [0, 1],
+                outputRange: [100, 0],
+              }),
+            },
+          ],
+        },
+      ]}
+    >
+      <Text style={styles.text}>Depart : {departLocation}</Text>
+      <Text style={styles.text}>Arrivee : {arriveeLocation}</Text>
+      <Text style={styles.text}>
+        Date : {moment(trip.departHeure).format('DD/MM/YYYY')}
+      </Text>
+      <Text style={styles.text}>
+        Heure : {moment(trip.departHeure).format('HH:mm')}
+      </Text>
+      <TouchableOpacity style={styles.button} onPress={handleAddTrip}>
+        <Text style={styles.buttonText}>Se désinscrire</Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
     return (
       <ScrollView>
         <View style={styles.container}>
@@ -100,130 +130,107 @@ export function LastTrips() {
     .catch((error) => {}    );
     }
     if (isFocused) {myTrips()}
+
   const handleAddTrip = () => {}
-    
+  const [animation, setAnimation] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    Animated.timing(animation, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+  
+  const renderTrip = (trip, index) => {
+    const departLocation = getLocationName(trip.departLat, trip.departLon);
+    const arriveeLocation = getLocationName(trip.destinationLat, trip.destinationLat);
+  
+    return (
+      <Animated.View
+        key={index}
+        style={[
+          styles.tripContainer,
+          {
+            opacity: animation,
+            transform: [
+              {
+                translateY: animation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [100, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
+        <Text style={styles.text}>Depart : {departLocation}</Text>
+        <Text style={styles.text}>Arrivee : {arriveeLocation}</Text>
+        <Text style={styles.text}>
+          Date : {moment(trip.departHeure).format('DD/MM/YYYY')}
+        </Text>
+        <Text style={styles.text}>
+          Heure : {moment(trip.departHeure).format('HH:mm')}
+        </Text>
+        <TouchableOpacity style={styles.button} onPress={handleAddTrip}>
+          <Text style={styles.buttonText}>Se désinscrire</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
 
     return (
-      <ScrollView>
-        <View style={styles.container}>
-        {trips.map((trip, index) => (
-        <View key={index} style={styles.tripContainer}>
-          <Text>Depart : {trip.departLat}</Text>
-          <Text>Arrivee : {trip.departLon}</Text>
-          <Text>Date : {moment(trip.departHeure).format('DD/MM/YYYY')}</Text>
-          <Text>Heure : {moment(trip.departHeure).format('HH:mm')}</Text>
-          <TouchableOpacity style={styles.button} onPress={handleAddTrip}>
-            <Text style={styles.buttonText}>Supprimer le trajet</Text>
-          </TouchableOpacity>
-        </View>
-        ))}
-        </View>
-      </ScrollView>
+        <ScrollView>
+          <View style={styles.container}>
+          {trips.map((trip, index) => renderTrip(trip, index))}
+          </View>
+        </ScrollView>
     );
   }
-
-const styles = StyleSheet.create({
-  button: {
+  const styles = StyleSheet.create({
+    button: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'gray',
+    backgroundColor: '#3B3B98',
     borderRadius: 5,
-    shadowColor: "#eee",
+    shadowColor: '#3B3B98',
     shadowOffset: {
-      width: 0,
-      height: 2,
+    width: 0,
+    height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     margin: 10,
-    padding:10,
+    padding: 10,
     position: 'absolute',
-    bottom: '20%',
+    bottom: '30%',
     right: 0,
-  },
-  buttonText: {
+    },
+    buttonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'black'
-  },
-  container: {
+    color: 'white',
+    },
+    container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  tripContainer: {
+    },
+    tripContainer: {
     padding: 10,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: '#3B3B98',
+    borderRadius: 5,
     margin: 10,
-    width:'90%'
-  },
-  labelRadio: {
+    width: '95%',
+    alignSelf: 'stretch',
+    backgroundColor: '#F0F0F5',
+    },
+    text: {
     fontSize: 18,
-    paddingTop: 10  
-  },
-  h1: {
-    fontSize: 28,
-    fontWeight : '800',
-    color : 'red',
-    textAlign: 'center'
-
-  },
-  h2: {
-    marginTop: 30,
-    textAlign: 'center',
-    fontSize: 20,
-    color : 'red'
-  },
-  tab: {
-    margin:10,
-    display: 'flex',
-    flexDirection: 'row'
-  },
-  containers: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  label: {
-    fontSize: 18,
-    marginBottom: 5,
-  },
-  date: {
-    paddingTop: 15,
-    textAlign: 'center',
-    fontSize: 18,
-    height: 60,
-    borderColor: '#26322b',
-    borderWidth: 1,
-    borderRadius: 20,
-    width: '50%',
-  },
-  input: {
-    fontSize: 18,
-    paddingLeft: 5,
-    height: 40,
-    borderColor: 'grey',
-    borderWidth: 1,
-    width: '80%',
-  },
-  btn: {
-    margin : 40
-  },
-  addressContainer: {
-    height: 40,
-    borderWidth: 3,
-    borderRadius: 10,
-    borderColor: '#ddd',
-    alignContent: 'center',
-    width: '80%',
-    marginBottom: 10
-  },  
-  addressInput: {
-    paddingTop:5,
-    textAlign: 'center',
-    borderColor: '#ddd',
-    fontSize: 16,
-  },
-});
+    fontWeight: 'bold',
+    color: '#3B3B98',
+    margin: 10,
+    },
+    });
