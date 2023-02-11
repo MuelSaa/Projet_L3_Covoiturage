@@ -36,11 +36,11 @@ exports.getAllNotification = (req, res) => {
 }
 
 exports.getNotification = (req, res) => {
-    console.log("Recu : GET /Notification/"+req.params.noficationID);
+    console.log("Recu : GET /Notification/"+req.params.notificationID);
     res.setHeader('Content-type', 'application/json');
     client = new Client(connectionString);
     client.connect();
-    client.query(`SELECT * FROM public."Notification" WHERE "Notification"."notificationID" = ${req.params.noficationID}`, (dbERR, dbRes) => {
+    client.query(`SELECT * FROM public."Notification" WHERE "Notification"."notificationID" = ${req.params.notificationID}`, (dbERR, dbRes) => {
         if (dbERR) {
             console.error(dbERR);
             res.status(500).send( 'Internal Server Error');
@@ -76,10 +76,20 @@ exports.addNotification = (req, res) => {
     res.setHeader('Content-type', 'application/json');
 
     console.log("POST Notification ADD entrer : ",req.body);
+    
+    const result = postSchema.validate(req.body);
+
+    if(result.error){
+        res.status(400).send(result.error);
+    }
+
     var {content, login, type} = req.body;
     client = new Client(connectionString);
     client.connect();
-    client.query(`INSERT INTO public."Notification"(Content, read, login, type)
+    
+    
+
+    client.query(`INSERT INTO public."Notification"("Content", read, login, type)
         VALUES ('${content}', false, '${login}', '${type}') RETURNING *`, (dbERR, dbRes) => {
         if (dbERR) {
         console.error(dbERR);
@@ -88,7 +98,7 @@ exports.addNotification = (req, res) => {
         }
 
         console.log("POST Notification ADD ajouter : ",dbRes.rows);
-        res.status(201).send(`Notification added with notificationID: ${dbRes.rows[0].noficationID}`);
+        res.status(201).send(`Notification added with notificationID: ${dbRes.rows[0].notificationID}`);
         client.end();
     });
 }
