@@ -97,10 +97,10 @@ exports.getTrajet = (req, res) => {
 }
 
 
-exports.findTrajet = (req, res) => {
+exports.findTrajetDepart = (req, res) => {
     res.setHeader('Content-type', 'application/json');
 
-    console.log("GET FindTrajet : ",req.body);
+    console.log("GET FindTrajetDepart : ",req.body);
     
     const result = findTrajetSchema.validate(req.body);
 
@@ -120,6 +120,46 @@ exports.findTrajet = (req, res) => {
         AND date_trunc('day', "Trajet"."date") = to_date('${myPostgresDate}', 'YYYY-MM-DD')`;
     if(heure){
         whereClause +=` AND "Trajet"."arriverHeure"::time BETWEEN ('${heure}'::timestamp with time zone - interval '1 hour')::time AND '${heure}'::time`;
+    }
+    
+    console.log(whereClause);
+    client.query(`SELECT *
+        FROM public."Trajet"
+        WHERE ${whereClause}`,
+        (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send( 'Internal Server Error');
+            return;
+        }
+        res.json(dbRes.rows);
+        client.end();
+        });
+}
+
+exports.findTrajetRetours = (req, res) => {
+    res.setHeader('Content-type', 'application/json');
+
+    console.log("GET FindTrajetRetours : ",req.body);
+    
+    const result = findTrajetSchema.validate(req.body);
+
+    if(result.error){
+        res.status(400).send(result.error);
+    }
+
+    client = new Client(connectionString);
+    client.connect();
+
+    var { departLat, departLon, arriverLat, arriverLon, date, heure } = req.body;
+
+    var myPostgresDate = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
+
+    var whereClause = `(6371 * acos(cos(radians(${departLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${departLon})) + sin(radians(${departLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
+        AND (6371 * acos(cos(radians(${arriverLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${arriverLon})) + sin(radians(${arriverLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
+        AND date_trunc('day', "Trajet"."date") = to_date('${myPostgresDate}', 'YYYY-MM-DD')`;
+    if(heure){
+        whereClause +=` AND "Trajet"."departHeure"::time BETWEEN ('${heure}'::timestamp with time zone - interval '1 hour')::time AND '${heure}'::time`;
     }
     
     console.log(whereClause);

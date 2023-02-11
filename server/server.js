@@ -55,7 +55,8 @@ app.delete('/Users/:login', users.deleteUsers);
 
 app.get('/Trajet', trajet.getAllTrajet);
 app.get('/Trajet/:trajetID', trajet.getTrajet);
-app.get('/FindTrajet', trajet.findTrajet);
+app.get('/FindTrajetDepart', trajet.findTrajetDepart);
+app.get('/FindTrajetRetours', trajet.findTrajetRetours);
 
 app.post('/Trajet', trajet.addTrajet);
 
