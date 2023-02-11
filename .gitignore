@@ -5,4 +5,4 @@ server/logs
 
 
 dist/node_modules
-
+dist/.expo

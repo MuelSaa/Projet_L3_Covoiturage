@@ -81,7 +81,7 @@ exports.getAllTrajet = (req, res) => {
 }
 
 exports.getTrajet = (req, res) => {
-    console.log("Recu : GET /Trajet");
+    console.log("Recu : GET /Trajet/"+req.params.trajetID);
     res.setHeader('Content-type', 'application/json');
     client = new Client(connectionString);
     client.connect();
@@ -177,14 +177,9 @@ exports.findTrajetRetours = (req, res) => {
         });
 }
 
-
-
-
 /*****************************************************
  *                      POST
  *****************************************************/
-
-
 
 exports.addTrajet = async (req, res) => {
     console.log("Recu : POST /Users/");
@@ -242,3 +237,25 @@ exports.addTrajet = async (req, res) => {
 /*****************************************************
  *                      DELETE
  *****************************************************/
+
+exports.deleteTrajet = (req, res) => {
+    console.log("Recu : DELETE /Trajet/"+req.params.trajetID);
+    res.setHeader('Content-type', 'application/json');
+    client = new Client(connectionString);
+    client.connect();
+    client.query(`DELETE FROM public."Trajet" WHERE "Trajet"."trajetID" = ${req.params.trajetID} returning *`, (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send('Internal Server Error');
+            return;
+        }
+
+        if(dbRes.rowCount!=0) {
+            res.status(200).send(`Trajet DELETED ${dbRes.rows[0].trajetID}`);
+        }else{
+            res.status(200).send(`No trajet DELETED`);
+        }
+
+        client.end();
+        });
+}

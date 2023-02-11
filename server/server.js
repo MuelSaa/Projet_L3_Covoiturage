@@ -22,6 +22,9 @@ const { client } = require("./config/serverConnection");
 const users = require("./Users");
 
 const trajet = require("./Trajet");
+
+const notification = require("./Notification");
+
 /*****************************************************
  *             Lancement du serveur web
  *****************************************************/
@@ -60,9 +63,19 @@ app.get('/FindTrajetRetours', trajet.findTrajetRetours);
 
 app.post('/Trajet', trajet.addTrajet);
 
+app.delete('/Trajet/:trajetID', trajet.deleteTrajet);
+
+
 /*****************************************************
  *                      Notification
  *****************************************************/
+
+app.get('/Notification', notification.getAllNotification);
+app.get('/Notification/:noficationID', notification.getNotification);
+app.get('/Notification/:login', notification.getUsersNotification);
+
+app.post('/Notification', notification.addNotification);
+
 
 /*****************************************************
  *                      Notes
