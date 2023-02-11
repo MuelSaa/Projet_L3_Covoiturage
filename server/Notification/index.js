@@ -107,6 +107,23 @@ exports.addNotification = (req, res) => {
  *                      UPDATE
  *****************************************************/
 
+exports.updateNotificationStatus = (req, res) => {
+    console.log("Recu : UPDATE /Notification/"+req.params.notificationID);
+    res.setHeader('Content-type', 'application/json');
+    client = new Client(connectionString);
+    client.connect();
+    client.query(`UPDATE public."Notification" SET read=true WHERE "notificationID" = ${req.params.notificationID}`, (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send( 'Internal Server Error');
+            return;
+        }
+        res.status(200).send( 'ok');
+        client.end();
+        });
+}
+
+
 /*****************************************************
  *                      DELETE
  *****************************************************/

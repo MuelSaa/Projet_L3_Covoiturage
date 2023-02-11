@@ -71,8 +71,11 @@ app.delete('/Trajet/:trajetID', trajet.deleteTrajet);
  *****************************************************/
 
 app.get('/Notification', notification.getAllNotification);
-app.get('/Notification/:noficationID', notification.getNotification);
-app.get('/Notification/:login', notification.getUsersNotification);
+app.get('/NotificationID/:noficationID', notification.getNotification);
+app.get('/NotificationUsers/:login', notification.getUsersNotification);
+
+app.put('/Notification/:notificationID', notification.updateNotificationStatus);
+
 
 app.post('/Notification', notification.addNotification);
 
