@@ -71,15 +71,17 @@ app.delete('/Trajet/:trajetID', trajet.deleteTrajet);
  *****************************************************/
 
 app.get('/Notification', notification.getAllNotification);
-app.get('/NotificationID/:noficationID', notification.getNotification);
+app.get('/NotificationID/:notificationID', notification.getNotification);
 app.get('/NotificationUsers/:login', notification.getUsersNotification);
+app.get('/NotificationRead/:login', notification.getReadNotification);
+app.get('/NotificationUnRead/:login', notification.getUnReadNotification);
 
 app.put('/Notification/:notificationID', notification.updateNotificationStatus);
 
 
 app.post('/Notification', notification.addNotification);
 
-
+app.delete('/Notification/:notificationID',notification.deleteNotification);
 /*****************************************************
  *                      Notes
  *****************************************************/

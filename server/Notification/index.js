@@ -40,7 +40,7 @@ exports.getNotification = (req, res) => {
     res.setHeader('Content-type', 'application/json');
     client = new Client(connectionString);
     client.connect();
-    client.query(`SELECT * FROM public."Notification" WHERE "Notification"."notificationID" = ${req.params.notificationID}`, (dbERR, dbRes) => {
+    client.query(`SELECT * FROM public."Notification" WHERE "Notification"."notificationID" = '${req.params.notificationID}'`, (dbERR, dbRes) => {
         if (dbERR) {
             console.error(dbERR);
             res.status(500).send( 'Internal Server Error');
@@ -56,7 +56,7 @@ exports.getUsersNotification = (req, res) => {
     res.setHeader('Content-type', 'application/json');
     client = new Client(connectionString);
     client.connect();
-    client.query(`SELECT * FROM public."Notification" WHERE "Notification"."login" = ${req.params.login}`, (dbERR, dbRes) => {
+    client.query(`SELECT * FROM public."Notification" WHERE "Notification"."login" = '${req.params.login}'`, (dbERR, dbRes) => {
         if (dbERR) {
             console.error(dbERR);
             res.status(500).send( 'Internal Server Error');
@@ -66,6 +66,39 @@ exports.getUsersNotification = (req, res) => {
         client.end();
         });
 }
+
+exports.getReadNotification = (req, res) => {
+    console.log("Recu : GET /Notification/"+req.params.login);
+    res.setHeader('Content-type', 'application/json');
+    client = new Client(connectionString);
+    client.connect();
+    client.query(`SELECT * FROM public."Notification" WHERE "Notification"."login" = '${req.params.login}' AND "read" = true`, (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send( 'Internal Server Error');
+            return;
+        }
+        res.json(dbRes.rows);
+        client.end();
+        });
+}
+
+exports.getUnReadNotification = (req, res) => {
+    console.log("Recu : GET /Notification/"+req.params.login);
+    res.setHeader('Content-type', 'application/json');
+    client = new Client(connectionString);
+    client.connect();
+    client.query(`SELECT * FROM public."Notification" WHERE "Notification"."login" = '${req.params.login}' AND "read" = false`, (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send( 'Internal Server Error');
+            return;
+        }
+        res.json(dbRes.rows);
+        client.end();
+        });
+}
+
 
 /*****************************************************
  *                      POST
@@ -120,7 +153,7 @@ exports.updateNotificationStatus = (req, res) => {
         }
         res.status(200).send( 'ok');
         client.end();
-        });
+    });
 }
 
 
@@ -128,4 +161,22 @@ exports.updateNotificationStatus = (req, res) => {
  *                      DELETE
  *****************************************************/
 
-
+exports.deleteNotification = (req, res) => {
+    console.log("Recu : DELETE /Notification/"+req.params.notificationID);
+    res.setHeader('Content-type', 'application/json');
+    client = new Client(connectionString);
+    client.connect();
+    client.query(`DELETE FROM public."Notification" WHERE "notificationID" = ${req.params.notificationID} RETURNING *`, (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send( 'Internal Server Error');
+            return;
+        }
+        if(dbRes.rowCount!=0) {
+            res.status(200).send(`Notification DELETED ${dbRes.rows[0].notificationID}`);
+        }else{
+            res.status(200).send(`No Notification DELETED`);
+        }        
+        client.end();
+    });
+}
