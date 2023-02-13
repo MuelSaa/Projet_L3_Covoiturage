@@ -1,26 +1,29 @@
-import React from 'react';
-import { StyleSheet, Text, View, StatusBar  } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { Appearance } from 'react-native';
+import { ThemeContext } from './AppProvider';
 
-export default class About extends React.Component {
+const About = () => {
+  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
 
-    render() {
-      
-        return (
-            <View style={style.view}>
-                <StatusBar hidden />
-                <Text style={style.title}>A propos de moi</Text>
-                <Text>notre projet va etre psm les freros</Text>
-            </View>
-        )
-    }
-}
+  return (
+    <View style={[styles.container, { backgroundColor: darkMode ? 'black' : 'white' }]}>
+      <TouchableOpacity onPress={toggleDarkMode}>
+        <Text style={{ color: darkMode ? 'white' : 'black' }}>Toggle Dark Mode</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
-const style = StyleSheet.create({
-  view: {
-    margin: 20
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  title: {
-    fontSize: 22,
-    marginBottom: 20
-  }
-})
+});
+
+export default About;
+
+
+

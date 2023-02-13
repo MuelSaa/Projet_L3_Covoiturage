@@ -1,6 +1,6 @@
-
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Animated} from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { ThemeContext } from './AppProvider';
+import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Animated } from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 import MapView, { Marker } from 'react-native-maps';
 import { RadioButton } from 'react-native-paper';
@@ -10,11 +10,11 @@ import * as Location from 'expo-location';
 import moment from 'moment';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", {language : "fr"});
+Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", { language: "fr" });
 
 const Tab = createMaterialTopTabNavigator();
 
-const handleAddTrip = () => {}
+const handleAddTrip = () => { }
 
 function getLocationName(latitude, longitude) {
   // Geocoder.from(latitude, longitude)
@@ -38,100 +38,31 @@ function getLocationName(latitude, longitude) {
 }
 
 export default function Notifs() {
-    return (
-      <Tab.Navigator>
-        <Tab.Screen name="Non lue" component={NewTrips} />
-        <Tab.Screen name="Lue" component={LastTrips}/>
-      </Tab.Navigator>
-    );
-  }
-
-  export function NewTrips() {
-    const [trips, setTrips] = useState([]);
-    const isFocused = useIsFocused();
-    async function myTrips() {
-      try {
-      const resp = await fetch("https://covoiturage.onrender.com/trajet", {
-      method: 'GET'
-      });
-      const data = await resp.json();
-      setTrips(data);
-      } catch (error) {
-      console.error(error);
-      }
-      }
-    if (isFocused) {myTrips()}    
-
-    const [animation, setAnimation] = useState(new Animated.Value(0));
-
-useEffect(() => {
-  Animated.timing(animation, {
-    toValue: 1,
-    duration: 1000,
-    useNativeDriver: true,
-  }).start();
-}, []);
-
-const renderTrip = (trip, index) => {
-  const departLocation = getLocationName(trip.departLat, trip.departLon);
-  const arriveeLocation = getLocationName(trip.destinationLat, trip.destinationLat);
-
+  const { darkMode } = useContext(ThemeContext);
   return (
-    <Animated.View
-      key={index}
-      style={[
-        styles.tripContainer,
-        {
-          opacity: animation,
-          transform: [
-            {
-              translateY: animation.interpolate({
-                inputRange: [0, 1],
-                outputRange: [100, 0],
-              }),
-            },
-          ],
-        },
-      ]}
-    >
-      <Text style={styles.text}>Depart : {departLocation}</Text>
-      <Text style={styles.text}>Arrivee : {arriveeLocation}</Text>
-      <Text style={styles.text}>
-        Date : {moment(trip.departHeure).format('DD/MM/YYYY')}
-      </Text>
-      <Text style={styles.text}>
-        Heure : {moment(trip.departHeure).format('HH:mm')}
-      </Text>
-      <TouchableOpacity style={styles.button} onPress={handleAddTrip}>
-        <Text style={styles.buttonText}>Se désinscrire</Text>
-      </TouchableOpacity>
-    </Animated.View>
+    <Tab.Navigator>
+      <Tab.Screen name="Non lue" component={NewTrips} />
+      <Tab.Screen name="Lue" component={LastTrips} />
+    </Tab.Navigator>
   );
-};
-    return (
-      <ScrollView>
-        <View style={styles.container}>
-        {trips.map((trip, index) => renderTrip(trip, index))}
-        </View>
-      </ScrollView>
-    );
-  }
+}
 
-
-export function LastTrips() {
+export function NewTrips() {
   const [trips, setTrips] = useState([]);
   const isFocused = useIsFocused();
   async function myTrips() {
-    const resp = await fetch('https://covoiturage.onrender.com/trajet', {
-        method: 'GET',
-    })
-    .then(response => response.json())
-    .then(data => setTrips(data))
-    .catch((error) => {}    );
+    try {
+      const resp = await fetch("https://covoiturage.onrender.com/trajet", {
+        method: 'GET'
+      });
+      const data = await resp.json();
+      setTrips(data);
+    } catch (error) {
+      console.error(error);
     }
-    if (isFocused) {myTrips()}
+  }
+  if (isFocused) { myTrips() }
 
-  const handleAddTrip = () => {}
   const [animation, setAnimation] = useState(new Animated.Value(0));
 
   useEffect(() => {
@@ -141,11 +72,81 @@ export function LastTrips() {
       useNativeDriver: true,
     }).start();
   }, []);
-  
+
   const renderTrip = (trip, index) => {
     const departLocation = getLocationName(trip.departLat, trip.departLon);
     const arriveeLocation = getLocationName(trip.destinationLat, trip.destinationLat);
-  
+
+    return (
+      <Animated.View
+        key={index}
+        style={[
+          styles.tripContainer,
+          {
+            opacity: animation,
+            transform: [
+              {
+                translateY: animation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [100, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
+        <Text style={styles.text}>Depart : {departLocation}</Text>
+        <Text style={styles.text}>Arrivee : {arriveeLocation}</Text>
+        <Text style={styles.text}>
+          Date : {moment(trip.departHeure).format('DD/MM/YYYY')}
+        </Text>
+        <Text style={styles.text}>
+          Heure : {moment(trip.departHeure).format('HH:mm')}
+        </Text>
+        <TouchableOpacity style={styles.button} onPress={handleAddTrip}>
+          <Text style={styles.buttonText}>Se désinscrire</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+  return (
+    <ScrollView>
+      <View style={styles.container}>
+        {trips.map((trip, index) => renderTrip(trip, index))}
+      </View>
+    </ScrollView>
+  );
+}
+
+
+export function LastTrips() {
+  const [trips, setTrips] = useState([]);
+  const isFocused = useIsFocused();
+  async function myTrips() {
+    const resp = await fetch('https://covoiturage.onrender.com/trajet', {
+      method: 'GET',
+    })
+      .then(response => response.json())
+      .then(data => setTrips(data))
+      .catch((error) => { });
+  }
+  if (isFocused) { myTrips() }
+
+  const handleAddTrip = () => { }
+  const [animation, setAnimation] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    Animated.timing(animation, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const renderTrip = (trip, index) => {
+    const departLocation = getLocationName(trip.departLat, trip.departLon);
+    const arriveeLocation = getLocationName(trip.destinationLat, trip.destinationLat);
+
     return (
       <Animated.View
         key={index}
@@ -179,16 +180,16 @@ export function LastTrips() {
     );
   };
 
-    return (
-        <ScrollView>
-          <View style={styles.container}>
-          {trips.map((trip, index) => renderTrip(trip, index))}
-          </View>
-        </ScrollView>
-    );
-  }
-  const styles = StyleSheet.create({
-    button: {
+  return (
+    <ScrollView>
+      <View style={styles.container}>
+        {trips.map((trip, index) => renderTrip(trip, index))}
+      </View>
+    </ScrollView>
+  );
+}
+const styles = StyleSheet.create({
+  button: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -196,8 +197,8 @@ export function LastTrips() {
     borderRadius: 5,
     shadowColor: '#3B3B98',
     shadowOffset: {
-    width: 0,
-    height: 2,
+      width: 0,
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -206,18 +207,18 @@ export function LastTrips() {
     position: 'absolute',
     bottom: '30%',
     right: 0,
-    },
-    buttonText: {
+  },
+  buttonText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
-    },
-    container: {
+  },
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    },
-    tripContainer: {
+  },
+  tripContainer: {
     padding: 10,
     borderWidth: 1,
     borderColor: '#3B3B98',
@@ -226,11 +227,11 @@ export function LastTrips() {
     width: '95%',
     alignSelf: 'stretch',
     backgroundColor: '#F0F0F5',
-    },
-    text: {
+  },
+  text: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#3B3B98',
     margin: 10,
-    },
-    });
+  },
+});

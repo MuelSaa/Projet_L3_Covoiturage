@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { ThemeContext } from './AppProvider';
 import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity} from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 import MapView, { Marker } from 'react-native-maps';
@@ -63,15 +64,15 @@ export default function Home() {
   const handleAddTrip = () => {}
 
   const search = async () => {
-    if(!dateFormat) alert("vous n'avez pas choisi de date...");
-    if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
+    if (!dateFormat) alert("vous n'avez pas choisi de date...");
+    if (!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     else {
       console.log(dateFormat);
       const resp = await fetch('https://covoiturage.onrender.com/trajet', {
         method: 'GET',
       })
-      .then(response => response.json())
-      .then(data => setTrips(data))
+        .then(response => response.json())
+        .then(data => setTrips(data))
       setListModalVisible(true);
     }
   };
@@ -83,9 +84,9 @@ export default function Home() {
     let tempDate = new Date(currentDate);
     let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
     let fTime = tempDate.getHours() + 'h ' + tempDate.getMinutes() + 'm';
-    setDateFormat(tempDate.getFullYear()+'-'+(tempDate.getMonth() + 1)+"-"+tempDate.getDate()+' '+tempDate.getHours()+':'+tempDate.getMinutes()+':'+tempDate.getSeconds()+'+00');
+    setDateFormat(tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + "-" + tempDate.getDate() + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds() + '+00');
     setText(fDate + ' ' + fTime);
-    setShow (false)
+    setShow(false)
   }
 
   const showMode = (currentMode) => {
@@ -158,7 +159,7 @@ export default function Home() {
           <Button onPress={() => search()} title="Rechercher" />
         </TouchableOpacity>
 
-        <Modal
+      <Modal
         animationType="slide"
         transparent={false}
         visible={mapModalVisible}
@@ -250,8 +251,8 @@ const styles = StyleSheet.create({
   },
   h1: {
     fontSize: 28,
-    fontWeight : '800',
-    color : 'red',
+    fontWeight: '800',
+    color: 'red',
     textAlign: 'center'
 
   },
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     textAlign: 'center',
     fontSize: 20,
-    color : 'red'
+    color: 'red'
   },
   tab: {
     margin:10,
