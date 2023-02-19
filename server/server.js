@@ -25,6 +25,8 @@ const trajet = require("./Trajet");
 
 const notification = require("./Notification");
 
+const passager = require("./Passager");
+
 /*****************************************************
  *             Lancement du serveur web
  *****************************************************/
@@ -65,7 +67,6 @@ app.post('/Trajet', trajet.addTrajet);
 
 app.delete('/Trajet/:trajetID', trajet.deleteTrajet);
 
-
 /*****************************************************
  *                      Notification
  *****************************************************/
@@ -78,10 +79,20 @@ app.get('/NotificationUnRead/:login', notification.getUnReadNotification);
 
 app.put('/Notification/:notificationID', notification.updateNotificationStatus);
 
-
 app.post('/Notification', notification.addNotification);
 
 app.delete('/Notification/:notificationID',notification.deleteNotification);
+
+/*****************************************************
+ *                      Passager
+ *****************************************************/
+
+app.get('/Passager/:trajetID',passager.getAllTrajetPassager);
+
+app.post('/Passager',passager.postWantToJoin);
+
+app.put('/Passager/:trajetID/:passagerID/:accepted',passager.updatePassagerStatus);
+
 /*****************************************************
  *                      Notes
  *****************************************************/

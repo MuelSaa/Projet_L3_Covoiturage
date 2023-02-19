@@ -6,7 +6,7 @@ Adam Taieb - [polarkit](https://github.com/polarkit)
 Bastien Verrier - [xef1121](https://github.com/Xef1121)
 ## Sujet
 [Sujet](https://github.com/MuelSaa/Projet_L3_Covoiturage/blob/main/Sujet.pdf)
-## Installation & Run
+## Server Installation & Run
 ### Install
 ```
 npm install --production=false
@@ -20,8 +20,8 @@ npm run start
 ### dotEnv
 champs à remplir :
 ```
-NODE_ENV=development
-DATABASE_URI=
+PORT=8080
+CONNECTING_STRING=
 ```
 ## Structure
 ### Base de donnée
