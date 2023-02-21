@@ -13,7 +13,6 @@ import { ThemeContext } from './AppProvider';
 Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", { language: "fr" });
 
 const Tab = createMaterialTopTabNavigator();
-const { darkMode, toggleDarkMode } = useContext(ThemeContext);
 const handleAddTrip = () => { }
 
 function getLocationName(latitude, longitude) {
@@ -38,6 +37,7 @@ function getLocationName(latitude, longitude) {
 }
 
 export default function Trajets() {
+    const { darkMode, toggleDarkMode } = useContext(ThemeContext);
     return (
         <Tab.Navigator>
             <Tab.Screen name="new" component={NewTrips} />
@@ -47,6 +47,7 @@ export default function Trajets() {
 }
 
 export function NewTrips() {
+    const { darkMode, toggleDarkMode } = useContext(ThemeContext);
     const [trips, setTrips] = useState([]);
     const isFocused = useIsFocused();
     async function myTrips() {
@@ -90,16 +91,16 @@ export function NewTrips() {
                                     outputRange: [100, 0],
                                 }),
                             },
-                        ],
+                        ], backgroundColor: darkMode ? 'black' : styles.tripContainer.color
                     },
                 ]}
             >
-                <Text style={styles.text}>Depart : {departLocation}</Text>
-                <Text style={styles.text}>Arrivee : {arriveeLocation}</Text>
-                <Text style={styles.text}>
+                <Text style={[styles.text, { color: darkMode ? 'white' : styles.text.color }]}>Depart : {departLocation}</Text>
+                <Text style={[styles.text, { color: darkMode ? 'white' : styles.text.color }]}>Arrivee : {arriveeLocation}</Text>
+                <Text style={[styles.text, { color: darkMode ? 'white' : styles.text.color }]}>
                     Date : {moment(trip.departHeure).format('DD/MM/YYYY')}
                 </Text>
-                <Text style={styles.text}>
+                <Text style={[styles.text, { color: darkMode ? 'white' : styles.text.color }]}>
                     Heure : {moment(trip.departHeure).format('HH:mm')}
                 </Text>
                 <TouchableOpacity style={styles.button} onPress={handleAddTrip}>
@@ -110,7 +111,7 @@ export function NewTrips() {
     };
     return (
         <ScrollView>
-            <View style={styles.container}>
+            <View style={[styles.container,{ backgroundColor: darkMode ? 'black' : styles.container.color }]}>
                 {trips.map((trip, index) => renderTrip(trip, index))}
             </View>
         </ScrollView>
@@ -118,6 +119,7 @@ export function NewTrips() {
 }
 
 export function LastTrips() {
+    const { darkMode, toggleDarkMode } = useContext(ThemeContext);
     const [trips, setTrips] = useState([]);
     const isFocused = useIsFocused();
     async function myTrips() {
@@ -159,16 +161,16 @@ export function LastTrips() {
                                     outputRange: [100, 0],
                                 }),
                             },
-                        ],
+                        ], backgroundColor: darkMode ? 'black' : styles.tripContainer.color
                     },
                 ]}
             >
-                <Text style={styles.text}>Depart : {departLocation}</Text>
-                <Text style={styles.text}>Arrivee : {arriveeLocation}</Text>
-                <Text style={styles.text}>
+                <Text style={[styles.text, { color: darkMode ? 'white' : styles.text.color }]}>Depart : {departLocation}</Text>
+                <Text style={[styles.text, { color: darkMode ? 'white' : styles.text.color }]}>Arrivee : {arriveeLocation}</Text>
+                <Text style={[styles.text, { color: darkMode ? 'white' : styles.text.color }]}>
                     Date : {moment(trip.departHeure).format('DD/MM/YYYY')}
                 </Text>
-                <Text style={styles.text}>
+                <Text style={[styles.text, { color: darkMode ? 'white' : styles.text.color }]}>
                     Heure : {moment(trip.departHeure).format('HH:mm')}
                 </Text>
                 <TouchableOpacity style={styles.button} onPress={handleAddTrip}>
@@ -180,12 +182,13 @@ export function LastTrips() {
 
     return (
         <ScrollView>
-            <View style={styles.container}>
+            <View style={[styles.container, { backgroundColor: darkMode ? 'black' : styles.container.color }]}>
                 {trips.map((trip, index) => renderTrip(trip, index))}
             </View>
         </ScrollView>
     );
 }
+
 const styles = StyleSheet.create({
     button: {
         display: 'flex',

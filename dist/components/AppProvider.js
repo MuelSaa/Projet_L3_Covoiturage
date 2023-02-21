@@ -2,7 +2,7 @@ import React, { createContext, useState } from 'react';
 
 export const ThemeContext = createContext({
   darkMode: false,
-  toggleDarkMode: () => {}
+  toggleDarkMode: () => { }
 });
 
 const AppProvider = ({ children }) => {

@@ -1,16 +1,15 @@
 
-import React, { useState,useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { ThemeContext } from './AppProvider';
 import TripAddedModal from './TripAddedModal';
-import { StyleSheet, Modal, Text, TextInput, View, Button, TouchableOpacity} from 'react-native';
+import { StyleSheet, Modal, Text, TextInput, View, Button, TouchableOpacity } from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 import MapView, { Marker } from 'react-native-maps';
 import { RadioButton } from 'react-native-paper';
 import Geocoder from 'react-native-geocoding';
 import * as Location from 'expo-location';
-import TripAddedModal from './TripAddedModal';
 
-Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", {language : "fr"});
+Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", { language: "fr" });
 
 export default function Add() {
   const [date, setDate] = useState(new Date());
@@ -38,19 +37,19 @@ export default function Add() {
   const handlePassengerCountChange = (value) => {
     setPassengerCount(value);
   };
-  
-  function showTripAddedModal(){
+
+  function showTripAddedModal() {
     setAddModalVisible(true);
   }
 
   const hideTripAddedModal = () => {
     setAddModalVisible(false);
   }
-  
+
   const add = async () => {
     if (!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     else {
-      if(checked==='depart'){
+      if (checked === 'depart') {
         setchamp1(47.244505);
         setchamp2(5.987401);
         setchamp3(latitude);
@@ -74,8 +73,8 @@ export default function Add() {
             //token: '',
             departLat: champ1,
             departLon: champ2,
-            destinationLat : champ3,
-            destinationLon : champ4,
+            destinationLat: champ3,
+            destinationLon: champ4,
             departHeure: dateFormat,
             arriverHeure: dateFormat2,
             placeDisponible: passengers,
@@ -94,7 +93,7 @@ export default function Add() {
 
     let tempDate = new Date(currentDate);
     let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
-    let fTime = tempDate.getHours() + 'h ' + tempDate.getMinutes() + 'm'; 
+    let fTime = tempDate.getHours() + 'h ' + tempDate.getMinutes() + 'm';
     setText(fDate + ' ' + fTime);
     setShow(false)
   }
@@ -103,71 +102,71 @@ export default function Add() {
     setShow(true);
     setMode(currentMode);
   }
-  
-  const handleAddTrip = () => {};
 
-    return (
-      <View style={styles.containers}>
-        <Text style={styles.h1}>Remplissez ce formulaire afin d'ajouter un trajet : </Text>
-        <TripAddedModal
-          visible={addModalVisible}
-          onClose={hideTripAddedModal}
-        />
-        <Text style={styles.h2}>-------------------</Text>
-        {homeLocation ? (
+  const handleAddTrip = () => { };
+  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
+  return (
+    <View style={[styles.containers, { backgroundColor: darkMode ? 'black' : 'white' }]}>
+      <Text style={styles.h1}>Remplissez ce formulaire afin d'ajouter un trajet : </Text>
+      <TripAddedModal
+        visible={addModalVisible}
+        onClose={hideTripAddedModal}
+      />
+      <Text style={styles.h2}>-------------------</Text>
+      {homeLocation ? (
         <TouchableOpacity style={styles.button} onPress={() => setMapModalVisible(true)}>
-        <Button
-        title="Modifier emplacement domicile"
-        onPress={() => setMapModalVisible(true)}
-        />
-      </TouchableOpacity>
+          <Button
+            title="Modifier emplacement domicile"
+            onPress={() => setMapModalVisible(true)}
+          />
+        </TouchableOpacity>
       ) : (
         <TouchableOpacity style={styles.button} onPress={() => setMapModalVisible(true)}>
           <Button
-        title="Choisir emplacement domicile"
-        onPress={() => setMapModalVisible(true)}
-        />
+            title="Choisir emplacement domicile"
+            onPress={() => setMapModalVisible(true)}
+          />
         </TouchableOpacity>
       )}
-        
-        <Text style={styles.label}>Université de sciences : </Text>
-        <View style={styles.tab}>
-          <Text style={styles.labelRadio}>Départ</Text>
-          <RadioButton
-            label="depart"
-            value="depart"
-            status={ checked === 'depart' ? 'checked' : 'unchecked' }
-            onPress={() => setChecked('depart')}
-          />
-          <Text style={styles.labelRadio}>Arrivée</Text>
-          <RadioButton
-            value="arrivee"
-            status={ checked === 'arrivee' ? 'checked' : 'unchecked' }
-            onPress={() => setChecked('arrivee')}
-          />
-        </View>
-        <View style={styles.tab}>
-          <Text style={styles.date}>{text}</Text>
-          <Button
-            style={styles.btn} title = "Date" onPress = { () => showMode('date')}
-          />
-          <Button
-            style={styles.btn} title = "Time" onPress = { () => showMode('time')}
-          />
-        </View>
-        {show && (
-          <DateTimePicker
+
+      <Text style={[styles.label, { color: darkMode ? 'white' : 'black' }]}>Université de sciences : </Text>
+      <View style={styles.tab}>
+        <Text style={[styles.labelRadio, { color: darkMode ? 'white' : 'black' }]}>Départ</Text>
+        <RadioButton
+          label="depart"
+          value="depart"
+          status={checked === 'depart' ? 'checked' : 'unchecked'}
+          onPress={() => setChecked('depart')}
+        />
+        <Text style={[styles.labelRadio, { color: darkMode ? 'white' : 'black' }]}>Arrivée</Text>
+        <RadioButton
+          value="arrivee"
+          status={checked === 'arrivee' ? 'checked' : 'unchecked'}
+          onPress={() => setChecked('arrivee')}
+        />
+      </View>
+      <View style={styles.tab}>
+        <Text style={[styles.date, { color: darkMode ? 'white' : 'black' }]}>{text}</Text>
+        <Button
+          style={styles.btn} title="Date" onPress={() => showMode('date')}
+        />
+        <Button
+          style={styles.btn} title="Time" onPress={() => showMode('time')}
+        />
+      </View>
+      {show && (
+        <DateTimePicker
           testID='dateTimePicker'
           value={date}
           mode={mode}
           is24Hour={true}
           display='default'
           onChange={onChangeDate}
-          />
-        )}
-        <View style={styles.btn}>
-          <Button onPress={() => add()} title="Creer le trajet" />
-        </View>
+        />
+      )}
+      <View style={styles.btn}>
+        <Button onPress={() => add()} title="Creer le trajet" />
+      </View>
 
       <Modal
         animationType="slide"
@@ -179,21 +178,21 @@ export default function Add() {
         <MapView
           style={{ flex: 1 }}
           initialRegion={{
-          latitude: 47.25,
-          longitude: 6.0333,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+            latitude: 47.25,
+            longitude: 6.0333,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
           }}
           onPress={event => {
             setHomeLocation([
               event.nativeEvent.coordinate.latitude,
               event.nativeEvent.coordinate.longitude,
-            ]);setMapModalVisible(false);
+            ]); setMapModalVisible(false);
           }}
         >
-        {homeLocation !== "" && (
-        <Marker   coordinate={{ latitude, longitude }} pinColor="red" />
-        )}
+          {homeLocation !== "" && (
+            <Marker coordinate={{ latitude, longitude }} pinColor="red" />
+          )}
         </MapView>
         <Button
           title="Fermer"
@@ -201,24 +200,24 @@ export default function Add() {
           style={{ position: 'absolute', top: 20, right: 20 }}
         />
       </Modal>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={listModalVisible}
-        >
-          <View style={styles.modalContainer}>
-            {trips.map((trip, index) => (
-              <View key={index} style={styles.tripContainer}>
-                <Text>{trip.nom} - {trip.prenom} - {trip.login}</Text>
-                <Button title="Ajouter ce trajet" onPress={handleAddTrip(trip)} />
-              </View>
-            ))}
-            <Button title="Masquer" onPress={() => setListModalVisible(false)} />
-          </View>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={listModalVisible}
+      >
+        <View style={styles.modalContainer}>
+          {trips.map((trip, index) => (
+            <View key={index} style={styles.tripContainer}>
+              <Text>{trip.nom} - {trip.prenom} - {trip.login}</Text>
+              <Button title="Ajouter ce trajet" onPress={handleAddTrip(trip)} />
+            </View>
+          ))}
+          <Button title="Masquer" onPress={() => setListModalVisible(false)} />
+        </View>
       </Modal>
-      </View>
-    );
-  }
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   button: {
@@ -255,7 +254,7 @@ const styles = StyleSheet.create({
   },
   labelRadio: {
     fontSize: 18,
-    alignContent:'center',
+    alignContent: 'center',
     paddingTop: 5,
   },
   h1: {
@@ -273,7 +272,7 @@ const styles = StyleSheet.create({
     color: 'red'
   },
   tab: {
-    margin:10,
+    margin: 10,
     display: 'flex',
     flexDirection: 'row'
   },
@@ -305,6 +304,6 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   btn: {
-    margin : 40
+    margin: 40
   }
 });
