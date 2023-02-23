@@ -15,6 +15,8 @@ const bodyParser = require('body-parser')
 
 const { client } = require("./config/serverConnection");
 
+const jwt = require('jsonwebtoken')
+
 
 /*****************************************************
  *             Chargement des fonctions/routes
@@ -26,6 +28,8 @@ const trajet = require("./Trajet");
 const notification = require("./Notification");
 
 const passager = require("./Passager");
+
+const tokenfile = require("./Token/Token")
 
 /*****************************************************
  *             Lancement du serveur web
