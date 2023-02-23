@@ -99,3 +99,14 @@ CONNECTING_STRING=
 [Tuto serveur + code](https://youtu.be/CvCiNeLnZ00?t=3687)  
 ### Test
 - [Postman](https://www.postman.com/) pour tester les requetes sur le serveur
+
+
+### JsonwebToken
+
+requete Postman pour creer le token  ( {
+        "login": "Sami",
+        "password" : "bidule"
+
+    }
+    Requete pour acceder au token :  /api/protected champ header remplir key Authorizatation et value Bearer plus token generé ( exemple Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImxvZ2luIjoiU2FtaSIsInBhc3N3b3JkIjoiYmlkdWxlIn0sImlhdCI6MTY3NzE2MTIyNH0.G-AiJfZH2jEfKsGZwmiNOBw3mddMUA5G7iQRyel5l-c)
+   
