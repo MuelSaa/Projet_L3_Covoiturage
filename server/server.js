@@ -102,6 +102,25 @@ app.put('/Passager/:trajetID/:passagerID/:accepted',passager.updatePassagerStatu
 
 //app.use('/', require('./routes/root'));
 
+/*****************************************************
+ *                      Web Access Token 
+ *****************************************************/
+
+function ensureToken(req, res, next) {
+  const bearerHeader = req.headers["authorization"];
+  if (bearerHeader !== undefined && bearerHeader !== null) {
+    const bearer = bearerHeader.split(" ");
+    const bearerToken = bearer[1];
+    req.token = bearerToken;
+    next();
+  } else {
+    res.sendStatus(401);
+  }
+}
+app.get('/api/protected' , ensureToken,tokenfile.getTokenProtection)
+app.post('/api/login', tokenfile.postTokenCreateToken); 
+    
+
 app.all('*', (req, res) => {
     res.status(404);
     if (req.accepts('html')) {
