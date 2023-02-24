@@ -67,19 +67,20 @@ const LoginScreen = () => {
   };
 
   const [infoModalVisible, setInfoModalVisible] = useState(false);
+  const { darkMode } = useContext(ThemeContext);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: darkMode ? 'black' : 'white'}]}>
       <Text style={styles.h1}>Connectez vous avec vos identifiants de l'université</Text>
-      <Text>Identifiant de connexion</Text>
+      <Text style={{color: darkMode ? 'white' : 'black'}}>Identifiant de connexion</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input,{backgroundColor: darkMode ? 'white' : ''}]}
         onChangeText={(text) => setLogin(text)}
         value={login}
       />
-      <Text>Mot de passe</Text>
+      <Text style={{color: darkMode ? 'white' : 'black'}}>Mot de passe</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input,,{backgroundColor: darkMode ? 'white' : ''}]}
         onChangeText={(text) => setPassword(text)}
         value={password}
         secureTextEntry={true}
