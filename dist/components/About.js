@@ -4,10 +4,10 @@ import { Appearance } from 'react-native';
 import { ThemeContext } from './AppProvider';
 
 const About = () => {
-  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
-
+  const { darkMode, toggleDarkMode, GlobalLogin } = useContext(ThemeContext);
   return (
-    <View style={[styles.container, { backgroundColor: darkMode ? 'black' : 'white' }]}>
+    <View style={[styles.container, { backgroundColor: darkMode ? 'black' : styles.container.color }]}>
+      <Text>{GlobalLogin}</Text>
       <TouchableOpacity onPress={toggleDarkMode}>
         <Text style={{ color: darkMode ? 'white' : 'black' }}>Toggle Dark Mode</Text>
       </TouchableOpacity>

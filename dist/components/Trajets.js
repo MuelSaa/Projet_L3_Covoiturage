@@ -39,7 +39,14 @@ function getLocationName(latitude, longitude) {
 export default function Trajets() {
     const { darkMode, toggleDarkMode } = useContext(ThemeContext);
     return (
-        <Tab.Navigator>
+        <Tab.Navigator
+            tabBarOptions={{
+                activeTintColor: darkMode ? 'white' : 'black',
+                inactiveTintColor: darkMode ? 'gray' : 'lightgray',
+                style: {
+                    backgroundColor: darkMode ? 'black' : 'white',
+                },
+            }}>
             <Tab.Screen name="new" component={NewTrips} />
             <Tab.Screen name="past" component={LastTrips} />
         </Tab.Navigator>
@@ -111,7 +118,7 @@ export function NewTrips() {
     };
     return (
         <ScrollView>
-            <View style={[styles.container,{ backgroundColor: darkMode ? 'black' : styles.container.color }]}>
+            <View style={[styles.container, { backgroundColor: darkMode ? 'black' : styles.container.color }]}>
                 {trips.map((trip, index) => renderTrip(trip, index))}
             </View>
         </ScrollView>
