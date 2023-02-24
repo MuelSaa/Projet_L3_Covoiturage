@@ -40,12 +40,10 @@ export default function Trajets() {
     const { darkMode, toggleDarkMode } = useContext(ThemeContext);
     return (
         <Tab.Navigator
-            tabBarOptions={{
-                activeTintColor: darkMode ? 'white' : 'black',
-                inactiveTintColor: darkMode ? 'gray' : 'lightgray',
-                style: {
-                    backgroundColor: darkMode ? 'black' : 'white',
-                },
+            screenOptions={{
+                tabBarActiveTintColor: darkMode ? 'white' : 'black',
+                tabBarInactiveTintColor: darkMode ? 'gray' : 'lightgray',
+                tabBarStyle: {backgroundColor: darkMode ? 'black' : 'white'},
             }}>
             <Tab.Screen name="new" component={NewTrips} />
             <Tab.Screen name="past" component={LastTrips} />

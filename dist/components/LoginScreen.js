@@ -1,67 +1,7 @@
-/*import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
-
-const LoginScreen = () => {
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
-  const { navigate } = useNavigation();
-
-  const handleLogin = async () => {
-    //navigate('Menu')
-    if (login === '' || password === '') {
-      alert('Veuillez remplir tous les champs');
-    }
-    else if (login === 'admin' && password === 'admin')
-      navigate('Menu');
-    else
-      alert('Identifiants incorrects');
-
-    /*try {
-      const response = await post(
-        'https://covoiturage.onrender.com/Trajet',
-        { login, password }
-      );
-      const token = response.data.token;
-      alert(token);
-      navigate('Menu')
-    } catch (error) {
-      console.error(error);
-      alert('Identifiants incorrects');
-
-    }*/
-/*};
-return (
-  <View style={styles.container}>
-    <Text style={styles.h1}>Connectez vous avec vos identifiants de l'université</Text>
-    <Text>Identifiant de connexion</Text>
-    <TextInput
-      style={styles.input}
-      onChangeText={(text) => setLogin(text)}
-      value={login}
-    />
-    <Text>Mot de passe</Text>
-    <TextInput
-      style={styles.input}
-      onChangeText={(text) => setPassword(text)}
-      value={password}
-      secureTextEntry={true}
-    />
-    <TouchableOpacity style={styles.button} onPress={handleLogin}>
-      <Text>Connexion</Text>
-    </TouchableOpacity>
-  </View>
-);
-};
-
-
-export default LoginScreen;
-*/
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { ThemeContext } from './AppProvider';
-
 
 exports.postTokenCreateToken = (req, res) => {
   const login = req.body.login;
@@ -106,6 +46,28 @@ const LoginScreen = () => {
     }
   };
 
+  const InfoModal = ({ visible, onClose }) => {
+    return (
+      <Modal
+        visible={visible}
+        animationType="slide"
+        transparent={true}
+      >
+        <View style={styles.infoModalContainer}>
+          <View style={styles.infoModalContent}>
+            <Text>Cette application est projet réalisé par des étudiants de L3 Informatique de l'UFR ST.</Text><Text></Text>
+            <Text>Les données collectées par cette application ne seront pas utilisées à des fins commerciales.</Text>
+            <TouchableOpacity style={styles.infoModalCloseButton} onPress={onClose}>
+              <Text style={styles.infoModalCloseButtonText}>Fermer</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
+  const [infoModalVisible, setInfoModalVisible] = useState(false);
+
   return (
     <View style={styles.container}>
       <Text style={styles.h1}>Connectez vous avec vos identifiants de l'université</Text>
@@ -125,6 +87,12 @@ const LoginScreen = () => {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text>Connexion</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.infoButton} onPress={() => setInfoModalVisible(true)}>
+        <Text style={styles.infoButtonText}>Information sur l'utilisation des données</Text>
+        <InfoModal visible={infoModalVisible} onClose={() => setInfoModalVisible(false)} />
+      </TouchableOpacity>
+
     </View>
   );
 };
@@ -133,7 +101,7 @@ const styles = StyleSheet.create({
   h1: {
     fontSize: 28,
     fontWeight: '800',
-    color: 'red',
+    color: '#1C6E8C',
     textAlign: 'center',
     paddingBottom: '20%',
   },
@@ -145,7 +113,8 @@ const styles = StyleSheet.create({
   input: {
     width: '80%',
     height: 40,
-    borderColor: 'gray',
+    textAlign: 'center',
+    borderColor: '#564256',
     borderWidth: 1,
     margin: 10,
   },
@@ -154,8 +123,42 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'blue',
+    backgroundColor: '#82B2D9',
+    color: 'green',
     margin: 10,
+  },
+  infoButton: {
+    marginTop: 20,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#564256',
+    borderRadius: 5,
+  },
+  infoButtonText: {
+    color: '#FF715B',
+  },
+  infoModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  infoModalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 5,
+    width: '80%',
+  },
+  infoModalCloseButton: {
+    marginTop: 20,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#564256',
+    borderRadius: 5,
+    alignSelf: 'flex-end',
+  },
+  infoModalCloseButtonText: {
+    color: '#2E282A',
   },
 });
 

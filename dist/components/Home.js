@@ -1,4 +1,3 @@
-
 import React, { useState, useContext } from 'react';
 import { ThemeContext } from './AppProvider';
 import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity } from 'react-native';
@@ -94,12 +93,12 @@ export default function Home() {
     setShow(true);
     setMode(currentMode);
   }
+
   return (
     <ScrollView style={{ backgroundColor: darkMode ? 'black' : 'white' }}>
       <View style={[styles.containers, { backgroundColor: darkMode ? 'black' : 'white' }]}>
-        <Text style={styles.h1}>Bienvenue sur l'application de covoiturage de l'UFR</Text>
-        <Text style={styles.h2}>-------------------</Text>
-        <View style={[styles.addressContainer, { backgroundColor: darkMode ? 'white' : 'white' }]}>
+        <Text style={[styles.h1, { marginBottom: 50 }]}>Bienvenue</Text>
+        <View style={[styles.addressContainer, { backgroundColor: darkMode ? 'white' : 'white', marginBottom: 10 }]}>
           <TextInput
             style={styles.addressInput}
             value={address}
@@ -107,7 +106,7 @@ export default function Home() {
             placeholder={addHolder}
           />
         </View>
-        <View style={{ display: 'flex', flexDirection: 'row' }}>
+        <View style={{ display: 'flex', flexDirection: 'row', marginBottom: 40 }}>
           <TouchableOpacity style={styles.button}>
             <Button title="Afficher carte" onPress={() => setMapModalVisible(true)} />
           </TouchableOpacity>
@@ -115,27 +114,24 @@ export default function Home() {
             <Button title="Utiliser localisation" onPress={getCurrentLocation} />
           </TouchableOpacity>
         </View>
-        <Text style={{ marginTop: 10, fontSize: 18, color: darkMode ? 'white' : 'black' }}>Université de sciences : </Text>
-        <View style={styles.tab}>
+        <Text style={{ fontSize: 18, color: darkMode ? 'white' : 'black' }}>Université de sciences : </Text>
+        <View style={[styles.tab, { marginBottom: 30 }]}>
           <Text style={[styles.labelRadio, { color: darkMode ? 'white' : 'black' }]}>Départ</Text>
-          <TouchableOpacity style={styles.button}>
-            <RadioButton
-              value="depart"
-              status={checked === 'depart' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('depart')}
-            />
-          </TouchableOpacity>
+          <RadioButton
+            label="depart"
+            value="depart"
+            status={checked === 'depart' ? 'checked' : 'unchecked'}
+            onPress={() => setChecked('depart')}
+          />
           <Text style={[styles.labelRadio, { color: darkMode ? 'white' : 'black' }]}>Arrivée</Text>
-          <TouchableOpacity style={styles.button}>
-            <RadioButton
-              value="arrivee"
-              status={checked === 'arrivee' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('arrivee')}
-            />
-          </TouchableOpacity>
+          <RadioButton
+            value="arrivee"
+            status={checked === 'arrivee' ? 'checked' : 'unchecked'}
+            onPress={() => setChecked('arrivee')}
+          />
         </View>
-        <View style={styles.tab}>
-          <Text style={[styles.date, { color: darkMode ? 'white' : 'black' }]}>{text}</Text>
+        <View style={[styles.tab, { marginBottom: 40 }]}>
+          <Text style={[styles.date, { color: darkMode ? 'white' : 'black'}]}>{text}</Text>
           <TouchableOpacity style={styles.button}>
             <Button
               style={styles.btn} title="Date" onPress={() => showMode('date')}
@@ -232,7 +228,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333333'
+    color: '#333333',
   },
   container: {
     flex: 1,
@@ -247,25 +243,19 @@ const styles = StyleSheet.create({
   },
   labelRadio: {
     fontSize: 18,
-    paddingTop: 10
+    paddingTop: 10,
   },
   h1: {
-    fontSize: 28,
+    marginTop: 50,
+    fontSize: 38,
     fontWeight: '800',
-    color: 'red',
-    textAlign: 'center'
-
-  },
-  h2: {
-    marginTop: 30,
+    color: '#1C6E8C',
     textAlign: 'center',
-    fontSize: 20,
-    color: 'red'
   },
   tab: {
     margin: 10,
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   containers: {
     flex: 1,
@@ -281,7 +271,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     height: 60,
-    borderColor: '#26322b',
+    borderColor: '#D2C6D0',
     borderWidth: 1,
     borderRadius: 20,
     width: '50%',
@@ -301,7 +291,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderWidth: 3,
     borderRadius: 10,
-    borderColor: '#ddd',
+    borderColor: '#D2C6D0',
     alignContent: 'center',
     width: '80%',
     marginBottom: 10
@@ -309,7 +299,7 @@ const styles = StyleSheet.create({
   addressInput: {
     paddingTop: 5,
     textAlign: 'center',
-    borderColor: '#ddd',
+    borderColor: '#92778E',
     fontSize: 16,
   },
 });

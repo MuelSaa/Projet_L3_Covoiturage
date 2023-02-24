@@ -4,7 +4,7 @@ import Menu from './Menu';
 
 const AppNavigator = createStackNavigator({
   Login: {
-    screen: Menu,
+    screen: LoginScreen,
     navigationOptions: {
       headerShown: false
     },

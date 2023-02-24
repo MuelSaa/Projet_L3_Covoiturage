@@ -112,7 +112,6 @@ export default function Add() {
         visible={addModalVisible}
         onClose={hideTripAddedModal}
       />
-      <Text style={styles.h2}>-------------------</Text>
       {homeLocation ? (
         <TouchableOpacity style={styles.button} onPress={() => setMapModalVisible(true)}>
           <Button
@@ -121,7 +120,7 @@ export default function Add() {
           />
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity style={styles.button} onPress={() => setMapModalVisible(true)}>
+        <TouchableOpacity style={[styles.button, { marginBottom: 30 }]} onPress={() => setMapModalVisible(true)}>
           <Button
             title="Choisir emplacement domicile"
             onPress={() => setMapModalVisible(true)}
@@ -130,7 +129,7 @@ export default function Add() {
       )}
 
       <Text style={[styles.label, { color: darkMode ? 'white' : 'black' }]}>Université de sciences : </Text>
-      <View style={styles.tab}>
+      <View style={[styles.tab, { marginBottom: 30 }]}>
         <Text style={[styles.labelRadio, { color: darkMode ? 'white' : 'black' }]}>Départ</Text>
         <RadioButton
           label="depart"
@@ -145,14 +144,16 @@ export default function Add() {
           onPress={() => setChecked('arrivee')}
         />
       </View>
-      <View style={styles.tab}>
+      <View style={[styles.tab, { marginBottom: 20 }]}>
         <Text style={[styles.date, { color: darkMode ? 'white' : 'black' }]}>{text}</Text>
-        <Button
-          style={styles.btn} title="Date" onPress={() => showMode('date')}
-        />
-        <Button
-          style={styles.btn} title="Time" onPress={() => showMode('time')}
-        />
+        <TouchableOpacity style={styles.button}>
+          <Button
+            style={styles.btn} title="Date" onPress={() => showMode('date')}
+          />
+          <Button
+            style={styles.btn} title="Time" onPress={() => showMode('time')}
+          />
+        </TouchableOpacity>
       </View>
       {show && (
         <DateTimePicker
@@ -261,20 +262,14 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     fontSize: 28,
     fontWeight: '800',
-    color: 'red',
-    textAlign: 'center'
-
-  },
-  h2: {
-    marginTop: 30,
+    color: '#1C6E8C',
     textAlign: 'center',
-    fontSize: 20,
-    color: 'red'
+    marginBottom: 20,
   },
   tab: {
     margin: 10,
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   containers: {
     flex: 1,
@@ -290,7 +285,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     height: 60,
-    borderColor: '#26322b',
+    borderColor: '#D2C6D0',
     borderWidth: 1,
     borderRadius: 20,
     width: '50%',
@@ -304,6 +299,6 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   btn: {
-    margin: 40
+    margin: 40,
   }
 });
