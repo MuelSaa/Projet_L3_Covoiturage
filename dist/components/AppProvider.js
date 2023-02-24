@@ -1,4 +1,5 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const ThemeContext = createContext({
   darkMode: false,
@@ -10,8 +11,28 @@ const AppProvider = ({ children }) => {
   const [darkMode, setDarkMode] = useState(false);
   const [GlobalLogin, setGlobalLogin] = useState('');
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+  useEffect(() => {
+    const getDarkMode = async () => {
+      try {
+        const value = await AsyncStorage.getItem('darkMode');
+        if (value !== null) {
+          setDarkMode(JSON.parse(value));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getDarkMode();
+  }, []);
+
+  const toggleDarkMode = async () => {
+    try {
+      const value = JSON.stringify(!darkMode);
+      await AsyncStorage.setItem('darkMode', value);
+      setDarkMode(!darkMode);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
