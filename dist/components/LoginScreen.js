@@ -19,17 +19,7 @@ const LoginScreen = () => {
       alert('Veuillez remplir tous les champs');
       navigate('Menu');
     }
-    else if (login === 'admin' && password === 'admin') {
-      setGlobalLogin(login);
-      navigate('Menu');
-    }
     else {
-      alert('Identifiants incorrects');
-    }
-  };
- 
-
-  const handleLogin = async () => {
       const response = await fetch(`https://servor-sgtr.onrender.com/api/protected`, {
         method: 'POST',
         body: JSON.stringify({ login: login, password: password }),
@@ -48,9 +38,10 @@ const LoginScreen = () => {
       //alert(token);
        Sinon naviguer jusqu'au menu ********************************/
        navigate('Menu');
+  };
 };
- 
 
+ 
   const InfoModal = ({ visible, onClose }) => {
     return (
       <Modal
