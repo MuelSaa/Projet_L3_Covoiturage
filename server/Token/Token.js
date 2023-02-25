@@ -43,8 +43,25 @@ exports.postTokenCreateToken = (req, res) => {
   
     if (user) {
       const token = jwt.sign({ user }, 'my_secret_key');
-      res.status(200).json({ success: true, Token:token });
+      res.status(201).send(`Token successful created ${token }`);
     } else {
-      res.status(401).json({ success: false, message: 'Identifiants invalides' });
+      res.status(401).send('Identifiants invalides');
+    }
+  }
+
+
+/*****************************************************
+ *                      Protection Token 
+ *****************************************************/
+
+  exports.ensureToken = (req, res, next) => {
+    const bearerHeader = req.headers["authorization"];
+    if (bearerHeader !== undefined && bearerHeader !== null) {
+      const bearer = bearerHeader.split(" ");
+      const bearerToken = bearer[1];
+      req.token = bearerToken;
+      next();
+    } else {
+      res.sendStatus(401);
     }
   }
