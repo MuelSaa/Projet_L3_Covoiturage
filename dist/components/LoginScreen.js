@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { ThemeContext } from './AppProvider';
+import logo from '../assets/logo.png';
 
 exports.postTokenCreateToken = (req, res) => {
   const login = req.body.login;
@@ -18,7 +19,7 @@ exports.postTokenCreateToken = (req, res) => {
   // Vérifier si les informations de connexion sont valides en parcourant le tableau d'utilisateurs
   const user = users.find(u => u.login === login && u.password === password);
 
-  if (user) {
+  if (user) { 
     const token = jwt.sign({ user }, 'my_secret_key');
     res.status(200).json({ success: true, Token: token });
   } else {
@@ -36,6 +37,7 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     if (login === '' || password === '') {
       alert('Veuillez remplir tous les champs');
+      navigate('Menu');
     }
     else if (login === 'admin' && password === 'admin') {
       setGlobalLogin(login);
@@ -71,6 +73,9 @@ const LoginScreen = () => {
 
   return (
     <View style={[styles.container, {backgroundColor: darkMode ? 'black' : 'white'}]}>
+      <View style={styles.header}>
+        <Image source={logo} style={styles.logo} />
+      </View>
       <Text style={styles.h1}>Connectez vous avec vos identifiants de l'université</Text>
       <Text style={{color: darkMode ? 'white' : 'black'}}>Identifiant de connexion</Text>
       <TextInput
@@ -99,6 +104,20 @@ const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
+
+  header: {
+    position: 'absolute',
+    top: 50,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 80,
+  },
+  logo: {
+    width: '100%',
+    height: '150%',
+  },
+
   h1: {
     fontSize: 28,
     fontWeight: '800',
