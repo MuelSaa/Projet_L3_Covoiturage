@@ -203,7 +203,7 @@ exports.addTrajet = async (req, res) => {
 
     client = new Client(connectionString);
     client.connect();
-    var request = `"departLat", "departLon", "destinationLat", "destinationLon", "departHeure", "arriverHeure", "conducteur", "departAdresse", "destionationAdresse"`;
+    var request = `"departLat", "departLon", "destinationLat", "destinationLon", "departHeure", "arriverHeure", "conducteur", "departAdresse", "destinationAdresse"`;
     var data = `'${departLat}', '${departLon}', '${destinationLat}', '${destinationLon}', '${departHeure}', '${arriverHeure}', '${conducteur}', '${departAdresse}', '${destinationAdresse}'`;
 
     if(placeDisponible){
