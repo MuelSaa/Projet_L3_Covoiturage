@@ -14,13 +14,13 @@ const errorHandler = require('./middleware/errorHandler');
 const bodyParser = require('body-parser')
 
 const { client } = require("./config/serverConnection");
-
-const jwt = require('jsonwebtoken')
-
+const cors = require('cors');
 
 /*****************************************************
  *             Chargement des fonctions/routes
  *****************************************************/
+
+
 const users = require("./Users");
 
 const trajet = require("./Trajet");
@@ -47,9 +47,16 @@ app.use(
     })
   )
 
+  app.use(cors({
+    origin: 'http://localhost:8080',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  }));
 /*****************************************************
  *                      Users
  *****************************************************/
+
 
 app.get('/Users', users.getAllUsers);
 app.get('/Users/:login', users.getUsers);
@@ -110,19 +117,9 @@ app.put('/Passager/:trajetID/:passagerID/:accepted',passager.updatePassagerStatu
  *                      Web Access Token 
  *****************************************************/
 
-function ensureToken(req, res, next) {
-  const bearerHeader = req.headers["authorization"];
-  if (bearerHeader !== undefined && bearerHeader !== null) {
-    const bearer = bearerHeader.split(" ");
-    const bearerToken = bearer[1];
-    req.token = bearerToken;
-    next();
-  } else {
-    res.sendStatus(401);
-  }
-}
-app.get('/api/protected' , ensureToken,tokenfile.getTokenProtection)
-app.post('/api/login', tokenfile.postTokenCreateToken); 
+
+app.get('/api/protected' , tokenfile.ensureToken,tokenfile.getTokenProtection)
+app.post('/api/protected', tokenfile.postTokenCreateToken); 
     
 
 app.all('*', (req, res) => {
