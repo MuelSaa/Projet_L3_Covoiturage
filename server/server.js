@@ -14,7 +14,8 @@ const errorHandler = require('./middleware/errorHandler');
 const bodyParser = require('body-parser')
 
 const { client } = require("./config/serverConnection");
-const cors = require('cors');
+
+// const cors = require('cors');
 
 /*****************************************************
  *             Chargement des fonctions/routes
@@ -47,12 +48,12 @@ app.use(
     })
   )
 
-  app.use(cors({
-    origin: 'http://localhost:8080',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-  }));
+  // app.use(cors({
+  //   origin: 'http://localhost:8080',
+  //   methods: ['GET', 'POST'],
+  //   allowedHeaders: ['Content-Type', 'Authorization'],
+  //   credentials: true
+  // }));
 /*****************************************************
  *                      Users
  *****************************************************/
@@ -109,18 +110,17 @@ app.put('/Passager/:trajetID/:passagerID/:accepted',passager.updatePassagerStatu
  *****************************************************/
 
 
-//app.use('/', express.static(path.join(__dirname, 'public')));
-
-//app.use('/', require('./routes/root'));
-
 /*****************************************************
  *                      Web Access Token 
  *****************************************************/
 
-
 app.get('/api/protected' , tokenfile.ensureToken,tokenfile.getTokenProtection)
 app.post('/api/protected', tokenfile.postTokenCreateToken); 
     
+
+//app.use('/', express.static(path.join(__dirname, 'public')));
+
+//app.use('/', require('./routes/root'));
 
 app.all('*', (req, res) => {
     res.status(404);
