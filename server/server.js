@@ -30,6 +30,8 @@ const notification = require("./Notification");
 
 const passager = require("./Passager");
 
+const note = require("./Notes")
+
 const tokenfile = require("./Token/Token")
 
 /*****************************************************
