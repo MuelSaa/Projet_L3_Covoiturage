@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image} from 'react-native';
+import React, { useState, useContext } from 'react';
+import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image } from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 import MapView, { Marker } from 'react-native-maps';
 import { RadioButton } from 'react-native-paper';
@@ -7,8 +7,10 @@ import Geocoder from 'react-native-geocoding';
 import * as Location from 'expo-location';
 import TripAddedModal from './TripAddedModal';
 import logo from '../assets/logo.png';
+import { DarkTheme } from '@react-navigation/native';
+import { ThemeContext } from './AppProvider';
 
-Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", {language : "fr"});
+Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", { language: "fr" });
 export default function Add() {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
@@ -32,14 +34,14 @@ export default function Add() {
   const [champ3, setchamp3] = useState('');
   const [champ4, setchamp4] = useState('');
 
-  function showTripAddedModal(){
+  function showTripAddedModal() {
     setAddModalVisible(true);
   }
-  
+
   const hideTripAddedModal = () => {
     setAddModalVisible(false);
   }
-  
+
   const incrementPassengers = () => {
     if (passengers < 8) {
       setPassengers(passengers + 1);
@@ -54,14 +56,14 @@ export default function Add() {
   function setCompleteLocation(lat, long) {
     setMarkerlat(lat);
     setMarkerlon(long);
-    setHomeLocation([lat,long]);
+    setHomeLocation([lat, long]);
     Geocoder.from(latitude, longitude)
-    .then(json => {
-            var addressComponent = json.results[0].address_components;
-      setAddress("");
-      setHolder(addressComponent[0].long_name + ' ' + addressComponent[1].long_name + ' ' + addressComponent[2].long_name)
-    })
-    .catch(error => setHolder('Adresse non trouvée'));
+      .then(json => {
+        var addressComponent = json.results[0].address_components;
+        setAddress("");
+        setHolder(addressComponent[0].long_name + ' ' + addressComponent[1].long_name + ' ' + addressComponent[2].long_name)
+      })
+      .catch(error => setHolder('Adresse non trouvée'));
   }
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -72,23 +74,23 @@ export default function Add() {
     console.log(location.coords.latitude, location.coords.longitude);
     setCompleteLocation(location.coords.latitude, location.coords.longitude);
   }
-  
+
   const handleAddressChange = (newAddress) => {
     setAddress(newAddress);
-    if(newAddress.length > 10){
-    Geocoder.from(newAddress)
-      .then(json => {
-        var location = json.results[0].geometry.location;
-        setCompleteLocation(location.lat, location.lng);
-      })
-      .catch(error => console.log(error));
+    if (newAddress.length > 10) {
+      Geocoder.from(newAddress)
+        .then(json => {
+          var location = json.results[0].geometry.location;
+          setCompleteLocation(location.lat, location.lng);
+        })
+        .catch(error => console.log(error));
     }
   };
-  const handleAddTrip = () => {}
+  const handleAddTrip = () => { }
   const add = async () => {
-    if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
+    if (!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     else {
-      if(checked==='depart'){
+      if (checked === 'depart') {
         setchamp1(47.244505);
         setchamp2(5.987401);
         setchamp3(latitude);
@@ -112,8 +114,8 @@ export default function Add() {
             //token: '',
             departLat: champ1,
             departLon: champ2,
-            destinationLat : champ3,
-            destinationLon : champ4,
+            destinationLat: champ3,
+            destinationLon: champ4,
             departHeure: dateFormat,
             arriverHeure: dateFormat2,
             placeDisponible: passengers,
@@ -121,8 +123,8 @@ export default function Add() {
           })
         });
       }
-      catch(error) {
-          console.error(error);
+      catch (error) {
+        console.error(error);
       }
     }
   }
@@ -132,21 +134,22 @@ export default function Add() {
     let tempDate = new Date(currentDate);
     let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
     let fTime = tempDate.getHours() + 'h ' + tempDate.getMinutes() + 'm';
-    setDateFormat(tempDate.getFullYear()+'-'+(tempDate.getMonth() + 1)+"-"+tempDate.getDate()+' '+tempDate.getHours()+':'+tempDate.getMinutes()+':'+tempDate.getSeconds()+'+00');
-    setDateFormat2(tempDate.getFullYear()+'-'+(tempDate.getMonth() + 1)+"-"+tempDate.getDate()+' '+(tempDate.getHours()+1)+':'+tempDate.getMinutes()+':'+tempDate.getSeconds()+'+00');
+    setDateFormat(tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + "-" + tempDate.getDate() + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds() + '+00');
+    setDateFormat2(tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + "-" + tempDate.getDate() + ' ' + (tempDate.getHours() + 1) + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds() + '+00');
     setText(fDate + ' ' + fTime);
-    setShow (false)
+    setShow(false)
   }
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
   }
-    return (
-      <ScrollView>
-      <View style={[styles.container]}>
-      <View style={styles.header}>
-        <Image source={logo} style={styles.logo} />
-      </View>
+  const { darkMode } = useContext(ThemeContext);
+  return (
+    <ScrollView style={{backgroundColor: darkMode ? 'black' : 'white'}}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Image source={logo} style={styles.logo} />
+        </View>
         <Text style={styles.h1}>Ajoutez un trajet </Text>
         <TripAddedModal
           visible={addModalVisible}
@@ -154,13 +157,13 @@ export default function Add() {
         />
         <View style={styles.addressContainer}>
           <TextInput
-            style={styles.addressInput}
+            style={[styles.addressInput,{backgroundColor: darkMode ? 'white': styles.addressInput.color}]}
             value={address}
             onChangeText={handleAddressChange}
             placeholder={addHolder}
           />
         </View>
-        <View style={{display:'flex', flexDirection:'row'}}>
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
           <TouchableOpacity style={styles.button}>
             <Button title="Afficher carte" onPress={() => setMapModalVisible(true)} />
           </TouchableOpacity>
@@ -168,109 +171,109 @@ export default function Add() {
             <Button title="Utiliser localisation" onPress={getCurrentLocation} />
           </TouchableOpacity>
         </View>
-        <Text style={{marginTop:10, fontSize:18}}>Université de sciences : </Text>
+        <Text style={{ marginTop: 10, fontSize: 18, color: darkMode ? 'white' : 'black' }}>Université de sciences : </Text>
         <View style={styles.tab}>
-          <Text style={styles.labelRadio}>Départ</Text>
+          <Text style={[styles.labelRadio,{color: darkMode ? 'white' : styles.labelRadio.color}]}>Départ</Text>
           <TouchableOpacity style={styles.button}>
-          <RadioButton
-            value="depart"
-            status={ checked === 'depart' ? 'checked' : 'unchecked' }
-            onPress={() => setChecked('depart')}
-          />
+            <RadioButton
+              value="depart"
+              status={checked === 'depart' ? 'checked' : 'unchecked'}
+              onPress={() => setChecked('depart')}
+            />
           </TouchableOpacity>
-          <Text style={styles.labelRadio}>Arrivée</Text>
+          <Text style={[styles.labelRadio,{color: darkMode ? 'white' : styles.labelRadio.color}]}>Arrivée</Text>
           <TouchableOpacity style={styles.button}>
-          <RadioButton
-            value="arrivee"
-            status={ checked === 'arrivee' ? 'checked' : 'unchecked' }
-            onPress={() => setChecked('arrivee')}
-          />
+            <RadioButton
+              value="arrivee"
+              status={checked === 'arrivee' ? 'checked' : 'unchecked'}
+              onPress={() => setChecked('arrivee')}
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.tab}>
-          <Text style={styles.date}>{text}</Text>
+          <Text style={[styles.date,{color: darkMode ? 'white' : styles.date.color,borderColor: darkMode ? '#D2C6D0' : styles.date.borderColor }]}>{text}</Text>
           <TouchableOpacity style={styles.button}>
             <Button
-              style={styles.btn} title = "Date" onPress = { () => showMode('date')}
+              style={styles.btn} title="Date" onPress={() => showMode('date')}
             />
             <Button
-              style={styles.btn} title = "Time" onPress = { () => showMode('time')}
+              style={styles.btn} title="Time" onPress={() => showMode('time')}
             />
           </TouchableOpacity>
         </View>
         {show && (
           <DateTimePicker
-          testID='dateTimePicker'
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          display='default'
-          onChange={onChangeDate}
+            testID='dateTimePicker'
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            display='default'
+            onChange={onChangeDate}
           />
         )}
         <View style={styles.tab}>
-          <Text style={styles.label}>Nombre de places : </Text>
-          <Text style={styles.numberfield}>{passengers}</Text>
+          <Text style={[styles.label,{color: darkMode ? 'white' : styles.label.color}]}>Nombre de places : </Text>
+          <Text style={[styles.numberfield,{color: darkMode ? 'white' : styles.numberfield.color}]}>{passengers}</Text>
           <TouchableOpacity style={styles.button}>
-          <Button title = "  +  " onPress = { () => incrementPassengers()} />
-          <Button title = "  -  " onPress = { () => decrementPassengers()} />
+            <Button title="  +  " onPress={() => incrementPassengers()} />
+            <Button title="  -  " onPress={() => decrementPassengers()} />
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.button}>
           <Button onPress={() => add()} title="Creer le trajet" />
         </TouchableOpacity>
         <Modal
-        animationType="slide"
-        transparent={false}
-        visible={mapModalVisible}
-        onRequestClose={() => {
-          setMapModalVisible(false);
-        }}>
-        <MapView
-          style={{ flex: 1 }}
-          initialRegion={{
-          latitude: 47.25,
-          longitude: 6.0333,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-          }}
-          onPress={event => {
-            console.log(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
-            setCompleteLocation(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
+          animationType="slide"
+          transparent={false}
+          visible={mapModalVisible}
+          onRequestClose={() => {
             setMapModalVisible(false);
-          }}
+          }}>
+          <MapView
+            style={{ flex: 1 }}
+            initialRegion={{
+              latitude: 47.25,
+              longitude: 6.0333,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            onPress={event => {
+              console.log(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
+              setCompleteLocation(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
+              setMapModalVisible(false);
+            }}
+          >
+            {homeLocation !== "" && (
+              <Marker coordinate={{ latitude, longitude }} pinColor="red" />
+            )}
+          </MapView>
+          <Button
+            title="Fermer"
+            onPress={() => setMapModalVisible(false)}
+            style={{ position: 'absolute', top: 20, right: 20 }}
+          />
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={listModalVisible}
         >
-        {homeLocation !== "" && (
-        <Marker   coordinate={{ latitude, longitude }} pinColor="red" />
-        )}
-        </MapView>
-        <Button
-          title="Fermer"
-          onPress={() => setMapModalVisible(false)}
-          style={{ position: 'absolute', top: 20, right: 20 }}
-        />
-      </Modal>
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={listModalVisible}
-      >
-        <View style={styles.modalContainer}>
-          <ScrollView>
-            {trips.map((trip, index) => (
-              <View key={index} style={styles.tripContainer}>
-                <Text>{trip.depart} - {trip.destination} - {trip.departHeure}</Text>
-                <Button title="Ajouter ce trajet" onPress={handleAddTrip(trip)} />
-              </View>
-            ))}
-          <Button style={{ position: 'absolute', top: 20, right: 20 }} title="Masquer" onPress={() => setListModalVisible(false)} />
-          </ScrollView>
-        </View>
-      </Modal>
+          <View style={styles.modalContainer}>
+            <ScrollView>
+              {trips.map((trip, index) => (
+                <View key={index} style={styles.tripContainer}>
+                  <Text>{trip.depart} - {trip.destination} - {trip.departHeure}</Text>
+                  <Button title="Ajouter ce trajet" onPress={handleAddTrip(trip)} />
+                </View>
+              ))}
+              <Button style={{ position: 'absolute', top: 20, right: 20 }} title="Masquer" onPress={() => setListModalVisible(false)} />
+            </ScrollView>
+          </View>
+        </Modal>
       </View>
-      </ScrollView>
-    );
-  }
+    </ScrollView>
+  );
+}
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
@@ -322,7 +325,7 @@ const styles = StyleSheet.create({
   h1: {
     paddingBottom: 20,
     fontSize: 28,
-    fontWeight : '800',
+    fontWeight: '800',
     color: '#1C6E8C',
     textAlign: 'center'
   },
@@ -330,10 +333,10 @@ const styles = StyleSheet.create({
     marginTop: 30,
     textAlign: 'center',
     fontSize: 20,
-    color : 'red'
+    color: 'red'
   },
   tab: {
-    margin:10,
+    margin: 10,
     display: 'flex',
     flexDirection: 'row'
   },
@@ -366,7 +369,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   btn: {
-    margin : 40
+    margin: 40
   },
   addressContainer: {
     height: 40,
@@ -376,9 +379,9 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     width: '80%',
     marginBottom: 10
-  },  
+  },
   addressInput: {
-    paddingTop:5,
+    paddingTop: 7,
     textAlign: 'center',
     borderColor: '#ddd',
     fontSize: 16,

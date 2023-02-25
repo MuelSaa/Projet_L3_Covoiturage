@@ -35,8 +35,12 @@ const AppProvider = ({ children }) => {
     }
   };
 
+  const logout = () => {
+    setGlobalLogin('');
+  };
+
   return (
-    <ThemeContext.Provider value={{ darkMode, toggleDarkMode, GlobalLogin, setGlobalLogin }}>
+    <ThemeContext.Provider value={{ darkMode, toggleDarkMode, GlobalLogin, setGlobalLogin, logout }}>
       {children}
     </ThemeContext.Provider>
   );

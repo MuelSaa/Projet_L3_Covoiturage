@@ -15,7 +15,6 @@ exports.postTokenCreateToken = (req, res) => {
     { login: 'Samuel', password: 'bidule' },
     { login: 'Bastien', password: 'bidule' },
   ];
-
   // Vérifier si les informations de connexion sont valides en parcourant le tableau d'utilisateurs
   const user = users.find(u => u.login === login && u.password === password);
 
@@ -35,6 +34,7 @@ const LoginScreen = () => {
   const { setGlobalLogin } = useContext(ThemeContext);
 
   const handleLogin = async () => {
+
     if (login === '' || password === '') {
       alert('Veuillez remplir tous les champs');
       navigate('Menu');
@@ -47,6 +47,29 @@ const LoginScreen = () => {
       alert('Identifiants incorrects');
     }
   };
+  /*const handleLogin = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/login", {
+        method: 'POST',
+        body: JSON.stringify({ login: login, password: password }),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      const token = data.token;
+      alert(token);
+      // naviguer vers la page suivante ou effectuer une autre action
+    } catch (error) {
+      console.error(error);
+    }
+  };*/
 
   const InfoModal = ({ visible, onClose }) => {
     return (
@@ -77,15 +100,15 @@ const LoginScreen = () => {
         <Image source={logo} style={styles.logo} />
       </View>
       <Text style={styles.h1}>Connectez vous avec vos identifiants de l'université</Text>
-      <Text style={{color: darkMode ? 'white' : 'black'}}>Identifiant de connexion</Text>
+      <Text style={{ color: darkMode ? 'white' : 'black' }}>Identifiant de connexion</Text>
       <TextInput
-        style={[styles.input,{backgroundColor: darkMode ? 'white' : ''}]}
+        style={[styles.input, { backgroundColor: darkMode ? 'white' : '' }]}
         onChangeText={(text) => setLogin(text)}
         value={login}
       />
-      <Text style={{color: darkMode ? 'white' : 'black'}}>Mot de passe</Text>
+      <Text style={{ color: darkMode ? 'white' : 'black' }}>Mot de passe</Text>
       <TextInput
-        style={[styles.input,,{backgroundColor: darkMode ? 'white' : ''}]}
+        style={[styles.input, , { backgroundColor: darkMode ? 'white' : '' }]}
         onChangeText={(text) => setPassword(text)}
         value={password}
         secureTextEntry={true}
