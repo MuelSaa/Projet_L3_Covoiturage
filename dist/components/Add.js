@@ -10,9 +10,9 @@ import logo from '../assets/logo.png';
 import { DarkTheme } from '@react-navigation/native';
 import { ThemeContext } from './AppProvider';
 
-require('dotenv').config();
-const apiUrl = process.env.API_URL;
-const apiKey = process.env.API_KEY;
+import Config from 'react-native-config';
+const apiUrl = Config.API_URL;
+const apiKey = Config.API_KEY;
 Geocoder.init(apiKey, {language : "fr"});
 
 export default function Add() {

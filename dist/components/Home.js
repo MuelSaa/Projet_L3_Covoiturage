@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image} from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 import MapView, { Marker } from 'react-native-maps';
@@ -6,10 +6,13 @@ import { RadioButton } from 'react-native-paper';
 import Geocoder from 'react-native-geocoding';
 import * as Location from 'expo-location';
 import logo from '../assets/logo.png';
+import { DarkTheme } from '@react-navigation/native';
+import { ThemeContext } from './AppProvider';
 
-require('dotenv').config();
-const apiUrl = process.env.API_URL;
-const apiKey = process.env.API_KEY;
+
+import Config from 'react-native-config';
+const apiUrl = Config.API_URL;
+const apiKey = Config.API_KEY;
 Geocoder.init(apiKey, {language : "fr"});
 
 export default function Home() {
@@ -101,9 +104,10 @@ export default function Home() {
     setShow(true);
     setMode(currentMode);
   }
+  const { darkMode } = useContext(ThemeContext);
 
     return (
-      <ScrollView>
+      <ScrollView style={{backgroundColor: darkMode ? 'black' : 'white'}}>
       <View style={[styles.container]}>
       <View style={styles.header}>
         <Image source={logo} style={styles.logo} />

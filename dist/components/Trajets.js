@@ -10,16 +10,18 @@ import moment from 'moment';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { ThemeContext } from './AppProvider';
 
-require('dotenv').config();
-const apiUrl = process.env.API_URL;
-const apiKey = process.env.API_KEY;
+import Config from 'react-native-config';
+const apiUrl = Config.API_URL;
+const apiKey = Config.API_KEY;
 Geocoder.init(apiKey, {language : "fr"});
+
+import { API_URL } from "./env";
 
 const Tab = createMaterialTopTabNavigator();
 
 const handleRemoveTrip = async (id) => { 
     try {
-        const resp = await fetch(apiUrl + "/Trajet/" + id, {
+        const resp = await fetch(API_URL + "/Trajet/" + id, {
             method: 'DELETE'
         });
         const data = await resp.json();
@@ -68,12 +70,13 @@ export default function Trajets() {
 }
 
 export function DriverTrips() {
+    console.log("URL"+API_URL);
     const { darkMode, toggleDarkMode } = useContext(ThemeContext);
     const [trips, setTrips] = useState([]);
     const isFocused = useIsFocused();
     async function myTrips() {
         try {
-            const resp = await fetch(apiUrl + "/Trajet", {
+            const resp = await fetch(API_URL + "/Trajet", {
                 method: 'GET'
             });
             const data = await resp.json();
@@ -150,7 +153,7 @@ export function PassengerTrips() {
     const [trips, setTrips] = useState([]);
     const isFocused = useIsFocused();
     async function myTrips() {
-        const resp = await fetch(apiUrl + "/Trajet", {
+        const resp = await fetch(API_URL + "/Trajet", {
             method: 'GET',
         })
             .then(response => response.json())
@@ -233,7 +236,7 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10,
         position: 'absolute',
-        bottom: '30%',
+        bottom: 0,
         right: 0,
     },
     buttonText: {
