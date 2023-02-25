@@ -16,9 +16,7 @@ export default function Add() {
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [text, setText] = useState('choisir une date');
-  const [trips, setTrips] = useState([]);
   const [checked, setChecked] = useState('depart');
-  const [listModalVisible, setListModalVisible] = useState(false);
   const [mapModalVisible, setMapModalVisible] = useState(false);
   const [homeLocation, setHomeLocation] = useState('');
   const [latitude, setMarkerlat] = useState('');
@@ -63,12 +61,13 @@ export default function Add() {
         setAddress("");
         setHolder(addressComponent[0].long_name + ' ' + addressComponent[1].long_name + ' ' + addressComponent[2].long_name)
       })
-      .catch(error => setHolder('Adresse non trouvée'));
+      .catch(error => setHolder('adresse inconnue'));
   }
+
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
-      alert('Impossible d\'accéder à votre position');
+      console.log('Permission to access location was denied');
     }
     let location = await Location.getCurrentPositionAsync({});
     console.log(location.coords.latitude, location.coords.longitude);
@@ -86,7 +85,7 @@ export default function Add() {
         .catch(error => console.log(error));
     }
   };
-  const handleAddTrip = () => { }
+
   const add = async () => {
     if (!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     else {
@@ -252,23 +251,6 @@ export default function Add() {
             onPress={() => setMapModalVisible(false)}
             style={{ position: 'absolute', top: 20, right: 20 }}
           />
-        </Modal>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={listModalVisible}
-        >
-          <View style={styles.modalContainer}>
-            <ScrollView>
-              {trips.map((trip, index) => (
-                <View key={index} style={styles.tripContainer}>
-                  <Text>{trip.depart} - {trip.destination} - {trip.departHeure}</Text>
-                  <Button title="Ajouter ce trajet" onPress={handleAddTrip(trip)} />
-                </View>
-              ))}
-              <Button style={{ position: 'absolute', top: 20, right: 20 }} title="Masquer" onPress={() => setListModalVisible(false)} />
-            </ScrollView>
-          </View>
         </Modal>
       </View>
     </ScrollView>
