@@ -108,7 +108,21 @@ app.put('/Passager/:trajetID/:passagerID/:accepted',passager.updatePassagerStatu
 /*****************************************************
  *                      Notes
  *****************************************************/
+app.get('/Notes',note.getNotes);
 
+app.get('/Notes/:noteID',note.getNoteById);
+
+app.get('/Noteur/:noteurLogin',note.getNotesByNoteur);
+
+app.get('/Noteur/:noteurLogin',note.getNotesByNoteur);
+
+app.get('/NoteTrajet/:TrajetID',note.getNotesByTrajetId );
+
+//app.post('/Notes',note.createNote);
+
+//app.put('/Unote/:NoteID',note.updateNote)
+
+app.delete('/DNotes/:NoteID',note.deleteNote);
 
 /*****************************************************
  *                      Web Access Token 
