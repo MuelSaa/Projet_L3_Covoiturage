@@ -33,7 +33,9 @@ const postSchema = Joi.object({
         .max(8-1)
         .optional(),
     conducteur: Joi.string()
-        .required()
+        .required(),
+    departAdresse: Joi.string(),
+    destinationAdresse: Joi.string(),
 });
 
 const findTrajetSchema = Joi.object({
@@ -193,7 +195,7 @@ exports.addTrajet = async (req, res) => {
         res.status(400).send(result.error);
     }
 
-    var {departLat, departLon, destinationLat, destinationLon, departHeure, arriverHeure, placeDisponible,  conducteur} = req.body;
+    var {departLat, departLon, destinationLat, destinationLon, departHeure, arriverHeure, placeDisponible,  conducteur, departAdresse, destinationAdresse} = req.body;
 
     if(departHeure>arriverHeure){
         res.status(400).send("depart > arrivée");
@@ -201,8 +203,8 @@ exports.addTrajet = async (req, res) => {
 
     client = new Client(connectionString);
     client.connect();
-    var request = `"departLat", "departLon", "destinationLat", "destinationLon", "departHeure", "arriverHeure", "conducteur"`;
-    var data = `'${departLat}', '${departLon}', '${destinationLat}', '${destinationLon}', '${departHeure}', '${arriverHeure}', '${conducteur}'`;
+    var request = `"departLat", "departLon", "destinationLat", "destinationLon", "departHeure", "arriverHeure", "conducteur", "departAdresse", "destionationAdresse"`;
+    var data = `'${departLat}', '${departLon}', '${destinationLat}', '${destinationLon}', '${departHeure}', '${arriverHeure}', '${conducteur}', '${departAdresse}', '${destinationAdresse}'`;
 
     if(placeDisponible){
         request += ', "placeDisponible"';
