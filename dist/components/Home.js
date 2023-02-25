@@ -63,8 +63,19 @@ export default function Home() {
     if (!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     else {
       console.log(dateFormat);
-      const resp = await fetch('https://covoiturage.onrender.com/trajet', {
+      const resp = await fetch('http://192.168.1.19:8080/FindTrajetDepart', {
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        // body: JSON.stringify({
+        //   departLat:,
+        //   departLon:,
+        //   arriverLat:,
+        //   arriverLon:,
+        //   date:,
+        //   heure:,
+        // })
       })
         .then(response => response.json())
         .then(data => setTrips(data))
