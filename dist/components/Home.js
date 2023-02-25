@@ -7,7 +7,11 @@ import Geocoder from 'react-native-geocoding';
 import * as Location from 'expo-location';
 import logo from '../assets/logo.png';
 
-Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", {language : "fr"});
+require('dotenv').config();
+const apiUrl = process.env.API_URL;
+const apiKey = process.env.API_KEY;
+Geocoder.init(apiKey, {language : "fr"});
+
 export default function Home() {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
@@ -63,7 +67,7 @@ export default function Home() {
     if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     else {
       console.log(dateFormat);
-      const resp = await fetch('http://192.168.1.19:8080/FindTrajetDepart', {
+      const resp = await fetch(apiUrl + '/FindTrajetDepart', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

@@ -10,7 +10,11 @@ import logo from '../assets/logo.png';
 import { DarkTheme } from '@react-navigation/native';
 import { ThemeContext } from './AppProvider';
 
-Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", { language: "fr" });
+require('dotenv').config();
+const apiUrl = process.env.API_URL;
+const apiKey = process.env.API_KEY;
+Geocoder.init(apiKey, {language : "fr"});
+
 export default function Add() {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
@@ -31,6 +35,8 @@ export default function Add() {
   const [champ2, setchamp2] = useState('');
   const [champ3, setchamp3] = useState('');
   const [champ4, setchamp4] = useState('');
+  const [champ5, setchamp5] = useState('');
+  const [champ6, setchamp6] = useState('');
 
   function showTripAddedModal() {
     setAddModalVisible(true);
@@ -94,16 +100,20 @@ export default function Add() {
         setchamp2(5.987401);
         setchamp3(latitude);
         setchamp4(longitude);
+        setchamp5('universite');
+        setchamp6(addHolder);
       }
       else {
         setchamp1(latitude);
         setchamp2(longitude);
         setchamp3(47.244505);
         setchamp4(5.987401);
+        setchamp5(addHolder);
+        setchamp6('universite');
       }
       showTripAddedModal();
       try {
-        const response = await fetch('http://192.168.1.19:8080/Trajet', {
+        const response = await fetch(apiUrl + '/Trajet', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -111,6 +121,8 @@ export default function Add() {
           body: JSON.stringify({
             conducteur: 'samu',
             //token: '',
+            departAdresse:champ5,
+            destinationAdresse:champ6,
             departLat: champ1,
             departLon: champ2,
             destinationLat: champ3,

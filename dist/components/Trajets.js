@@ -10,10 +10,26 @@ import moment from 'moment';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { ThemeContext } from './AppProvider';
 
-Geocoder.init("AIzaSyCO9jnug1zEda2f2N4HveqArp4Z4cHH0ww", { language: "fr" });
+require('dotenv').config();
+const apiUrl = process.env.API_URL;
+const apiKey = process.env.API_KEY;
+Geocoder.init(apiKey, {language : "fr"});
 
 const Tab = createMaterialTopTabNavigator();
-const handleAddTrip = () => { }
+
+const handleRemoveTrip = async (id) => { 
+    try {
+        const resp = await fetch(apiUrl + "/Trajet/" + id, {
+            method: 'DELETE'
+        });
+        const data = await resp.json();
+        // Recharge la page si la suppression a réussi
+        window.location.reload();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 
 function getLocationName(latitude, longitude) {
     // Geocoder.from(latitude, longitude)
@@ -45,19 +61,19 @@ export default function Trajets() {
                 tabBarInactiveTintColor: darkMode ? 'gray' : 'lightgray',
                 tabBarStyle: {backgroundColor: darkMode ? 'black' : 'white'},
             }}>
-            <Tab.Screen name="new" component={NewTrips} />
-            <Tab.Screen name="past" component={LastTrips} />
+            <Tab.Screen name="Conducteur" component={DriverTrips} />
+            <Tab.Screen name="Passager" component={PassengerTrips} />
         </Tab.Navigator>
     );
 }
 
-export function NewTrips() {
+export function DriverTrips() {
     const { darkMode, toggleDarkMode } = useContext(ThemeContext);
     const [trips, setTrips] = useState([]);
     const isFocused = useIsFocused();
     async function myTrips() {
         try {
-            const resp = await fetch("https://covoiturage.onrender.com/trajet", {
+            const resp = await fetch(apiUrl + "/Trajet", {
                 method: 'GET'
             });
             const data = await resp.json();
@@ -79,8 +95,8 @@ export function NewTrips() {
     }, []);
 
     const renderTrip = (trip, index) => {
-        const departLocation = getLocationName(trip.departLat, trip.departLon);
-        const arriveeLocation = getLocationName(trip.destinationLat, trip.destinationLat);
+        const departLocation = trip.departAdresse;
+        const arriveeLocation = trip.destinationAdresse;
 
         return (
             <Animated.View
@@ -108,7 +124,7 @@ export function NewTrips() {
                 <Text style={[styles.text, { color: darkMode ? 'white' : styles.text.color }]}>
                     Heure : {moment(trip.departHeure).format('HH:mm')}
                 </Text>
-                <TouchableOpacity style={styles.button} onPress={handleAddTrip}>
+                <TouchableOpacity style={styles.button} onPress={() => handleRemoveTrip(trip.trajetID)}>
                     <Text style={styles.buttonText}>Se désinscrire</Text>
                 </TouchableOpacity>
             </Animated.View>
@@ -123,12 +139,18 @@ export function NewTrips() {
     );
 }
 
-export function LastTrips() {
+
+
+
+
+
+
+export function PassengerTrips() {
     const { darkMode, toggleDarkMode } = useContext(ThemeContext);
     const [trips, setTrips] = useState([]);
     const isFocused = useIsFocused();
     async function myTrips() {
-        const resp = await fetch('https://covoiturage.onrender.com/trajet', {
+        const resp = await fetch(apiUrl + "/Trajet", {
             method: 'GET',
         })
             .then(response => response.json())
@@ -137,7 +159,7 @@ export function LastTrips() {
     }
     if (isFocused) { myTrips() }
 
-    const handleAddTrip = () => { }
+    const handleDeleteTrip = () => { }
     const [animation, setAnimation] = useState(new Animated.Value(0));
 
     useEffect(() => {
@@ -149,8 +171,8 @@ export function LastTrips() {
     }, []);
 
     const renderTrip = (trip, index) => {
-        const departLocation = getLocationName(trip.departLat, trip.departLon);
-        const arriveeLocation = getLocationName(trip.destinationLat, trip.destinationLat);
+        const departLocation = trip.departAdresse;
+        const arriveeLocation = trip.destinationAdresse;
 
         return (
             <Animated.View
@@ -178,7 +200,7 @@ export function LastTrips() {
                 <Text style={[styles.text, { color: darkMode ? 'white' : styles.text.color }]}>
                     Heure : {moment(trip.departHeure).format('HH:mm')}
                 </Text>
-                <TouchableOpacity style={styles.button} onPress={handleAddTrip}>
+                <TouchableOpacity style={styles.button} onPress={handleDeleteTrip}>
                     <Text style={styles.buttonText}>Se désinscrire</Text>
                 </TouchableOpacity>
             </Animated.View>
@@ -199,9 +221,9 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#3B3B98',
+        backgroundColor: '#1C6E8C',
         borderRadius: 5,
-        shadowColor: '#3B3B98',
+        shadowColor: '#1C6E8C',
         shadowOffset: {
             width: 0,
             height: 2,
@@ -237,7 +259,7 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#3B3B98',
+        color: '#1C6E8C',
         margin: 10,
     },
 });
