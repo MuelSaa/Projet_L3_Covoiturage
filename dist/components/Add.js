@@ -102,7 +102,7 @@ export default function Add() {
       }
       showTripAddedModal();
       try {
-        const response = await fetch('https://covoiturage.onrender.com/Trajet', {
+        const response = await fetch('http://192.168.1.19:8080/Trajet', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
