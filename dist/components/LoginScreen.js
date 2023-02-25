@@ -4,27 +4,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { ThemeContext } from './AppProvider';
 import logo from '../assets/logo.png';
 
-exports.postTokenCreateToken = (req, res) => {
-  const login = req.body.login;
-  const password = req.body.password;
 
-  // Partie a modifier pour l'annuaire de la faculté 
-  const users = [
-    { login: 'Sami', password: 'bidule' },
-    { login: 'Adam', password: 'bidule' },
-    { login: 'Samuel', password: 'bidule' },
-    { login: 'Bastien', password: 'bidule' },
-  ];
-  // Vérifier si les informations de connexion sont valides en parcourant le tableau d'utilisateurs
-  const user = users.find(u => u.login === login && u.password === password);
-
-  if (user) { 
-    const token = jwt.sign({ user }, 'my_secret_key');
-    res.status(200).json({ success: true, Token: token });
-  } else {
-    res.status(401).json({ success: false, message: 'Identifiants invalides' });
-  }
-}
 
 const LoginScreen = () => {
 
@@ -47,29 +27,29 @@ const LoginScreen = () => {
       alert('Identifiants incorrects');
     }
   };
-  /*const handleLogin = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/api/login", {
+ 
+
+  const handleLogin = async () => {
+      const response = await fetch(`https://servor-sgtr.onrender.com/api/protected`, {
         method: 'POST',
         body: JSON.stringify({ login: login, password: password }),
-        headers: {
+        headers: { 
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         }
       });
-
+  
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
       const data = await response.json();
       const token = data.token;
-      alert(token);
-      // naviguer vers la page suivante ou effectuer une autre action
-    } catch (error) {
-      console.error(error);
-    }
-  };*/
+      /************Faire Affichier le token generé 
+      //alert(token);
+       Sinon naviguer jusqu'au menu ********************************/
+       navigate('Menu');
+};
+ 
 
   const InfoModal = ({ visible, onClose }) => {
     return (
