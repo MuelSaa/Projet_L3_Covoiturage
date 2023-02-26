@@ -29,7 +29,7 @@ exports.getAllTrajetPassager = (req, res) => {
     res.setHeader('Content-type', 'application/json');
     client = new Client(connectionString);
     client.connect();
-    client.query(`SELECT * FROM public."Passager" WHERE "Passager"."trajetID" = '${req.params.trajetID}'`, (dbERR, dbRes) => {
+    client.query(`SELECT * FROM public."Passager" WHERE "Passager"."trajetID" = '${client.escapeLiteral(req.params.trajetID)}'`, (dbERR, dbRes) => {
         if (dbERR) {
             console.error(dbERR);
             res.status(500).send( 'Internal Server Error');
@@ -38,6 +38,40 @@ exports.getAllTrajetPassager = (req, res) => {
         res.json(dbRes.rows);
         client.end();
         });
+}
+
+exports.getTrajetPassagerID = (req, res) => {
+    console.log("Recu : GET /PassagerID/"+req.params.passagerID);
+    res.setHeader('Content-type', 'application/json');
+    const client = new Client(connectionString);
+    client.connect();
+    const passagerID = req.params.passagerID;
+    const query = `SELECT *
+    FROM public."Trajet"
+    WHERE "trajetID" IN (
+      SELECT "trajetID"
+      FROM public."Passager"
+      WHERE "passagerID" = ${client.escapeLiteral(passagerID)}
+    );`;
+
+    client.query(query, (dbERR, dbRes) => {
+      if (dbERR) {
+        console.error(dbERR);
+        res.status(500).send('Internal Server Error');
+        client.end();
+        return;
+      }
+      if (dbRes.rowCount == 0) {
+        res.status(404).send(`No passenger found with ID ${passagerID}`);
+        client.end();
+        return;
+      } else {
+        const passager = dbRes.rows;
+        res.status(200).send(passager);
+        client.end();
+        return;
+      }
+    });
 }
 /*****************************************************
  *                      POST
@@ -127,14 +161,16 @@ exports.updatePassagerStatus = (req, res) => {
 exports.deletePassagerFromTrajet = (req, res) => {
     console.log(`Recu : DELETE /PassagerD/${req.params.trajetID}/${req.params.passagerID}`);
     res.setHeader('Content-type', 'application/json');
-   // console.log(req.params.trajetID)
-    //console.log(req.params.passagerID)
     const client = new Client(connectionString);
     client.connect();
     
+    // Protéger les données avec la fonction d'échappement SQL
+    const trajetID = client.escapeLiteral(req.params.trajetID);
+    const passagerID = client.escapeLiteral(req.params.passagerID);
+
     const query = `DELETE FROM "Passager" 
-                   WHERE "trajetID" = '${req.params.trajetID}' 
-                   AND "passagerID" = '${req.params.passagerID}';`;
+                   WHERE "trajetID" = ${trajetID} 
+                   AND "passagerID" = ${passagerID};`;
     
     client.query(query, (dbERR, dbRes) => {
         if (dbERR) {
@@ -146,12 +182,12 @@ exports.deletePassagerFromTrajet = (req, res) => {
     
         if (dbRes.rowCount == 0) {
             res.status(404).send(`No passenger found for trajetID ${req.params.trajetID} and passagerID ${req.params.passagerID}`);
+            client.end();
             return;
         } else {
             res.status(200).send(`Passenger with ID ${req.params.passagerID} successfully removed from trajet with ID ${req.params.trajetID}`);
+            client.end();
             return;
         }
-    
-        client.end();
     });
 };
