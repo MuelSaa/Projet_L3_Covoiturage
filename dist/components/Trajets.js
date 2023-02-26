@@ -10,12 +10,10 @@ import moment from 'moment';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { ThemeContext } from './AppProvider';
 
-import Config from 'react-native-config';
-const apiUrl = Config.API_URL;
-const apiKey = Config.API_KEY;
-Geocoder.init(apiKey, {language : "fr"});
-
 import { API_URL } from "./env";
+import { API_KEY } from "./env";
+Geocoder.init(API_KEY, {language : "fr"});
+
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -24,8 +22,6 @@ const handleRemoveTrip = async (id) => {
         const resp = await fetch(API_URL + "/Trajet/" + id, {
             method: 'DELETE'
         });
-        const data = await resp.json();
-        // Recharge la page si la suppression a réussi
         window.location.reload();
     } catch (error) {
         console.error(error);
@@ -70,7 +66,6 @@ export default function Trajets() {
 }
 
 export function DriverTrips() {
-    console.log("URL"+API_URL);
     const { darkMode, toggleDarkMode } = useContext(ThemeContext);
     const [trips, setTrips] = useState([]);
     const isFocused = useIsFocused();

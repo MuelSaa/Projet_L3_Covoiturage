@@ -1,19 +1,18 @@
-import React, { useState, useContext } from 'react';
-import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image} from 'react-native';
+import React, { useState, useContext, useRef } from 'react';
+import { Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image} from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 import MapView, { Marker } from 'react-native-maps';
 import { RadioButton } from 'react-native-paper';
 import Geocoder from 'react-native-geocoding';
 import * as Location from 'expo-location';
 import logo from '../assets/logo.png';
-import { DarkTheme } from '@react-navigation/native';
 import { ThemeContext } from './AppProvider';
+import moment from 'moment';
+import styles from '../styles';
 
-
-import Config from 'react-native-config';
-const apiUrl = Config.API_URL;
-const apiKey = Config.API_KEY;
-Geocoder.init(apiKey, {language : "fr"});
+import { API_URL } from "./env";
+import { API_KEY } from "./env";
+Geocoder.init(API_KEY, {language : "fr"});
 
 export default function Home() {
   const [date, setDate] = useState(new Date());
@@ -30,6 +29,8 @@ export default function Home() {
   const [address, setAddress] = useState('');
   const [dateFormat, setDateFormat] = useState('');
   const [addHolder, setHolder] = useState('choisir une adresse');
+  const timeoutRef = useRef(null);
+
   
   function setCompleteLocation(lat, long) {
     setMarkerlat(lat);
@@ -55,22 +56,48 @@ export default function Home() {
   
   const handleAddressChange = (newAddress) => {
     setAddress(newAddress);
-    if(newAddress.length > 10){
-    Geocoder.from(newAddress)
-      .then(json => {
-        var location = json.results[0].geometry.location;
-        setCompleteLocation(location.lat, location.lng);
-      })
-      .catch(error => console.log(error));
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
+    timeoutRef.current = setTimeout(() => {
+      Geocoder.from(newAddress)
+        .then(json => {
+          var location = json.results[0].geometry.location;
+          setCompleteLocation(location.lat, location.lng);
+        })
+        .catch(error => console.log(error));
+    }, 2000);
   };
-  const handleAddTrip = () => {}
+
+  const handleAddTrip = async (id) => { 
+    console.log(id);
+    try {
+        const body = JSON.stringify({
+            login: "samu",
+            trajetID: id,
+        });
+
+        const resp = await fetch(API_URL + "/Passager", {
+            method: 'POST',
+            body,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+        });
+        const data = await resp.json();
+        console.log(data);
+    } catch (error) {
+        console.error(error);
+    }
+  }
+
   const search = async () => {
     if(!dateFormat) alert("vous n'avez pas choisi de date...");
     if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
+    if(addHolder == 'adresse inconnue') alert("vous n'avez pas choisi une adresse valide...");
     else {
       console.log(dateFormat);
-      const resp = await fetch(apiUrl + '/FindTrajetDepart', {
+      const resp = await fetch(API_URL + '/Trajet', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -111,7 +138,7 @@ export default function Home() {
       <View style={[styles.container]}>
       <View style={styles.header}>
         <Image source={logo} style={styles.logo} />
-      </View>
+      </View> 
         <Text style={styles.h1}>Recherchez un trajet</Text>
         <View style={styles.addressContainer}>
           <TextInput
@@ -121,43 +148,40 @@ export default function Home() {
             placeholder={addHolder}
           />
         </View>
-        <View style={{display:'flex', flexDirection:'row'}}>
-          <TouchableOpacity style={styles.button}>
-            <Button title="Afficher carte" onPress={() => setMapModalVisible(true)} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Button title="Utiliser localisation" onPress={getCurrentLocation} />
-          </TouchableOpacity>
+        <View style={styles.tabrow}>
+        <TouchableOpacity style={[styles.button, { backgroundColor: '#1C6E8C' }]} onPress={() => setMapModalVisible(true)}>
+          <Text style={styles.buttonText}>Afficher carte</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, { backgroundColor: '#1C6E8C' }]} onPress={getCurrentLocation}>
+          <Text style={styles.buttonText}>Utiliser localisation</Text>
+        </TouchableOpacity>
         </View>
-        <Text style={{marginTop:10, fontSize:18}}>Université de sciences : </Text>
-        <View style={styles.tab}>
-          <Text style={styles.labelRadio}>Départ</Text>
-          <TouchableOpacity style={styles.button}>
-          <RadioButton
-            value="depart"
-            status={ checked === 'depart' ? 'checked' : 'unchecked' }
+        <View style={styles.radioButtonsContainer}>
+          <TouchableOpacity 
+            style={[styles.button, checked === 'depart' ? styles.activeButton : null]} 
             onPress={() => setChecked('depart')}
-          />
+          >
+            <Text style={[styles.buttonText, checked === 'depart' ? styles.activeButtonText : null]}>Université de Sciences - Départ</Text>
           </TouchableOpacity>
-          <Text style={styles.labelRadio}>Arrivée</Text>
-          <TouchableOpacity style={styles.button}>
-          <RadioButton
-            value="arrivee"
-            status={ checked === 'arrivee' ? 'checked' : 'unchecked' }
+          <TouchableOpacity 
+            style={[styles.button, checked === 'arrivee' ? styles.activeButton : null]} 
             onPress={() => setChecked('arrivee')}
-          />
+          >
+            <Text style={[styles.buttonText, checked === 'arrivee' ? styles.activeButtonText : null]}>Université de Sciences - Arrivée</Text>
           </TouchableOpacity>
         </View>
+
         <View style={styles.tab}>
+
           <Text style={styles.date}>{text}</Text>
-          <TouchableOpacity style={styles.button}>
-            <Button
-              style={styles.btn} title = "Date" onPress = { () => showMode('date')}
-            />
-            <Button
-              style={styles.btn} title = "Time" onPress = { () => showMode('time')}
-            />
+
+          <TouchableOpacity style={[styles.button, { backgroundColor: '#1C6E8C' }]} onPress = { () => showMode('date')}>
+            <Text style={styles.buttonText}>Date</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, { backgroundColor: '#1C6E8C' }]} onPress = { () => showMode('time')}>
+            <Text style={styles.buttonText}>Time</Text>
+          </TouchableOpacity>
+
         </View>
         {show && (
           <DateTimePicker
@@ -169,8 +193,8 @@ export default function Home() {
           onChange={onChangeDate}
           />
         )}
-        <TouchableOpacity style={styles.button}>
-          <Button onPress={() => search()} title="Rechercher" />
+        <TouchableOpacity style={styles.button} onPress={() => search()}>
+          <Text style={styles.buttonText}>Rechercher</Text>
         </TouchableOpacity>
         <Modal
         animationType="slide"
@@ -209,126 +233,23 @@ export default function Home() {
         visible={listModalVisible}
       >
         <View style={styles.modalContainer}>
+        <Text style={{color:'#1C6E8C', fontSize:23, marginBottom:30, fontStyle:"italic" }}>Cliquez sur un trajet pour l'ajouter</Text>
           <ScrollView>
             {trips.map((trip, index) => (
-              <View key={index} style={styles.tripContainer}>
-                <Text>{trip.depart} - {trip.destination} - {trip.departHeure}</Text>
-                <Button title="Ajouter ce trajet" onPress={handleAddTrip(trip)} />
-              </View>
+              <TouchableOpacity key={index} style={styles.tripTouchable} onPress={() => handleAddTrip(trip.trajetID)}>
+                <Text style={styles.tripText}>{trip.departAdresse} - {trip.destinationAdresse}</Text>
+                <Text style={styles.tripText}>{moment(trip.departHeure).format('DD/MM/YYYY HH:mm')}</Text>
+              </TouchableOpacity>
             ))}
-          <Button style={{ position: 'absolute', top: 20, right: 20 }} title="Masquer" onPress={() => setListModalVisible(false)} />
           </ScrollView>
+          <TouchableOpacity style={styles.closeButton} onPress={() => setListModalVisible(false)}>
+            <Text style={styles.closeButtonText}>Fermer</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
-
       </View>
       </ScrollView>
     );
   }
 
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 80,
-    marginBottom: 30,
-  },
-  logo: {
-    width: '100%',
-    height: '150%',
-  },
-  button: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    borderRadius: 5,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    margin: 10,
-  },
-  buttonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333'
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tripContainer: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: 'black',
-    margin: 10,
-  },
-  labelRadio: {
-    fontSize: 18,
-    paddingTop:20,  
-  },
-  h1: {
-    fontSize: 28,
-    fontWeight : '800',
-    paddingBottom : 20,
-    color: '#1C6E8C',
-    textAlign: 'center'
-  },
-  tab: {
-    margin:10,
-    display: 'flex',
-    flexDirection: 'row'
-  },
-  containers: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  label: {
-    fontSize: 18,
-    marginBottom: 5,
-  },
-  date: {
-    paddingTop: 15,
-    textAlign: 'center',
-    fontSize: 18,
-    height: 60,
-    borderColor: '#26322b',
-    borderWidth: 1,
-    borderRadius: 20,
-    width: '50%',
-  },
-  input: {
-    fontSize: 18,
-    paddingLeft: 5,
-    height: 40,
-    borderColor: 'grey',
-    borderWidth: 1,
-    width: '80%',
-  },
-  btn: {
-    margin : 40
-  },
-  addressContainer: {
-    height: 40,
-    borderWidth: 3,
-    borderRadius: 10,
-    borderColor: '#ddd',
-    alignContent: 'center',
-    width: '80%',
-    marginBottom: 10
-  },  
-  addressInput: {
-    paddingTop:5,
-    textAlign: 'center',
-    borderColor: '#ddd',
-    fontSize: 16,
-  },
-});
+;

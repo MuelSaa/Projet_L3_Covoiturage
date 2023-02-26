@@ -52,6 +52,7 @@ exports.postWantToJoin = (req, res) => {
 
     if(result.error){
         res.status(400).send(result.error);
+        return;
     }
 
     var {trajetID, login} = req.body;

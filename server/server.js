@@ -124,7 +124,7 @@ app.get('/NoteTrajet/:TrajetID',note.getNotesByTrajetId );
 
 //app.put('/Unote/:NoteID',note.updateNote)
 
-app.delete('/DNotes/:NoteID',note.deleteNote);
+//app.delete('/DNotes/:NoteID',note.deleteNote);
 
 /*****************************************************
  *                      Web Access Token 
