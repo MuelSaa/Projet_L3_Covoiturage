@@ -62,7 +62,7 @@ exports.getTrajetPassagerID = (req, res) => {
         return;
       }
       if (dbRes.rowCount == 0) {
-        res.status(404).send(`No passenger found with ID ${passagerID}`);
+        res.status(404).json([]);
         client.end();
         return;
       } else {
@@ -125,8 +125,6 @@ exports.postWantToJoin = (req, res) => {
     res.status(201).send(`Passager added`);
     client.end();
     });
-
-
 }
 /*****************************************************
  *                      UPDATE

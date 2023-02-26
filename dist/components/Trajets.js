@@ -160,4 +160,49 @@ export function DriverTrips() {
   }
   
 
-export function PassengerTrips() {};
+export function PassengerTrips() {
+    const [trips, setTrips] = useState([]);
+    const { darkMode } = useContext(ThemeContext);
+    const [refreshing, setRefreshing] = useState(false);
+  
+    const fetchTrips = async () => {
+        try {
+          const resp = await fetch(API_URL + '/PassagerID/' + user, { method: 'GET' });
+          const data = await resp.json();
+          console.log(data);
+          setTrips(data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+  
+    useEffect(() => {
+        fetchTrips();
+      }, []);
+
+    const onRefresh = () => {
+       setRefreshing(true);
+       fetchTrips();
+       setRefreshing(false);
+    };
+  
+    return (
+        <ScrollView
+            refreshControl={
+            <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={darkMode ? 'white' : 'black'}
+          />
+        }
+      >
+        {trips.map((trip, index) => (
+          <TouchableOpacity key={index} style={styles.tripTouchableTrajet} onPress={() => handleTripPressPassenger(trip)}>
+            <View style={styles.info}><Text style={styles.label}>Depart :     </Text><Text style={styles.tripText}>{trip.departAdresse}</Text></View>
+            <View style={styles.info}><Text style={styles.label}>Destination :     </Text><Text style={styles.tripText}>{trip.destinationAdresse}</Text></View>
+            <Text style={styles.tripText}>{moment(trip.departHeure).format('DD/MM/YYYY - HH:mm')}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    );
+  }
