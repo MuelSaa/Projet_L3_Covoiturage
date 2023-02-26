@@ -103,6 +103,8 @@ app.delete('/Notification/:notificationID',notification.deleteNotification);
 
 app.get('/Passager/:trajetID',passager.getAllTrajetPassager);
 
+app.get('/PassagerID/:passagerID',passager.getTrajetPassagerID);
+
 app.post('/Passager',passager.postWantToJoin);
 
 app.put('/Passager/:trajetID/:passagerID/:accepted',passager.updatePassagerStatus);
