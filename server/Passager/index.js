@@ -127,8 +127,6 @@ exports.updatePassagerStatus = (req, res) => {
 exports.deletePassagerFromTrajet = (req, res) => {
     console.log(`Recu : DELETE /PassagerD/${req.params.trajetID}/${req.params.passagerID}`);
     res.setHeader('Content-type', 'application/json');
-   // console.log(req.params.trajetID)
-    //console.log(req.params.passagerID)
     const client = new Client(connectionString);
     client.connect();
     

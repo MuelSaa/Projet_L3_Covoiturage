@@ -97,12 +97,18 @@ const styles = StyleSheet.create({
     borderColor: '#1C6E8C',
     paddingVertical: 20,
   },
+  tripTouchableTrajet: {
+    borderBottomWidth: 2,
+    borderBottomStartRadius: 20,
+    borderBottomEndRadius: 20,
+    borderColor: '#1C6E8C',
+    paddingVertical: 20,
+  },
   tripText: {
     alignSelf: 'center',
     fontSize: 16,
     lineHeight: 26,
-    marginBottom: 5,
-  },
+    fontWeight: 'bold',  },
   closeButton: {
     backgroundColor: '#1C6E8C',
     paddingVertical: 10,
@@ -137,6 +143,8 @@ const styles = StyleSheet.create({
     marginBottom: 10, 
   },    
   label: {
+    position: 'relative',
+    left:0,
     fontWeight: 'bold',
     fontSize: 18,
     color: '#1C6E8C',
@@ -146,10 +154,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   numberfield: {
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#1C6E8C',
   },
+  info: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 5,
+    marginLeft: 20,
+  }
 });
 
 export default styles;

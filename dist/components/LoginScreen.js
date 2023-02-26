@@ -73,13 +73,13 @@ const LoginScreen = () => {
       <Text style={styles.h1}>Connectez vous avec vos identifiants de l'université</Text>
       <Text style={{ color: darkMode ? 'white' : 'black' }}>Identifiant de connexion</Text>
       <TextInput
-        style={[styles.input, { backgroundColor: darkMode ? 'white' : '' }]}
+        style={[styles.input, { backgroundColor: darkMode ? 'white' : 'white' }]}
         onChangeText={(text) => setLogin(text)}
         value={login}
       />
       <Text style={{ color: darkMode ? 'white' : 'black' }}>Mot de passe</Text>
       <TextInput
-        style={[styles.input, , { backgroundColor: darkMode ? 'white' : '' }]}
+        style={[styles.input, , { backgroundColor: darkMode ? 'white' : 'white' }]}
         onChangeText={(text) => setPassword(text)}
         value={password}
         secureTextEntry={true}

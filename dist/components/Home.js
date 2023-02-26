@@ -233,7 +233,7 @@ export default function Home() {
         visible={listModalVisible}
       >
         <View style={styles.modalContainer}>
-        <Text style={{color:'#1C6E8C', fontSize:23, marginBottom:30, fontStyle:"italic" }}>Cliquez sur un trajet pour l'ajouter</Text>
+        <Text style={{color:'#1C6E8C', fontWeight:"bold", fontSize:23, marginBottom:30, fontStyle:"italic" }}>Cliquez sur un trajet pour l'ajouter</Text>
           <ScrollView>
             {trips.map((trip, index) => (
               <TouchableOpacity key={index} style={styles.tripTouchable} onPress={() => handleAddTrip(trip.trajetID)}>
