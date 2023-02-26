@@ -6,21 +6,22 @@ var {client, connectionString} = require("../config/serverConnection");
 /*****************************************************
  *                      GET
  *****************************************************/
-exports.getNotes = (req, res) => {
-    console.log("Recu : GET /Note/");
-    res.setHeader('Content-type', 'application/json');
-    client = new Client(connectionString);
-    client.connect();
-    client.query('SELECT * FROM "Notes"', (err, result) => {
-    if (err) {
-    console.error(err);
-    res.status(500).send('Internal Server Error');
-    return;
-    }
-    res.send(result.rows);
-    client.end();
+  exports.getNotes = (req, res) => {
+      console.log("Recu : GET /Note/");
+      res.setHeader('Content-type', 'application/json');
+      client = new Client(connectionString);
+      client.connect();
+      client.query('SELECT * FROM "Notes"', (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+      return;
+      }
+      res.send(result.rows);
+      client.end();
+      return;
     });
-    };
+      };
     
     // GET /notes/:id - renvoie une note avec l'id spécifié
     exports.getNoteById = (req, res) => {
@@ -30,16 +31,18 @@ exports.getNotes = (req, res) => {
     client.connect();
     client.query('SELECT * FROM "Notes" WHERE "noteID" = $1', [id], (err, result) => {
     if (err) {
-    console.error(err);
-    res.status(500).send('Internal Server Error');
-    return;
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+      client.end();
+      return;
     }
     if (result.rows.length === 0) {
-    res.status(404).send('Note not found');
-    return;
+      res.status(404).send('Note not found');
+      client.end();
+      return;
     }
-    res.send(result.rows[0]);
-    client.end();
+      res.send(result.rows[0]);
+      client.end();
     });
     };
 
@@ -53,14 +56,13 @@ exports.getNotes = (req, res) => {
           if (err) {
             console.error(err);
             res.status(500).send('Internal Server Error');
+            client.end();
             return;
           }
           res.send(result.rows);
           client.end();
         });
       };
-
-
 
       exports.getNotesByNoter = (req, res) => {
         const noter = req.params.noterLogin;
@@ -71,10 +73,12 @@ exports.getNotes = (req, res) => {
           if (err) {
             console.error(err);
             res.status(500).send('Internal Server Error');
+            client.end();
             return;
           }
           res.send(result.rows);
           client.end();
+          return;
         });
       };
 
@@ -87,10 +91,12 @@ exports.getNotes = (req, res) => {
           if (err) {
             console.error(err);
             res.status(500).send('Internal Server Error');
+            client.end();
             return;
           }
           res.send(result.rows);
           client.end();
+          return;
         });
       };
 /*****************************************************
@@ -104,25 +110,28 @@ exports.getNotes = (req, res) => {
 /*****************************************************
  *                      DELETE
  *****************************************************/
-//Pas encore Fonctionnel
-/*exports.deleteNote = (req, res) => {
-    const dnoter = req.params.NoteID;
-    console.log(dnoter);
-    client.query(
-      `DELETE FROM "Notes" WHERE "noteID"=$1 RETURNING *`,
-      [noteID],
-      (err, result) => {
-        if (err) {
-          console.error(err);
-          res.status(500).send('Internal Server Error');
-          return;
-        }
-        if (result.rows.length === 0) {
-          res.status(404).send('Note not found');
-          return;
-        }
-        res.send(result.rows[0]);
+exports.deleteNote = (req, res) => {
+  const dnoter = req.params.NoteID;
+  console.log(dnoter);
+  //const client = new Client(connectionString); // initialisation de client
+  //client.connect();
+  client.query(
+    `DELETE FROM "Notes" WHERE "noteID"=$1 RETURNING *`,
+    [dnoter],
+    (err, result) => {
+      //client.end(); // fermeture de la connexion
+      if (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+        return;
       }
-    );
-  };
+      if (result.rows.length === 0) {
+        res.status(404).send('Note not found');
+        return;
+      }
+      res.status(200).send(`Note with ID ${req.params.NoteID} successfully removed from Notes`);
+      return;
+    }
+  );
+};
   */
