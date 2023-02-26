@@ -123,3 +123,35 @@ exports.updatePassagerStatus = (req, res) => {
 /*****************************************************
  *                      DELETE
  *****************************************************/
+//Route pour se desinscrire d'un trajet en fonction du passager et du trajetID 
+exports.deletePassagerFromTrajet = (req, res) => {
+    console.log(`Recu : DELETE /PassagerD/${req.params.trajetID}/${req.params.passagerID}`);
+    res.setHeader('Content-type', 'application/json');
+   // console.log(req.params.trajetID)
+    //console.log(req.params.passagerID)
+    const client = new Client(connectionString);
+    client.connect();
+    
+    const query = `DELETE FROM "Passager" 
+                   WHERE "trajetID" = '${req.params.trajetID}' 
+                   AND "passagerID" = '${req.params.passagerID}';`;
+    
+    client.query(query, (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send('Internal Server Error');
+            client.end();
+            return;
+        }
+    
+        if (dbRes.rowCount == 0) {
+            res.status(404).send(`No passenger found for trajetID ${req.params.trajetID} and passagerID ${req.params.passagerID}`);
+            return;
+        } else {
+            res.status(200).send(`Passenger with ID ${req.params.passagerID} successfully removed from trajet with ID ${req.params.trajetID}`);
+            return;
+        }
+    
+        client.end();
+    });
+};
