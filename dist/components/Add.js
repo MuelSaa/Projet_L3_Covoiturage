@@ -1,11 +1,11 @@
 import React, { useState, useContext, useRef } from 'react';
-import { StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { Alert, StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image } from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
 import MapView, { Marker } from 'react-native-maps';
 import { RadioButton } from 'react-native-paper';
 import Geocoder from 'react-native-geocoding';
 import * as Location from 'expo-location';
-import TripAddedModal from './TripAddedModal';
 import logo from '../assets/logo.png';
 import { DarkTheme } from '@react-navigation/native';
 import { ThemeContext } from './AppProvider';
@@ -32,7 +32,6 @@ export default function Add() {
   const [dateFormat2, setDateFormat2] = useState('');
   const [addHolder, setHolder] = useState('choisir une adresse');
   const [passengers, setPassengers] = useState(1);
-  const [addModalVisible, setAddModalVisible] = useState(false);
   const [champ1, setchamp1] = useState('');
   const [champ2, setchamp2] = useState('');
   const [champ3, setchamp3] = useState('');
@@ -40,15 +39,70 @@ export default function Add() {
   const [champ5, setchamp5] = useState('');
   const [champ6, setchamp6] = useState('');
   const timeoutRef = useRef(null);
+  const [showAddTripModal, setShowAddTripModal] = useState(false);
+
+  const AddTripModal = ({ visible, onClose }) => {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={visible}
+        onRequestClose={onClose}
+      >
+      <View style={modalStyles.container}>
+        <View style={modalStyles.modalContainer}>
+          <TouchableOpacity onPress={onClose} style={modalStyles.closeButton}>
+            <Text style={modalStyles.closeButtonText}>X</Text>
+          </TouchableOpacity>
+          <Text style={modalStyles.title}>Trajet ajouté</Text>
+          <Text style={modalStyles.message}>Votre trajet a bien été ajouté.</Text>
+        </View>
+        </View>
+      </Modal>
+      
+    );
+  };
 
 
-  function showTripAddedModal() {
-    setAddModalVisible(true);
-  }
-
-  const hideTripAddedModal = () => {
-    setAddModalVisible(false);
-  }
+const modalStyles = StyleSheet.create({
+  container : {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 20,
+    margin: 30,
+    borderColor:'green',
+    borderWidth: 3,
+    width: '80%',
+    height: '15%',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: 'green',
+  },
+  message: {
+    fontSize: 16,
+    color: 'black',
+    textAlign: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 10,
+  },
+  closeButtonText: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 30,
+  },
+});
 
   const incrementPassengers = () => {
     if (passengers < 8) {
@@ -104,6 +158,7 @@ export default function Add() {
     if (!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     if(addHolder == 'adresse inconnue') alert("vous n'avez pas choisi une adresse valide...");
     else {
+      setShowAddTripModal(true);
       if (checked === 'depart') {
         setchamp1(47.244505);
         setchamp2(5.987401);
@@ -120,7 +175,6 @@ export default function Add() {
         setchamp5(addHolder);
         setchamp6('universite');
       }
-      showTripAddedModal();
       try {
         const response = await fetch(API_URL + '/Trajet', {
           method: 'POST',
@@ -226,7 +280,7 @@ export default function Add() {
         )}
 
         <View style={styles.tabrow}>
-          <Text style={styles.label}>Nombre de places : </Text>
+          <Text style={styles.label}>place(s) disponible(s) : </Text>
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={() => incrementPassengers()}>
               <Text style={styles.buttonText}>+</Text>
@@ -237,10 +291,11 @@ export default function Add() {
             </TouchableOpacity>
           </View>
         </View>
-
-        <TouchableOpacity style={styles.button} onPress={() => add()}>
-          <Text style={styles.buttonText}>Creer le trajet</Text>
-        </TouchableOpacity>
+        <View>
+          <TouchableOpacity style={styles.button} onPress={() => add()}>
+            <Text style={styles.buttonText}>Creer le trajet</Text>
+          </TouchableOpacity>
+        </View>
 
         <Modal
         animationType="slide"
@@ -273,6 +328,7 @@ export default function Add() {
           style={{ position: 'absolute', top: 20, right: 20 }}
         />
       </Modal>
+      <AddTripModal visible={showAddTripModal} onClose={() => setShowAddTripModal(false)} />
       </View>
     </ScrollView>
   );

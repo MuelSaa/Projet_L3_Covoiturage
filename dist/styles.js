@@ -104,11 +104,13 @@ const styles = StyleSheet.create({
     borderColor: '#1C6E8C',
     paddingVertical: 20,
   },
+
   tripText: {
-    alignSelf: 'center',
-    fontSize: 16,
+    textAlign: 'center',
+    fontSize: 15,
     lineHeight: 26,
-    fontWeight: 'bold',  },
+    fontWeight: 'bold',
+    },
   closeButton: {
     backgroundColor: '#1C6E8C',
     paddingVertical: 10,
@@ -143,6 +145,7 @@ const styles = StyleSheet.create({
     marginBottom: 10, 
   },    
   label: {
+    marginRight: -10,
     position: 'relative',
     left:0,
     fontWeight: 'bold',
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     marginBottom: 5,
-    marginLeft: 20,
+    marginLeft: 10,
   }
 });
 

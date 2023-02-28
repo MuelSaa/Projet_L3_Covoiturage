@@ -24,15 +24,16 @@ const joinTrajetSchema = Joi.object({
 /*****************************************************
  *                      GET
  *****************************************************/
+
 exports.getAllTrajetPassager = (req, res) => {
     console.log("Recu : GET /Passager/"+req.params.trajetID);
     res.setHeader('Content-type', 'application/json');
     client = new Client(connectionString);
     client.connect();
-    client.query(`SELECT * FROM public."Passager" WHERE "Passager"."trajetID" = '${client.escapeLiteral(req.params.trajetID)}'`, (dbERR, dbRes) => {
+    client.query(`SELECT * FROM public."Passager" WHERE "Passager"."trajetID" = '${req.params.trajetID}'`, (dbERR, dbRes) => {
         if (dbERR) {
             console.error(dbERR);
-            res.status(500).send( 'Internal Server Error');
+            res.status(500).send(JSON.stringify('Internal Server Error'));
             return;
         }
         res.json(dbRes.rows);
