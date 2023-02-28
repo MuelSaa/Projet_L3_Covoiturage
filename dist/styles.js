@@ -1,3 +1,5 @@
+import React, { useContext } from 'react';
+import { ThemeContext } from './components/AppProvider';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -167,6 +169,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 5,
     marginLeft: 10,
+  },
+  buttonInfo: {
+    justifyContent: 'center',
+    width:'80%',
+    flexDirection: 'row',
+    padding: 10,
+    margin: 5,
+    borderColor: '#1C6E8C',
+    borderWidth: 2,
+    borderRadius: 20,
+    lineHeight: 26,
+  },
+  buttonInfoText: {
+    color: darkMode ? 'white' : 'black' ,
+    marginLeft: 10,
+    fontWeight: 'bold',
+    fontSize: 20,
   }
 });
 

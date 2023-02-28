@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from 'react';
-import { Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image} from 'react-native';
+import { Alert, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image} from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 import MapView, { Marker } from 'react-native-maps';
 import { RadioButton } from 'react-native-paper';
@@ -9,6 +9,7 @@ import logo from '../assets/logo.png';
 import { ThemeContext } from './AppProvider';
 import moment from 'moment';
 import styles from '../styles';
+import modalStyles from '../modalStyles';
 
 import { API_URL } from "./env";
 import { API_KEY } from "./env";
@@ -30,7 +31,29 @@ export default function Home() {
   const [dateFormat, setDateFormat] = useState('');
   const [addHolder, setHolder] = useState('choisir une adresse');
   const timeoutRef = useRef(null);
+  const [showAddTripModal, setShowAddTripModal] = useState(false);
 
+  const AddTripModal = ({ visible, onClose }) => {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={visible}
+        onRequestClose={onClose}
+      >
+      <View style={modalStyles.container}>
+        <View style={modalStyles.modalContainer}>
+          <TouchableOpacity onPress={onClose} style={modalStyles.closeButton}>
+            <Text style={modalStyles.closeButtonText}>X</Text>
+          </TouchableOpacity>
+          <Text style={modalStyles.title}>Trajet ajouté</Text>
+          <Text style={modalStyles.message}>Vous avez demandé l'inscription à ce trajet.</Text>
+        </View>
+        </View>
+      </Modal>
+      
+    );
+  };
   
   function setCompleteLocation(lat, long) {
     setMarkerlat(lat);
@@ -133,6 +156,35 @@ export default function Home() {
   }
   const { darkMode } = useContext(ThemeContext);
 
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleTripPress = (trip) => {
+    Alert.alert(
+        'Que souhaitez-vous faire ?',
+        '',
+        [
+            {
+                text: 'Ajouter ce trajet',
+                onPress: async () => {
+                    setShowAddTripModal(true);
+                    handleAddTrip(trip.trajetID);
+                },
+                style: 'default',
+            },
+            {
+                text: 'Information sur le trajet',
+                onPress: () => {
+                },
+                style: 'default',
+            },
+            {
+                text: 'Annuler',
+                onPress: () => {},
+                style: 'cancel',
+            },
+        ],
+    );
+  };
     return (
       <ScrollView style={{backgroundColor: darkMode ? 'black' : 'white'}}>
       <View style={[styles.container]}>
@@ -228,7 +280,7 @@ export default function Home() {
         />
       </Modal>
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={false}
         visible={listModalVisible}
       >
@@ -236,7 +288,7 @@ export default function Home() {
         <Text style={{color:'#1C6E8C', fontWeight:"bold", fontSize:23, marginBottom:30, fontStyle:"italic" }}>Cliquez sur un trajet pour l'ajouter</Text>
           <ScrollView>
             {trips.map((trip, index) => (
-              <TouchableOpacity key={index} style={styles.tripTouchable} onPress={() => handleAddTrip(trip.trajetID)}>
+              <TouchableOpacity key={index} style={styles.tripTouchable} onPress={() => handleTripPress(trip)}>
                 <Text style={styles.tripText}>{trip.departAdresse} - {trip.destinationAdresse}</Text>
                 <Text style={styles.tripText}>{moment(trip.departHeure).format('DD/MM/YYYY HH:mm')}</Text>
               </TouchableOpacity>
@@ -248,6 +300,7 @@ export default function Home() {
         </View>
       </Modal>
       </View>
+      <AddTripModal visible={showAddTripModal} onClose={() => setShowAddTripModal(false)} />
       </ScrollView>
     );
   }

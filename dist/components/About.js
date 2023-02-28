@@ -1,7 +1,10 @@
 import React, { useContext } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { ThemeContext } from './AppProvider';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import styles from '../styles';
+import logo from '../assets/logo.png';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const About = () => {
   const { darkMode, toggleDarkMode, GlobalLogin, logout } = useContext(ThemeContext);
@@ -10,53 +13,27 @@ const About = () => {
   const text = darkMode ? 'Mode sombre activé' : 'Mode sombre désactivé';
 
   return (
-    <View style={[styles.container, { backgroundColor: darkMode ? 'black' : 'white' }]}>
+    <ScrollView style={{backgroundColor: darkMode ? 'black' : 'white'}}>
+      <View style={[styles.container]}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Bonjour {GlobalLogin} !</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-          <Icon name="sign-out" size={20} color="red" />
+        <Image source={logo} style={styles.logo} />
+      </View> 
+        <Text style={styles.h1}>Bonjour {GlobalLogin} !</Text>
+        <TouchableOpacity style={styles.buttonInfo}>
+          <Icon name="history" size={20} color={darkMode ? 'white' : 'black'}/>
+          <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Votre historique des trajets</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonInfo} onPress={toggleDarkMode}>
+          <Icon name={icon} size={20} color={darkMode ? 'white' : 'black'} />
+          <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>{text}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonInfo}>
+          <Icon name="info" size={20} color={darkMode ? 'white' : 'black'}/>
+          <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Conditions legales</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.darkModeButton} onPress={toggleDarkMode}>
-        <Icon name={icon} size={20} color={darkMode ? 'white' : 'black'} />
-        <Text style={[styles.darkModeText, { color: darkMode ? 'white' : 'black' }]}>{text}</Text>
-      </TouchableOpacity>
-      
-    </View>
+    </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    margin: 10,
-  },
-  headerText: {
-    color: '#82B2D9',
-    fontSize: 18,
-  },
-  logoutButton: {
-    marginLeft: 10,
-  },
-  darkModeButton: {
-    flexDirection: 'row',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 50,
-  },
-  darkModeText: {
-    marginLeft: 5,
-    fontSize: 16,
-  },
-});
 
 export default About;
