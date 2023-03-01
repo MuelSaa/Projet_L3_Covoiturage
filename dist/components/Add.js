@@ -212,21 +212,21 @@ export default function Add() {
         )}
 
         <View style={styles.tabrow}>
-          <Text style={styles.label}>place(s) disponible(s) : </Text>
+          <Text style={styles.label}>Place(s) disponible(s) : </Text>
+          <Text style={styles.numberfield}>{passengers}</Text>
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={() => incrementPassengers()}>
               <Text style={styles.buttonText}>+</Text>
             </TouchableOpacity>
-            <Text style={styles.numberfield}>{passengers}</Text>
             <TouchableOpacity style={styles.button} onPress={() => decrementPassengers()}>
               <Text style={styles.buttonText}>-</Text>
             </TouchableOpacity>
-          </View>
+            </View>
         </View>
 
         <View>
-          <TouchableOpacity style={styles.button} onPress={() => add()}>
-            <Text style={styles.buttonText}>Creer le trajet</Text>
+          <TouchableOpacity style={styles.buttonForm} onPress={() => add()}>
+            <Text style={styles.buttonFormText}>Creer le trajet</Text>
           </TouchableOpacity>
         </View>
 

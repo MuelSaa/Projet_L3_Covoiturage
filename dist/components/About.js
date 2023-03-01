@@ -24,12 +24,6 @@ const About = () => {
         '',
         [
             {
-                text: 'Ajouter ce trajet',
-                onPress: () => {
-                },
-                style: 'default',
-            },
-            {
                 text: 'Information sur le trajet',
                 onPress: () => {
                 },

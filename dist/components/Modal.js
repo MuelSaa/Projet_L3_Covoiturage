@@ -77,17 +77,18 @@ export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text})
 
   return (
     <Modal
-        animationType="fade"
+        animationType="slide"
         transparent={false}
         visible={visible}
       >
         <View style={styles.modalContainer}>
-        <Text style={{color:'#1C6E8C', fontWeight:"bold", fontSize:23, marginBottom:30, fontStyle:"italic", textAlign:'center'}}>{text}</Text>
+        <Text style={{color:'#1C6E8C', fontWeight:"bold", fontSize:27, marginBottom:30, fontStyle:"italic", textAlign:'center'}}>{text}</Text>
           <ScrollView>
             {trips.map((trip, index) => (
               <TouchableOpacity key={index} style={styles.tripTouchable} onPress={() => handleTripPress(trip)}>
-                <Text style={styles.tripText}>{trip.departAdresse} - {trip.destinationAdresse}</Text>
-                <Text style={styles.tripText}>{moment(trip.departHeure).format('DD/MM/YYYY HH:mm')}</Text>
+                <View style={styles.info}><Text style={styles.label}>Depart : </Text><Text style={styles.tripText} >{trip.departAdresse}</Text></View>
+                <View style={styles.info}><Text style={styles.label}>Arrivée : </Text><Text style={styles.tripText} numberOfLines={1} ellipsizeMode="tail">{trip.destinationAdresse}</Text></View>
+                <Text style={styles.h1}>{moment(trip.departHeure).format('DD/MM/YYYY -;k  HH:mm')}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>

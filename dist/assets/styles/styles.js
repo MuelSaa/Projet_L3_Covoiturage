@@ -27,13 +27,37 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    margin: 5,
+    padding: 15,
+  },
+  buttonForm: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1C6E8C',
+    borderRadius: 5,
+    borderColor:'black',
+    borderWidth:3,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
     margin: 10,
     padding: 15,
   },
   buttonText: {
-    fontSize: 17,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
+  },
+  buttonFormText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'black',
   },
   container: {
     flex: 1,
@@ -45,14 +69,11 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   h1: {
-    fontSize: 28,
-    paddingBottom: 10,
+    fontSize: 20,
+    paddingTop: 5,
     color: '#1C6E8C',
     textAlign: 'center',
-    borderBottomWidth: 2,
-    borderColor: '#1C6E8C',
-    marginBottom:20,
-  },
+    fontWeight: 'bold',  },
   tab: {
     margin: 10,
     display: 'flex',
@@ -60,18 +81,19 @@ const styles = StyleSheet.create({
   },
   date: {
     marginTop: 5,
-    paddingTop: 20,
+    paddingTop: 10,
     textAlign: 'center',
-    fontSize: 18,
-    height: 60,
+    fontSize: 20,
+    color: '#1C6E8C',
+    height: 50,
     borderColor: '#1C6E8C',
     borderWidth: 2,
-    borderRadius: 20,
+    borderRadius: 10,
     width: '50%',
     paddingHorizontal: 10,
   },
   addressContainer: {
-    height: 40,
+    height: 50,
     borderWidth: 2,
     borderRadius: 10,
     borderColor: '#1C6E8C',
@@ -81,10 +103,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   addressInput: {
-    paddingTop: 5,
+    paddingTop: 10,
     textAlign: 'center',
     borderColor: '#1C6E8C',
-    fontSize: 16,
+    fontSize: 20,
   },
   modalContainer: {
     flex: 1,
@@ -93,9 +115,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   tripTouchable: {
-    borderTopWidth: 2,
-    borderTopStartRadius: 20,
-    borderTopEndRadius: 20,
+    borderWidth: 2,
+    borderRadius: 20,
+    margin:5,
     borderColor: '#1C6E8C',
     paddingVertical: 20,
   },
@@ -111,7 +133,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     lineHeight: 26,
-    fontWeight: 'bold',
+    fontWeight: 'bold', 
     },
   closeButton: {
     backgroundColor: '#1C6E8C',
@@ -145,21 +167,23 @@ const styles = StyleSheet.create({
     marginBottom: 10, 
   },    
   label: {
-    marginRight: -10,
+    fontSize: 20,
+    marginRight: 5,
     position: 'relative',
     left:0,
     fontWeight: 'bold',
-    fontSize: 18,
     color: '#1C6E8C',
   },
   buttonContainer: {
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
   },
   numberfield: {
-    fontSize: 22,
+    marginRight: 10,
+    fontSize: 30,
     fontWeight: 'bold',
-    color: '#1C6E8C',
+    color: 'black',
   },
   info: {
     flexDirection: 'row',
@@ -167,6 +191,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 5,
     marginLeft: 10,
+    maxWidth: '76%',
   },
   buttonInfo: {
     justifyContent: 'center',
@@ -183,7 +208,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontWeight: 'bold',
     fontSize: 20,
-  }
+  },
+
+  
 });
 
 export default styles;

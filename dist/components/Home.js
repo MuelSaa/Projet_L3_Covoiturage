@@ -250,8 +250,8 @@ export default function Home() {
           onChange={onChangeDate}
           />
         )}
-        <TouchableOpacity style={styles.button} onPress={() => search()}>
-          <Text style={styles.buttonText}>Rechercher</Text>
+        <TouchableOpacity style={styles.buttonForm} onPress={() => search()}>
+          <Text style={styles.buttonFormText}>Rechercher</Text>
         </TouchableOpacity>
         <MapShowModal 
           visible={mapModalVisible} 
