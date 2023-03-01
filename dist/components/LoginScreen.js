@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Modal } fro
 import { useNavigation } from 'react-navigation-hooks';
 import { ThemeContext } from './AppProvider';
 import logo from '../assets/logo.png';
-
+import { InfoModal } from './Modal';
 
 
 const LoginScreen = () => {
@@ -40,27 +40,6 @@ const LoginScreen = () => {
        navigate('Menu');
   };
 };
-
- 
-  const InfoModal = ({ visible, onClose }) => {
-    return (
-      <Modal
-        visible={visible}
-        animationType="slide"
-        transparent={true}
-      >
-        <View style={styles.infoModalContainer}>
-          <View style={styles.infoModalContent}>
-            <Text>Cette application est projet réalisé par des étudiants de L3 Informatique de l'UFR ST.</Text><Text></Text>
-            <Text>Les données collectées par cette application ne seront pas utilisées à des fins commerciales.</Text>
-            <TouchableOpacity style={styles.infoModalCloseButton} onPress={onClose}>
-              <Text style={styles.infoModalCloseButtonText}>Fermer</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    );
-  };
 
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const { darkMode } = useContext(ThemeContext);

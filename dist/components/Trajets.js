@@ -10,45 +10,15 @@ import moment from 'moment';
 import Dialog, { DialogContent } from 'react-native-popup-dialog';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { ThemeContext } from './AppProvider';
-import styles from '../styles';
-
+import modalStyles from '../assets/styles/modalStyles';
+import styles from '../assets/styles/styles';
+import { RemoveTripModal } from './Modal';
 
 import { API_URL } from "./env";
 import { API_KEY } from "./env";
 Geocoder.init(API_KEY, {language : "fr"});
 const user = "samu";
 const Tab = createMaterialTopTabNavigator();
-
-
-const handleTripPressPassenger = (trip) => {
-    Alert.alert(
-        'Que souhaitez-vous faire ?',
-        '',
-        [
-            {
-                text: 'Information sur le trajet',
-                onPress: () => {
-                    // afficher des informations sur le trajet
-                    console.log(trip);
-                },
-                style: 'default',
-            },
-            {
-                text: 'Se retirer des passagers',
-                onPress: () => {
-                    handleUnscribeTrip(trip.trajetID)
-                    console.log(`Supprimer le trajet ${trip.trajetID}`);
-                },
-                style: 'destructive',
-            },
-            {
-                text: 'Annuler',
-                onPress: () => {},
-                style: 'cancel',
-            },
-        ],
-    );
-};
 
 const handleRemoveTrip = async (id) => { 
     try {
@@ -78,9 +48,15 @@ export default function Trajets() {
                 tabBarActiveTintColor: darkMode ? 'white' : 'black',
                 tabBarInactiveTintColor: darkMode ? 'gray' : 'lightgray',
                 tabBarStyle: {backgroundColor: darkMode ? 'black' : 'white'},
+                tabBarActiveTintColor: '#1C6E8C',
+                tabBarInactiveTintColor: 'gray',
+                tabBarPressColor: '#1C6E8C',
+                borderColor: '#1C6E8C',
+                tabBarIndicatorStyle: {backgroundColor: '#1C6E8C'},
             }}>
-            <Tab.Screen name="Conducteur" component={DriverTrips} />
+            <Tab.Screen name="Conducteur" component={DriverTrips}/>
             <Tab.Screen name="Passager" component={PassengerTrips} />
+            
         </Tab.Navigator>
     );
 }
@@ -91,6 +67,8 @@ export function DriverTrips() {
     const { darkMode } = useContext(ThemeContext);
     const [refreshing, setRefreshing] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [showRemoveTripModal, setShowRemoveTripModal] = useState(false);
+
 
     const handleTripPressDriver = (trip) => {
         Alert.alert(
@@ -105,6 +83,7 @@ export function DriverTrips() {
                               const resp = await fetch(API_URL + '/Passager/' + trip.trajetID, { method: 'GET' });
                               const data = await resp.json();
                               console.log(data);
+                              if(data != undefined)
                               setPassengers(data);
                             } catch (error) {
                               console.error(error);
@@ -116,6 +95,7 @@ export function DriverTrips() {
                 {
                     text: 'Supprimer le trajet',
                     onPress: () => {
+                        setShowRemoveTripModal(true);
                         handleRemoveTrip(trip.trajetID)
                         console.log(`Supprimer le trajet ${trip.trajetID}`);
                     },
@@ -169,7 +149,7 @@ export function DriverTrips() {
             <View style={styles.info}><Text style={styles.label}>Places restantes :     </Text><Text style={styles.tripText}>{trip.placeDisponible}</Text></View>
           </TouchableOpacity>
         ))}
-        
+        <RemoveTripModal visible={showRemoveTripModal} onClose={() => setShowRemoveTripModal(false)} />
         <Modal
         animationType="slide"
         transparent={true}
@@ -191,7 +171,6 @@ export function DriverTrips() {
             </View>
         </View>
         </Modal>
-
       </ScrollView>
       
     );
@@ -202,6 +181,8 @@ export function PassengerTrips() {
     const [trips, setTrips] = useState([]);
     const { darkMode } = useContext(ThemeContext);
     const [refreshing, setRefreshing] = useState(false);
+    const [showRemoveTripModal, setShowRemoveTripModal] = useState(false);
+
   
     const fetchTrips = async () => {
         try {
@@ -223,6 +204,38 @@ export function PassengerTrips() {
        fetchTrips();
        setRefreshing(false);
     };
+
+
+const handleTripPressPassenger = (trip) => {
+  Alert.alert(
+      'Que souhaitez-vous faire ?',
+      '',
+      [
+          {
+              text: 'Information sur le trajet',
+              onPress: () => {
+                  // afficher des informations sur le trajet
+                  console.log(trip);
+              },
+              style: 'default',
+          },
+          {
+              text: 'Se retirer des passagers',
+              onPress: () => {
+                  setShowRemoveTripModal(true);
+                  handleUnscribeTrip(trip.trajetID)
+                  console.log(`Supprimer le trajet ${trip.trajetID}`);
+              },
+              style: 'destructive',
+          },
+          {
+              text: 'Annuler',
+              onPress: () => {},
+              style: 'cancel',
+          },
+      ],
+  );
+};
   
     return (
         <ScrollView
@@ -241,53 +254,7 @@ export function PassengerTrips() {
             <Text style={styles.tripText}>{moment(trip.departHeure).format('DD/MM/YYYY - HH:mm')}</Text>
           </TouchableOpacity>
         ))}
+        <RemoveTripModal visible={showRemoveTripModal} onClose={() => setShowRemoveTripModal(false)} />
       </ScrollView>
     );
-  }
-
-  const modalStyles = StyleSheet.create({
-    centeredView: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 22,
-    },
-    modalView: {
-      margin: 20,
-      backgroundColor: 'white',
-      borderRadius: 20,
-      padding: 35,
-      alignItems: 'center',
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
-    },
-    button: {
-      marginTop:10,
-      marginBottom: -10,
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2,
-      marginVertical: 10,
-    },
-    buttonClose: {
-      backgroundColor: '#2196F3',
-    },
-    textStyle: {
-      color: 'white',
-      fontWeight: 'bold',
-      textAlign: 'center',
-    },
-    modalText: {
-      color: '#1E90FF',
-      marginBottom: 15,
-      fontSize: 20,
-      textAlign: 'center',
-      fontWeight: 'bold',
-    },
-  });
+  };

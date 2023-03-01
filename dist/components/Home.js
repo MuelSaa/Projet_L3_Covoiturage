@@ -2,20 +2,21 @@ import React, { useState, useContext, useRef } from 'react';
 import { Alert, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image} from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
 import MapView, { Marker } from 'react-native-maps';
-import { RadioButton } from 'react-native-paper';
 import Geocoder from 'react-native-geocoding';
 import * as Location from 'expo-location';
 import logo from '../assets/logo.png';
 import { ThemeContext } from './AppProvider';
-import moment from 'moment';
-import styles from '../styles';
-import modalStyles from '../modalStyles';
+import styles from '../assets/styles/styles';
+import { AddPassengerModal } from './Modal';
+import { TripShowModal } from './Modal';
+import { MapShowModal } from './Modal';
 
 import { API_URL } from "./env";
 import { API_KEY } from "./env";
 Geocoder.init(API_KEY, {language : "fr"});
 
 export default function Home() {
+
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
@@ -31,30 +32,19 @@ export default function Home() {
   const [dateFormat, setDateFormat] = useState('');
   const [addHolder, setHolder] = useState('choisir une adresse');
   const timeoutRef = useRef(null);
-  const [showAddTripModal, setShowAddTripModal] = useState(false);
+  const [showAddPassengerModal, setShowAddPassengerModal] = useState(false);
+  const { darkMode } = useContext(ThemeContext);
 
-  const AddTripModal = ({ visible, onClose }) => {
-    return (
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onClose}
-      >
-      <View style={modalStyles.container}>
-        <View style={modalStyles.modalContainer}>
-          <TouchableOpacity onPress={onClose} style={modalStyles.closeButton}>
-            <Text style={modalStyles.closeButtonText}>X</Text>
-          </TouchableOpacity>
-          <Text style={modalStyles.title}>Trajet ajouté</Text>
-          <Text style={modalStyles.message}>Vous avez demandé l'inscription à ce trajet.</Text>
-        </View>
-        </View>
-      </Modal>
-      
-    );
-  };
-  
+
+  /**********************************************************************************************************
+   * 3 fonctions pour gérer la localisation de l'utilisateur :
+   * 
+   * getCurrentLocation : récupère la localisation de l'utilisateur
+   * setCompleteLocation : met à jour les variables latitude, longitude, homeLocation et address
+   * handleAdressChange : récupère le nom de la localisation de l'utilisateur en fonction de l'adresse entrée
+   * 
+   *********************************************************************************************************/
+
   function setCompleteLocation(lat, long) {
     setMarkerlat(lat);
     setMarkerlon(long);
@@ -76,7 +66,6 @@ export default function Home() {
     console.log(location.coords.latitude, location.coords.longitude);
     setCompleteLocation(location.coords.latitude, location.coords.longitude);
   }
-  
   const handleAddressChange = (newAddress) => {
     setAddress(newAddress);
     if (timeoutRef.current) {
@@ -89,7 +78,43 @@ export default function Home() {
           setCompleteLocation(location.lat, location.lng);
         })
         .catch(error => console.log(error));
-    }, 2000);
+    }, 1000);
+  };
+
+  /**********************************************************************************************************
+   * 2 fonctions pour gérer l'ajout d'un passager à la base de données :
+   * 
+   * handleTripPress : affiche une alerte avec 3 boutons : ajouter ce trajet, information sur le trajet et annuler
+   * handleAddTrip : ajoute le passager à la base de données
+   * 
+   **********************************************************************************************************/
+
+  const handleTripPress = (trip) => {
+    Alert.alert(
+        'Que souhaitez-vous faire ?',
+        '',
+        [
+            {
+                text: 'Ajouter ce trajet',
+                onPress: async () => {
+                    setShowAddPassengerModal(true);
+                    handleAddTrip(trip.trajetID);
+                },
+                style: 'default',
+            },
+            {
+                text: 'Information sur le trajet',
+                onPress: () => {
+                },
+                style: 'default',
+            },
+            {
+                text: 'Annuler',
+                onPress: () => {},
+                style: 'cancel',
+            },
+        ],
+    );
   };
 
   const handleAddTrip = async (id) => { 
@@ -113,6 +138,16 @@ export default function Home() {
         console.error(error);
     }
   }
+
+
+  /**********************************************************************************************************
+   * 3 fonctions pour gérer la recherche de trajet :
+   * 
+   * search : récupère les trajets correspondant aux critères de recherche
+   * onChange : met à jour la variable dateFormat
+   * showMode : affiche le calendrier
+   * 
+   **********************************************************************************************************/
 
   const search = async () => {
     if(!dateFormat) alert("vous n'avez pas choisi de date...");
@@ -154,44 +189,14 @@ export default function Home() {
     setShow(true);
     setMode(currentMode);
   }
-  const { darkMode } = useContext(ThemeContext);
 
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const handleTripPress = (trip) => {
-    Alert.alert(
-        'Que souhaitez-vous faire ?',
-        '',
-        [
-            {
-                text: 'Ajouter ce trajet',
-                onPress: async () => {
-                    setShowAddTripModal(true);
-                    handleAddTrip(trip.trajetID);
-                },
-                style: 'default',
-            },
-            {
-                text: 'Information sur le trajet',
-                onPress: () => {
-                },
-                style: 'default',
-            },
-            {
-                text: 'Annuler',
-                onPress: () => {},
-                style: 'cancel',
-            },
-        ],
-    );
-  };
+  /************************* AFFICHAGE DU FORMULAIRE **********************************************************/
     return (
       <ScrollView style={{backgroundColor: darkMode ? 'black' : 'white'}}>
       <View style={[styles.container]}>
       <View style={styles.header}>
         <Image source={logo} style={styles.logo} />
       </View> 
-        <Text style={styles.h1}>Recherchez un trajet</Text>
         <View style={styles.addressContainer}>
           <TextInput
             style={styles.addressInput}
@@ -248,59 +253,20 @@ export default function Home() {
         <TouchableOpacity style={styles.button} onPress={() => search()}>
           <Text style={styles.buttonText}>Rechercher</Text>
         </TouchableOpacity>
-        <Modal
-        animationType="slide"
-        transparent={false}
-        visible={mapModalVisible}
-        onRequestClose={() => {
-          setMapModalVisible(false);
-        }}>
-        <MapView
-          style={{ flex: 1 }}
-          initialRegion={{
-          latitude: 47.25,
-          longitude: 6.0333,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-          }}
-          onPress={event => {
-            console.log(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
-            setCompleteLocation(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
-            setMapModalVisible(false);
-          }}
-        >
-        {homeLocation !== "" && (
-        <Marker   coordinate={{ latitude, longitude }} pinColor="red" />
-        )}
-        </MapView>
-        <Button
-          title="Fermer"
-          onPress={() => setMapModalVisible(false)}
-          style={{ position: 'absolute', top: 20, right: 20 }}
-        />
-      </Modal>
-      <Modal
-        animationType="fade"
-        transparent={false}
-        visible={listModalVisible}
-      >
-        <View style={styles.modalContainer}>
-        <Text style={{color:'#1C6E8C', fontWeight:"bold", fontSize:23, marginBottom:30, fontStyle:"italic" }}>Cliquez sur un trajet pour l'ajouter</Text>
-          <ScrollView>
-            {trips.map((trip, index) => (
-              <TouchableOpacity key={index} style={styles.tripTouchable} onPress={() => handleTripPress(trip)}>
-                <Text style={styles.tripText}>{trip.departAdresse} - {trip.destinationAdresse}</Text>
-                <Text style={styles.tripText}>{moment(trip.departHeure).format('DD/MM/YYYY HH:mm')}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          <TouchableOpacity style={styles.closeButton} onPress={() => setListModalVisible(false)}>
-            <Text style={styles.closeButtonText}>Fermer</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+        <MapShowModal 
+          visible={mapModalVisible} 
+          onClose={() => setMapModalVisible(false)} 
+          setCompleteLocation={setCompleteLocation} 
+          homeLocation={homeLocation}
+          />
+        <TripShowModal
+          visible={listModalVisible}
+          onClose={() => setListModalVisible(false)}
+          trips={trips}
+          handleTripPress={handleTripPress}
+          text="Cliquez sur un trajet pour l'ajouter"/>
       </View>
-      <AddTripModal visible={showAddTripModal} onClose={() => setShowAddTripModal(false)} />
+      <AddPassengerModal visible={showAddPassengerModal} onClose={() => setShowAddPassengerModal(false)} />
       </ScrollView>
     );
   }

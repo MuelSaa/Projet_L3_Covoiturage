@@ -1,18 +1,13 @@
 import React, { useState, useContext, useRef } from 'react';
-import { Alert, StyleSheet, Modal, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image } from 'react-native';
+import {Text, TextInput, View, ScrollView, TouchableOpacity, Image } from 'react-native';
 import DateTimePicker from "@react-native-community/datetimepicker"
-import Dialog, { DialogContent } from 'react-native-popup-dialog';
-import MapView, { Marker } from 'react-native-maps';
-import { RadioButton } from 'react-native-paper';
 import Geocoder from 'react-native-geocoding';
 import * as Location from 'expo-location';
 import logo from '../assets/logo.png';
-import { DarkTheme } from '@react-navigation/native';
 import { ThemeContext } from './AppProvider';
-import styles from '../styles';
-import modalStyles from '../modalStyles';
-
-
+import styles from '../assets/styles/styles';
+import { AddTripModal } from './Modal';
+import { MapShowModal } from './Modal';
 import { API_URL } from "./env";
 import { API_KEY } from "./env";
 Geocoder.init(API_KEY, {language : "fr"});
@@ -41,28 +36,6 @@ export default function Add() {
   const [champ6, setchamp6] = useState('');
   const timeoutRef = useRef(null);
   const [showAddTripModal, setShowAddTripModal] = useState(false);
-
-  const AddTripModal = ({ visible, onClose }) => {
-    return (
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onClose}
-      >
-      <View style={modalStyles.container}>
-        <View style={modalStyles.modalContainer}>
-          <TouchableOpacity onPress={onClose} style={modalStyles.closeButton}>
-            <Text style={modalStyles.closeButtonText}>X</Text>
-          </TouchableOpacity>
-          <Text style={modalStyles.title}>Trajet ajouté</Text>
-          <Text style={modalStyles.message}>Votre trajet a bien été ajouté.</Text>
-        </View>
-        </View>
-      </Modal>
-      
-    );
-  };
 
   const incrementPassengers = () => {
     if (passengers < 8) {
@@ -110,7 +83,7 @@ export default function Add() {
           setCompleteLocation(location.lat, location.lng);
         })
         .catch(error => console.log(error));
-    }, 2000);
+    }, 1000);
   };
 
   const add = async () => {
@@ -184,7 +157,6 @@ export default function Add() {
       <View style={styles.header}>
         <Image source={logo} style={styles.logo} />
       </View> 
-        <Text style={styles.h1}>Ajoutez un trajet</Text>
         <View style={styles.addressContainer}>
           <TextInput
             style={styles.addressInput}
@@ -251,44 +223,15 @@ export default function Add() {
             </TouchableOpacity>
           </View>
         </View>
+
         <View>
           <TouchableOpacity style={styles.button} onPress={() => add()}>
             <Text style={styles.buttonText}>Creer le trajet</Text>
           </TouchableOpacity>
         </View>
 
-        <Modal
-        animationType="slide"
-        transparent={false}
-        visible={mapModalVisible}
-        onRequestClose={() => {
-          setMapModalVisible(false);
-        }}>
-        <MapView
-          style={{ flex: 1 }}
-          initialRegion={{
-          latitude: 47.25,
-          longitude: 6.0333,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-          }}
-          onPress={event => {
-            console.log(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
-            setCompleteLocation(event.nativeEvent.coordinate.latitude, event.nativeEvent.coordinate.longitude);
-            setMapModalVisible(false);
-          }}
-        >
-        {homeLocation !== "" && (
-        <Marker   coordinate={{ latitude, longitude }} pinColor="red" />
-        )}
-        </MapView>
-        <Button
-          title="Fermer"
-          onPress={() => setMapModalVisible(false)}
-          style={{ position: 'absolute', top: 20, right: 20 }}
-        />
-      </Modal>
-      <AddTripModal visible={showAddTripModal} onClose={() => setShowAddTripModal(false)} />
+        <MapShowModal visible={mapModalVisible} onClose={() => setMapModalVisible(false)} setCompleteLocation={setCompleteLocation} homeLocation={homeLocation}/>
+        <AddTripModal visible={showAddTripModal} onClose={() => setShowAddTripModal(false)} />
       </View>
     </ScrollView>
   );

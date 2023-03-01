@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { ThemeContext } from './components/AppProvider';
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -78,7 +77,8 @@ const styles = StyleSheet.create({
     borderColor: '#1C6E8C',
     alignContent: 'center',
     width: '80%',
-    marginBottom: 10
+    marginBottom: 10,
+    marginTop: 10,
   },
   addressInput: {
     paddingTop: 5,
@@ -127,12 +127,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   activeButton: {
-    backgroundColor: '#2C7E9E',
-    borderColor: 'black',
-    borderWidth:2,
+    backgroundColor: 'black',
   },
   activeButtonText: {
-    color: 'black',
+    color: '#1C6E8C',
   },
   radioButtonsContainer: {
     flexDirection: 'column',
@@ -182,7 +180,6 @@ const styles = StyleSheet.create({
     lineHeight: 26,
   },
   buttonInfoText: {
-    color: darkMode ? 'white' : 'black' ,
     marginLeft: 10,
     fontWeight: 'bold',
     fontSize: 20,
