@@ -88,7 +88,7 @@ export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text})
               <TouchableOpacity key={index} style={styles.tripTouchable} onPress={() => handleTripPress(trip)}>
                 <View style={styles.info}><Text style={styles.label}>Depart : </Text><Text style={styles.tripText} >{trip.departAdresse}</Text></View>
                 <View style={styles.info}><Text style={styles.label}>Arrivée : </Text><Text style={styles.tripText} numberOfLines={1} ellipsizeMode="tail">{trip.destinationAdresse}</Text></View>
-                <Text style={styles.h1}>{moment(trip.departHeure).format('DD/MM/YYYY -;k  HH:mm')}</Text>
+                <Text style={styles.h1}>{moment(trip.departHeure).format('DD/MM/YYYY - HH:mm')}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
