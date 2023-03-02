@@ -22,6 +22,51 @@ var {client, connectionString} = require("../config/serverConnection");
       return;
     });
       };
+    //Moyenne GET 
+      
+     exports.getNotesByConducteurAndTrajet = (req, res) => {
+        const conducteur = req.params.noterLogin;
+        const trajet = req.params.trajetID;
+        res.setHeader('Content-type', 'application/json');
+        client = new Client(connectionString);
+        client.connect();
+        client.query(
+          'SELECT AVG(note) as moyenne FROM "Notes" WHERE "noterLogin" = $1 AND "trajetID" = $2',
+          [conducteur, trajet],
+          (err, result) => {
+            if (err) {
+              console.error(err);
+              res.status(500).send('Internal Server Error');
+              client.end();
+              return;
+            }
+      
+            const moyenne = result.rows[0].moyenne;
+      
+            client.query(
+              'SELECT * FROM "Notes" WHERE "noterLogin" = $1 AND "trajetID" = $2',
+              [conducteur, trajet],
+              (err, result) => {
+                if (err) {
+                  console.error(err);
+                  res.status(500).send('Internal Server Error');
+                  client.end();
+                  return;
+                }
+      
+                const notes = result.rows.map((note) => ({
+                  passager: note.passagerLogin,
+                  note: note,
+                }));
+      
+                res.send({ moyenne, notes });
+                client.end();
+                return;
+              }
+            );
+          }
+        );
+      };
     
     // GET /notes/:id - renvoie une note avec l'id spécifié
     exports.getNoteById = (req, res) => {
