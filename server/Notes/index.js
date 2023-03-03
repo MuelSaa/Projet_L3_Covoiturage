@@ -23,16 +23,14 @@ var {client, connectionString} = require("../config/serverConnection");
     });
       };
     //Moyenne GET 
-      
-     exports.getNotesByConducteurAndTrajet = (req, res) => {
+       exports.getNotesByConducteurAndTrajet = (req, res) => {
         const conducteur = req.params.noterLogin;
-        const trajet = req.params.trajetID;
         res.setHeader('Content-type', 'application/json');
-        client = new Client(connectionString);
-        client.connect();
+       // client = new Client(connectionString);
+        //client.connect();
         client.query(
-          'SELECT AVG(note) as moyenne FROM "Notes" WHERE "noterLogin" = $1 AND "trajetID" = $2',
-          [conducteur, trajet],
+          'SELECT AVG(note) as moyenne FROM "Notes" WHERE "noterLogin" = $1',
+          [conducteur],
           (err, result) => {
             if (err) {
               console.error(err);
@@ -44,8 +42,8 @@ var {client, connectionString} = require("../config/serverConnection");
             const moyenne = result.rows[0].moyenne;
       
             client.query(
-              'SELECT * FROM "Notes" WHERE "noterLogin" = $1 AND "trajetID" = $2',
-              [conducteur, trajet],
+              'SELECT * FROM "Notes" WHERE "noterLogin" = $1',
+              [conducteur],
               (err, result) => {
                 if (err) {
                   console.error(err);
