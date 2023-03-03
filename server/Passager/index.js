@@ -21,6 +21,38 @@ const joinTrajetSchema = Joi.object({
     trajetID: Joi.number()
         .required(),
 });
+function getTrajectOwnerLogin(trajetID, callback) {
+    const client = new Client(connectionString);
+    client.connect();
+    client.query(`SELECT "Trajet"."conducteur" FROM public."Trajet" WHERE "Trajet"."trajetID" = ${trajetID}`, (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            callback(dbERR, null);
+            return;
+        }
+        
+        client.end();
+        callback(null, dbRes.rows[0]);
+    });
+}
+function postNotification(content,login,type,relatedID) {
+    
+    client = new Client(connectionString);
+    client.connect();
+    const contentValue = client.escapeLiteral(content);
+    console.log(`INSERT INTO public."Notification"("Content", read, login, type, "relatedID")
+    VALUES (${contentValue}, false, '${login}', '${type}','${relatedID}') RETURNING *`);
+    client.query(`INSERT INTO public."Notification"("Content", read, login, type, "relatedID")
+    VALUES (${contentValue}, false, '${login}', '${type}','${relatedID}') RETURNING *`, (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            return;
+        }
+
+        console.log("POST Notification ADD ajouter : ",dbRes.rows);
+        client.end();
+    });
+}
 /*****************************************************
  *                      GET
  *****************************************************/
@@ -92,39 +124,46 @@ exports.postWantToJoin = (req, res) => {
 
     var {trajetID, login} = req.body;
 
+    
 
     client = new Client(connectionString);
     client.connect();
     var request = `"trajetID", "passagerID", "status"`;
     var data = `'${trajetID}', '${login}', 'p'`;
 
-
-
-
     client.query(`INSERT INTO public."Passager"(${request})
     VALUES (${data}) RETURNING *;`, (dbERR, dbRes) => {
-    if (dbERR) {
-        console.error(dbERR);
-        var msg="";
-        switch(dbERR.code){
-            case '23503':
-                msg='la cle etrangere n\'existe pas';
-                break;
-            case '23505':
-                msg='l\'enregistrement existe deja';
-                break;
-            default:
-                msg='Internal Server Error';
-                break;
+        if (dbERR) {
+            console.error(dbERR);
+            var msg="";
+            switch(dbERR.code){
+                case '23503':
+                    msg='la cle etrangere n\'existe pas';
+                    break;
+                case '23505':
+                    msg='l\'enregistrement existe deja';
+                    break;
+                default:
+                    msg='Internal Server Error';
+                    break;
+            }
+            res.status(500).send({message:msg,code:dbERR.code});
+
+            return;
         }
-        res.status(500).send({message:msg,code:dbERR.code});
 
-        return;
-    }
-
-    console.log("POST Passager ADD ajouter : ",dbRes.rows);
-    res.status(201).send(`Passager added`);
-    client.end();
+        console.log("POST Passager ADD ajouter : ",dbRes.rows);
+        res.status(201).send(`Passager added`);
+        client.end();
+        
+        getTrajectOwnerLogin(trajetID, (err, res) => {
+            if (err) {
+            console.error(err);
+            return;
+            }
+            console.log(res);
+            postNotification(`${login} veux rejoindre ton trajet !`,`${res.conducteur}`,"j",trajetID);
+        });
     });
 }
 /*****************************************************
@@ -134,23 +173,26 @@ exports.updatePassagerStatus = (req, res) => {
     console.log(`Recu : UPDATE /Passager/${req.params.trajetID}/${req.params.passagerID}/${req.params.accepted}`);
     res.setHeader('Content-type', 'application/json');
     client = new Client(connectionString);
-    var accept = "p";
-    if(req.params.accepted=="false"){
-        accept="r";
-    }else if(req.params.accepted=="true"){
-        accept="a";
-    }
+
     client.connect();
     client.query(`UPDATE public."Passager"
-	SET "status"='${accept}'
+	SET "status"='${req.params.accepted=="true" ? 'a' : 'r'}'
 	WHERE "trajetID"='${req.params.trajetID}' AND "passagerID"='${req.params.passagerID}';`, (dbERR, dbRes) => {
         if (dbERR) {
             console.error(dbERR);
             res.status(500).send( 'Internal Server Error');
             return;
         }
-        res.status(200).send('status set to :'+accept);
+        res.status(200).send('status set to :'+req.params.accepted=="true" ? 'a' : 'r');
         client.end();
+        getTrajectOwnerLogin(req.params.trajetID, (err, res) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            console.log(res);
+            postNotification(`${res.conducteur} t'as ${req.params.accepted=="true" ? 'accepté' : 'refusé'} !`,`${req.params.passagerID}`,`${req.params.accepted=="true" ? 'a' : 'r'}`,req.params.trajetID);
+        });
     });
 }
 /*****************************************************
@@ -178,7 +220,16 @@ exports.deletePassagerFromTrajet = (req, res) => {
             client.end();
             return;
         }
-    
+        
+        getTrajectOwnerLogin(req.params.trajetID, (err, res) => {
+            if (err) {
+            console.error(err);
+            return;
+            }
+            console.log(res);
+            postNotification(`${req.params.passagerID} est supprimé du trajet !`,`${res.conducteur}`,"l",req.params.trajetID);
+        });
+
         if (dbRes.rowCount == 0) {
             res.status(404).send(`No passenger found for trajetID ${req.params.trajetID} and passagerID ${req.params.passagerID}`);
             client.end();
