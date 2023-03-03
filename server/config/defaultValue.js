@@ -1,1 +1,1 @@
-exports.DEFAULT_MAX_RAYON=0,7;
+exports.DEFAULT_RAYON=5;
