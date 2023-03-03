@@ -73,7 +73,7 @@ app.delete('/Users/:login', users.deleteUsers);
  *****************************************************/
 
 app.get('/Trajet', trajet.getAllTrajet);
-app.get('/Trajet/:trajetID', trajet.getTrajet);
+app.get('/Trajet/:trajetID', trajet.getAllTrajetPassager);
 app.get('/FindTrajetDepart', trajet.findTrajetDepart);
 app.get('/FindTrajetRetours', trajet.findTrajetRetours);
 
