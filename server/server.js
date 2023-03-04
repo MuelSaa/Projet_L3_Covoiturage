@@ -120,7 +120,7 @@ app.get('/Notes/:noteID',note.getNoteById);
 
 app.get('/Noteur/:noteurLogin',note.getNotesByNoteur);
 
-app.get('/Noteur/:noteurLogin',note.getNotesByNoteur);
+app.get('/MNotes/:noterLogin', note.getNotesByConducteurAndTrajet);
 
 app.get('/NoteTrajet/:TrajetID',note.getNotesByTrajetId );
 
