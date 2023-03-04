@@ -163,6 +163,7 @@ export default function Add() {
             value={address}
             onChangeText={handleAddressChange}
             placeholder={addHolder}
+            placeholderTextColor='#1C6E8C'
           />
         </View>
         <View style={styles.tabrow}>
@@ -230,7 +231,13 @@ export default function Add() {
           </TouchableOpacity>
         </View>
 
-        <MapShowModal visible={mapModalVisible} onClose={() => setMapModalVisible(false)} setCompleteLocation={setCompleteLocation} homeLocation={homeLocation}/>
+        <MapShowModal visible={mapModalVisible}
+        onClose={() => setMapModalVisible(false)}
+        setCompleteLocation={setCompleteLocation}
+        homeLocation={homeLocation}
+        latitude={latitude}
+        longitude={longitude}/>
+
         <AddTripModal visible={showAddTripModal} onClose={() => setShowAddTripModal(false)} />
       </View>
     </ScrollView>

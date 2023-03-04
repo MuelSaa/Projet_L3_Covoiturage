@@ -69,7 +69,8 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   h1: {
-    fontSize: 20,
+    fontSize: 30,
+    marginBottom: 10,
     paddingTop: 5,
     color: '#1C6E8C',
     textAlign: 'center',
@@ -105,6 +106,7 @@ const styles = StyleSheet.create({
   addressInput: {
     paddingTop: 10,
     textAlign: 'center',
+    color: '#1C6E8C',
     borderColor: '#1C6E8C',
     fontSize: 20,
   },

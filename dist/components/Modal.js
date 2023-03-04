@@ -88,7 +88,7 @@ export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text})
               <TouchableOpacity key={index} style={styles.tripTouchable} onPress={() => handleTripPress(trip)}>
                 <View style={styles.info}><Text style={styles.label}>Depart : </Text><Text style={styles.tripText} >{trip.departAdresse}</Text></View>
                 <View style={styles.info}><Text style={styles.label}>Arrivée : </Text><Text style={styles.tripText} numberOfLines={1} ellipsizeMode="tail">{trip.destinationAdresse}</Text></View>
-                <Text style={styles.h1}>{moment(trip.departHeure).format('DD/MM/YYYY - HH:mm')}</Text>
+                <Text style={{fontSize:22, textAlign:'center', color:'#1C6E8C'}}>{moment(trip.departHeure).format('DD/MM/YYYY - HH:mm')}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -100,7 +100,7 @@ export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text})
   );
 };
 
-export const MapShowModal = ({ visible, onClose, setCompleteLocation, homeLocation}) => {
+export const MapShowModal = ({ visible, onClose, setCompleteLocation, homeLocation, latitude, longitude}) => {
   return (
         <Modal
         animationType="slide"
@@ -144,7 +144,7 @@ export const RemoveTripModal = ({ visible, onClose }) => {
       visible={visible}
       onRequestClose={onClose}
     >
-    <View style={modalStyles.centeredView}>
+    <View style={modalStyles.infoModalContainer}>
       <View style={modalStyles.modalContainerR}>
         <TouchableOpacity onPress={onClose} style={modalStyles.closeButton}>
           <Text style={modalStyles.closeButtonText}>X</Text>

@@ -151,29 +151,28 @@ export default function Home() {
 
   const search = async () => {
     if(!dateFormat) alert("vous n'avez pas choisi de date...");
-    if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
-    if(addHolder == 'adresse inconnue') alert("vous n'avez pas choisi une adresse valide...");
+    else if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
+    else if(addHolder == 'adresse inconnue') alert("vous n'avez pas choisi une adresse valide...");
     else {
       console.log(dateFormat);
-      const resp = await fetch(API_URL + '/Trajet', {
-        method: 'GET',
+      const resp = await fetch(API_URL + '/FindTrajetDepart', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        // body: JSON.stringify({
-        //   departLat:,
-        //   departLon:,
-        //   arriverLat:,
-        //   arriverLon:,
-        //   date:,
-        //   heure:,
-        // })
+        body: JSON.stringify({
+           departLat:checked == 'depart' ? 47.244505 : latitude,
+           departLon:checked == 'depart' ? 5.987401 : longitude,
+           arriverLat:checked == 'depart' ? latitude : 47.244505,
+           arriverLon:checked == 'depart' ? longitude : 5.987401,
+           date:dateFormat,
+         })
       })
       .then(response => response.json())
       .then(data => setTrips(data))
       setListModalVisible(true);
     }
-  };
+  };  
     
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -203,6 +202,7 @@ export default function Home() {
             value={address}
             onChangeText={handleAddressChange}
             placeholder={addHolder}
+            placeholderTextColor='#1C6E8C'
           />
         </View>
         <View style={styles.tabrow}>
@@ -253,12 +253,14 @@ export default function Home() {
         <TouchableOpacity style={styles.buttonForm} onPress={() => search()}>
           <Text style={styles.buttonFormText}>Rechercher</Text>
         </TouchableOpacity>
-        <MapShowModal 
-          visible={mapModalVisible} 
-          onClose={() => setMapModalVisible(false)} 
-          setCompleteLocation={setCompleteLocation} 
-          homeLocation={homeLocation}
-          />
+
+        <MapShowModal visible={mapModalVisible}
+        onClose={() => setMapModalVisible(false)}
+        setCompleteLocation={setCompleteLocation}
+        homeLocation={homeLocation}
+        latitude={latitude}
+        longitude={longitude}/>
+
         <TripShowModal
           visible={listModalVisible}
           onClose={() => setListModalVisible(false)}

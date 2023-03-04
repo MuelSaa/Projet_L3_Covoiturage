@@ -157,7 +157,7 @@ export function DriverTrips() {
         onRequestClose={() => {
             setModalVisible(!modalVisible);
         }}>
-        <View style={modalStyles.centeredView}>
+        <View style={modalStyles.infoModalContainer}>
             <View style={modalStyles.modalView}>
             <Text style={modalStyles.modalText}>Passagers inscrits :</Text>
             {passengers.map((pass, index) => (
