@@ -113,9 +113,9 @@ exports.getAllTrajetPassager = async (req, res) => {
 exports.findTrajetDepart = (req, res) => {
     res.setHeader('Content-type', 'application/json');
 
-    console.log("GET FindTrajetDepart : ",req.body);
+    console.log("GET FindTrajetDepart : ",req.query);
     
-    const result = findTrajetSchema.validate(req.body);
+    const result = findTrajetSchema.validate(req.query);
 
     if(result.error){
         res.status(400).send(result.error);
@@ -124,12 +124,16 @@ exports.findTrajetDepart = (req, res) => {
     client = new Client(connectionString);
     client.connect();
 
-    var { departLat, departLon, arriverLat, arriverLon, heure } = req.body;
+    const departLat = client.escapeLiteral(req.query.departLat);
+    const departLon = client.escapeLiteral(req.query.departLon);
+    const arriverLat = client.escapeLiteral(req.query.arriverLat);
+    const arriverLon = client.escapeLiteral(req.query.arriverLon);
+    const heure = client.escapeLiteral(req.query.heure);
 
     var whereClause = `(6371 * acos(cos(radians(${departLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${departLon})) + sin(radians(${departLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
         AND (6371 * acos(cos(radians(${arriverLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${arriverLon})) + sin(radians(${arriverLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
-        AND date_trunc('day', "Trajet"."arriverHeure" AT TIME ZONE 'UTC') = date_trunc('day', '${heure}'::timestamp with time zone AT TIME ZONE 'UTC')
-        AND "Trajet"."arriverHeure"::time BETWEEN ('${heure}'::timestamp with time zone - interval '1 hour')::time AND '${heure}'::time`;
+        AND date_trunc('day', "Trajet"."arriverHeure" AT TIME ZONE 'UTC') = date_trunc('day', ${heure}::timestamp with time zone AT TIME ZONE 'UTC')
+        AND "Trajet"."arriverHeure"::time BETWEEN (${heure}::timestamp with time zone - interval '1 hour')::time AND ${heure}::time`;
 
     console.log(whereClause);
     client.query(`SELECT *
@@ -149,9 +153,9 @@ exports.findTrajetDepart = (req, res) => {
 exports.findTrajetRetours = (req, res) => {
     res.setHeader('Content-type', 'application/json');
 
-    console.log("GET FindTrajetRetours : ",req.body);
+    console.log("GET FindTrajetRetours : ",req.query);
     
-    const result = findTrajetSchema.validate(req.body);
+    const result = findTrajetSchema.validate(req.query);
 
     if(result.error){
         res.status(400).send(result.error);
@@ -160,13 +164,16 @@ exports.findTrajetRetours = (req, res) => {
     client = new Client(connectionString);
     client.connect();
 
-    var { departLat, departLon, arriverLat, arriverLon, heure } = req.body;
-
+    const departLat = client.escapeLiteral(req.query.departLat);
+    const departLon = client.escapeLiteral(req.query.departLon);
+    const arriverLat = client.escapeLiteral(req.query.arriverLat);
+    const arriverLon = client.escapeLiteral(req.query.arriverLon);
+    const heure = client.escapeLiteral(req.query.heure);
 
     var whereClause = `(6371 * acos(cos(radians(${departLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${departLon})) + sin(radians(${departLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
         AND (6371 * acos(cos(radians(${arriverLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${arriverLon})) + sin(radians(${arriverLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
-        AND date_trunc('day', "Trajet"."arriverHeure" AT TIME ZONE 'UTC') = date_trunc('day', '${heure}'::timestamp with time zone AT TIME ZONE 'UTC')
-        AND "Trajet"."arriverHeure"::time BETWEEN ('${heure}'::timestamp with time zone - interval '1 hour')::time AND '${heure}'::time`;
+        AND date_trunc('day', "Trajet"."arriverHeure" AT TIME ZONE 'UTC') = date_trunc('day', ${heure}::timestamp with time zone AT TIME ZONE 'UTC')
+        AND "Trajet"."arriverHeure"::time BETWEEN (${heure}::timestamp with time zone - interval '1 hour')::time AND ${heure}::time`;
     
     console.log(whereClause);
     client.query(`SELECT *
