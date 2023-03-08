@@ -128,7 +128,7 @@ app.post('/Notes',note.createNote);
 
 //app.put('/Unote/:NoteID',note.updateNote)
 
-//app.delete('/DNotes/:NoteID',note.deleteNote);
+app.delete('/Notes/:NoteID',note.deleteNote);
 
 /*****************************************************
  *                      Web Access Token 
