@@ -2,7 +2,7 @@
 const { Client } = require('pg');
 var {client, connectionString} = require("../config/serverConnection");
 //
-
+const Joi = require('joi');
 /*****************************************************
  *                      GET
  *****************************************************/
@@ -145,7 +145,39 @@ var {client, connectionString} = require("../config/serverConnection");
 /*****************************************************
  *                      POST
  *****************************************************/
+// Fonction de création d'une note
+exports.createNote = (req, res) => {
+  client = new Client(connectionString);
+  client.connect();
+  // Schéma de validation pour les notes
+  const createNoteSchema = Joi.object({
+    noteID: Joi.number().integer().required(),
+    trajetID: Joi.number().integer().required(),
+    commentaire: Joi.string().required(),
+    note: Joi.number().integer().required(),
+    noteurLogin: Joi.string().required(),
+    noterLogin: Joi.string().required()
+  });
+  
+  const { error, value } = createNoteSchema.validate(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
 
+  const { noteID, trajetID, commentaire, note, noteurLogin, noterLogin } = value;
+
+  const insertQuery = `INSERT INTO "Notes" ("note", "noteID", "trajetID", "commentaire", "noteurLogin", "noterLogin") 
+                       VALUES ($1, $2, $3, $4, $5, $6) 
+                       RETURNING *`;
+
+  client.query(insertQuery, [note, noteID, trajetID, commentaire, noteurLogin, noterLogin], (err, result) => {
+    if (err) {
+      console.error(err);
+     return res.status(500).send(JSON.stringify('Internal Server Error'));
+    }
+    res.status(201).send(result.rows[0]);
+  });
+};
 /*****************************************************
  *                      UPDATE
  *****************************************************/
