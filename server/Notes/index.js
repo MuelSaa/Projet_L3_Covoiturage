@@ -188,8 +188,8 @@ exports.createNote = (req, res) => {
 exports.deleteNote = (req, res) => {
   const dnoter = req.params.NoteID;
   console.log(dnoter);
-  //const client = new Client(connectionString); // initialisation de client
-  //client.connect();
+  const client = new Client(connectionString); // initialisation de client
+  client.connect();
   client.query(
     `DELETE FROM "Notes" WHERE "noteID"=$1 RETURNING *`,
     [dnoter],
@@ -197,14 +197,14 @@ exports.deleteNote = (req, res) => {
       //client.end(); // fermeture de la connexion
       if (err) {
         console.error(err);
-        res.status(500).send('Internal Server Error');
+        res.status(500).send(JSON.stringify('Internal Server Error'));
         return;
       }
       if (result.rows.length === 0) {
-        res.status(404).send('Note not found');
+        res.status(404).send(JSON.stringify('Note not found'));
         return;
       }
-      res.status(200).send(`Note with ID ${req.params.NoteID} successfully removed from Notes`);
+      res.status(200).send(JSON.stringify(`Note with ID ${req.params.NoteID} successfully removed from Notes`));
       return;
     }
   );
