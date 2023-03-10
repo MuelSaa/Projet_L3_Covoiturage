@@ -23,7 +23,6 @@ const Notifs = () => {
     try {
       const resp = await fetch(API_URL + "/NotificationUnread/samu");
       const data = await resp.json();
-      console.log(data);
       setUnreadNotifications(data);
     } catch (error) {
       console.error(error);
@@ -32,7 +31,6 @@ const Notifs = () => {
     try {
       const resp = await fetch(API_URL + "/NotificationRead/samu");
       const data = await resp.json();
-      console.log(data);
       setReadNotifications(data);
     } catch (error) {
       console.error(error);
@@ -78,12 +76,10 @@ const Notifs = () => {
  };
 
  const displayTrip = async (notificationRelatedID) => {
-  console.log(notificationRelatedID);
   const resp = await fetch(API_URL + '/Trajet/' + notificationRelatedID, {
     method: 'GET'
   }).catch((error) => {console.log(error)});
   const dataTrip = await resp.json();
-  console.log(dataTrip);
   if (dataTrip != undefined) {
     setTripDetails(dataTrip);
   }  
