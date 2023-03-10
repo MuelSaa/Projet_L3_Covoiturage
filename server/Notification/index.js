@@ -158,10 +158,10 @@ exports.updateNotificationStatus = (req, res) => {
     client.query(`UPDATE public."Notification" SET read=true WHERE "notificationID" = ${req.params.notificationID}`, (dbERR, dbRes) => {
         if (dbERR) {
             console.error(dbERR);
-            res.status(500).send( 'Internal Server Error');
+            res.status(500).send(JSON.stringify('Internal Server Error'));
             return;
         }
-        res.status(200).send( 'ok');
+        res.status(200).send(JSON.stringify('ok'));
         client.end();
     });
 }
