@@ -1,1 +1,1 @@
-exports.DEFAULT_RAYON=5;
+exports.DEFAULT_RAYON=2;

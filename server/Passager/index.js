@@ -162,7 +162,7 @@ exports.postWantToJoin = (req, res) => {
             return;
             }
             console.log(res);
-            postNotification(`${login} veux rejoindre ton trajet !`,`${res.conducteur}`,"j",trajetID);
+            postNotification(`${login} veut rejoindre ton trajet !`,`${res.conducteur}`,"j",trajetID);
         });
     });
 }
@@ -170,7 +170,7 @@ exports.postWantToJoin = (req, res) => {
  *                      UPDATE
  *****************************************************/
 exports.updatePassagerStatus = (req, res) => {
-    console.log(`Recu : UPDATE /Passager/${req.params.trajetID}/${req.params.passagerID}/${req.params.accepted}`);
+    console.log(`Recu : UPDATE /Passager/${req.params.trajetID}/${req.params.passagerID}/${req.params.accepted}/${req.params.oldNotificationID}`);
     res.setHeader('Content-type', 'application/json');
     client = new Client(connectionString);
 
@@ -184,6 +184,12 @@ exports.updatePassagerStatus = (req, res) => {
             return;
         }
         res.status(200).send('status set to :'+req.params.accepted=="true" ? 'a' : 'r');
+        client.query(`DELETE FROM public."Notification" WHERE "notificationID" = ${req.params.oldNotificationID}`, (dbERR, dbRes) => {
+            if (dbERR) {
+                console.error(dbERR);            
+            }
+            console.log("delete old notif");
+        });
         client.end();
         getTrajectOwnerLogin(req.params.trajetID, (err, res) => {
             if (err) {
@@ -228,6 +234,7 @@ exports.deletePassagerFromTrajet = (req, res) => {
             }
             console.log(res);
             postNotification(`${req.params.passagerID} est supprimé du trajet !`,`${res.conducteur}`,"l",req.params.trajetID);
+            postNotification(`${res.conducteur} t'as supprimé !`,`${req.params.passagerID}`,"l",req.params.trajetID);
         });
 
         if (dbRes.rowCount == 0) {
