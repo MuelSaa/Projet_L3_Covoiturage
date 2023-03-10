@@ -19,7 +19,7 @@ const Trajets = () => {
   const [tripsDriver, setTripsDriver] = useState([]);
   const [tripsPassenger, setTripsPassenger] = useState([]);
   const [passengers, setPassengers] = useState([]);
-  const { darkMode, globalLogin } = useContext(ThemeContext);
+  const { darkMode, globalLogin, token } = useContext(ThemeContext);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [showRemoveTripModal, setShowRemoveTripModal] = useState(false);
@@ -28,6 +28,7 @@ const Trajets = () => {
   const user = globalLogin ? globalLogin : 'samu';
 
   useEffect(() => {
+    console.log('tk =' + token);
     fetchTrips();
   }, []);
 

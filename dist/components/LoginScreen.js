@@ -4,6 +4,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { ThemeContext } from './AppProvider';
 import logo from '../assets/logo.png';
 import { InfoModal } from './Modal';
+import { API_URL } from './env';
 
 
 const LoginScreen = () => {
@@ -11,7 +12,7 @@ const LoginScreen = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const { navigate } = useNavigation();
-  const { setGlobalLogin } = useContext(ThemeContext);
+  const { setGlobalLogin, setToken } = useContext(ThemeContext);
 
   const handleLogin = async () => {
 
@@ -20,20 +21,23 @@ const LoginScreen = () => {
       navigate('Menu');
     }
     else {
-      const response = await fetch(`https://servor-sgtr.onrender.com/api/protected`, {
+      const response = await fetch(API_URL + '/api/protected', {
         method: 'POST',
-        body: JSON.stringify({ login: login, password: password }),
-        headers: { 
-          'Accept': 'application/json',
+        body: JSON.stringify({
+          login: login,
+          password: password
+        }),
+        headers: {
           'Content-Type': 'application/json'
         }
-      });
-  
+      })
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      const token = data.token;
+      console.log(data);
+      setGlobalLogin(login);
+      setToken(data.split(' ')[3]);
       /************Faire Affichier le token generé 
       //alert(token);
        Sinon naviguer jusqu'au menu ********************************/
@@ -129,30 +133,7 @@ const styles = StyleSheet.create({
   },
   infoButtonText: {
     color: '#FF715B',
-  },
-  infoModalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  infoModalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 5,
-    width: '80%',
-  },
-  infoModalCloseButton: {
-    marginTop: 20,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#564256',
-    borderRadius: 5,
-    alignSelf: 'flex-end',
-  },
-  infoModalCloseButtonText: {
-    color: '#2E282A',
-  },
+  }
 });
 
 export default LoginScreen;

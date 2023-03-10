@@ -40,9 +40,9 @@ exports.postTokenCreateToken = (req, res) => {
   
     if (user) {
       const token = jwt.sign({ user }, 'my_secret_key');
-      res.status(201).send(`Token successful created ${token }`);
+      res.status(201).send(JSON.stringify(`Token successful created ${token }`));
     } else {
-      res.status(401).send('Identifiants invalides');
+      res.status(401).send(JSON.stringify('Identifiants invalides').stringify());
     }
   }
 

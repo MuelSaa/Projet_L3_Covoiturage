@@ -17,11 +17,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
+
 export const Tab = createBottomTabNavigator();
 
 export const Menu = () => {
   const [colorScheme, setColorScheme] = React.useState(Appearance.getColorScheme());
   const { darkMode, toggleDarkMode } = useContext(ThemeContext);
+
   React.useEffect(() => {
     const subscription = Appearance.addChangeListener(({ colorScheme }) => {
       setColorScheme(colorScheme);

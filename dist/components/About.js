@@ -9,9 +9,11 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { InfoModal } from './Modal';
 import { TripShowModal } from './Modal';
 import { API_URL } from "./env";
+import {useNavigation} from 'react-navigation-hooks'
 
 const About = () => {
   const { darkMode, toggleDarkMode, GlobalLogin, logout } = useContext(ThemeContext);
+  const { navigate } = useNavigation();
   const styles = getStyles(darkMode);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [listModalVisible, setListModalVisible] = useState(false);
@@ -82,6 +84,11 @@ const About = () => {
       Linking.openURL('mailto:ataieb3342@gmail.com?subject=Ticket');
     };
 
+    const handleLogout = () => {
+      {logout};
+      navigate('Login');
+    }
+
     return (
       <ScrollView style={{backgroundColor: darkMode ? 'black' : 'white'}}>
         <View style={[styles.container]}>
@@ -121,7 +128,7 @@ const About = () => {
             <Icon name="send" size={20} color={darkMode ? 'white' : 'black'}/>
             <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Envoyer un ticket</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonInfo} onPress={logout}>
+          <TouchableOpacity style={styles.buttonInfo} onPress={handleLogout}>
             <Icon name="sign-out" size={20} color={darkMode ? 'white' : 'black'}/>
             <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Se déconnecter</Text>
           </TouchableOpacity>
