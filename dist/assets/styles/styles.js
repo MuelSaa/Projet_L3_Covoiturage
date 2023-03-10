@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   buttonInfo: {
     justifyContent: 'center',
-    width:'80%',
+    width: '80%',
     flexDirection: 'row',
     padding: 10,
     margin: 5,
@@ -239,6 +239,15 @@ const styles = StyleSheet.create({
   notifbuttonIcon: {
     color: 'white',
     fontSize: 24
+  },
+  star: {
+    color: '#FFD700',
+  },
+  filledStar: {
+    color: '#FFD700',
+  },
+  emptyStar: {
+    color: '#D3D3D3',
   }
 
   

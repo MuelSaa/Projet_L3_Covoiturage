@@ -6,6 +6,7 @@ import { ThemeContext } from './AppProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import modalStyles from '../assets/styles/modalStyles';
 import styles from '../assets/styles/styles';
+import { TripDetailModal } from './Modal';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -14,6 +15,8 @@ const Notifs = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [getReadNotifications, setReadNotifications] = useState([]);
   const [getUnreadNotifications, setUnreadNotifications] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [tripDetails, setTripDetails] = useState([]);
 
   const fetchNotifs = async () => {
     // Récupération des notifications non lues
@@ -59,12 +62,25 @@ const Notifs = () => {
     setRefreshing(false);
  };
 
+ const displayTrip = async (notificationRelatedID) => {
+  console.log(notificationRelatedID);
+  setModalVisible(true);
+  const resp = await fetch(API_URL + '/Trajet/' + notificationRelatedID, {
+    method: 'GET'
+  }).catch((error) => {console.log(error)});
+  const dataTrip = await resp.json();
+  console.log(dataTrip);
+  if (dataTrip != undefined) {
+    setTripDetails(dataTrip);
+  }  
+};
+
   const renderNotification = (notification) => {
       return (
-        <View style={styles.tripTouchableTrajet}>
+        <TouchableOpacity style={styles.tripTouchableTrajet} onPress={() => displayTrip(notification.relatedID)}>
     <Text style={styles.notiflabel}>{notification.Content}</Text>
     <View style={styles.notifbuttonContainer}>
-        {notification.type === 'r' && (
+        {notification.type === 'j' && (
           <>
             <TouchableOpacity style={styles.notifbutton} onPress={() => acceptRequest(notification.notificationID)}>
               <Ionicons name="checkmark-sharp" style={styles.notifbuttonIcon} />
@@ -74,6 +90,16 @@ const Notifs = () => {
             </TouchableOpacity>
           </>
         )}
+        {notification.type === 'a' && (
+          <TouchableOpacity style={styles.notifbutton} onPress={() => handleNotificationAction(notification)}>
+            <Ionicons name="checkmark-sharp" style={styles.notifbuttonIcon} />
+          </TouchableOpacity>
+        )}
+        {notification.type === 'r' && (
+          <TouchableOpacity style={styles.notifbutton} onPress={() => handleNotificationAction(notification)}>
+            <Ionicons name="close-sharp" style={styles.notifbuttonIcon} />
+          </TouchableOpacity>
+        )}
         {notification.read === false && (
           <>
         <TouchableOpacity style={styles.notifbutton} onPress={() => markAsRead(notification.notificationID)}>
@@ -81,7 +107,7 @@ const Notifs = () => {
         </TouchableOpacity>
         </>)}
       </View>
-    </View>
+    </TouchableOpacity>
       );
   };
   const renderAllNotifications = (notifications) => {
@@ -92,6 +118,7 @@ const Notifs = () => {
           {renderNotification(notification)}
         </View>
       ))}
+      <TripDetailModal visible={modalVisible} onClose={() => setModalVisible(false)} selectedTrip={tripDetails}/>
     </View>
   );
   };

@@ -1,7 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Image, Text, View, TouchableOpacity, Linking, Alert } from 'react-native';
 import { ThemeContext } from './AppProvider';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import styles from '../assets/styles/styles';
 import logo from '../assets/logo.png';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -14,9 +16,18 @@ const About = () => {
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [listModalVisible, setListModalVisible] = useState(false);
   const [trips, setTrips] = useState([]);
+  const [noteAverage, setNoteAverage] = useState(0);
+  const [notes, setNotes] = useState([]);
   
   const icon = darkMode ? 'moon-o' : 'sun-o';
   const text = darkMode ? 'Mode sombre activé' : 'Mode sombre désactivé';
+
+  useEffect(() => {
+    fetch(API_URL + '/MNotes/samu', { 
+      method: 'GET',
+    }).then(response => response.json())
+    .then(data => setNoteAverage(data));
+  }, []);
 
   const handleTripPress = (trip) => {
     Alert.alert(
@@ -36,6 +47,15 @@ const About = () => {
             },
         ],
     );
+  };
+
+  const handleNotes = async () => {
+    const resp = await fetch(API_URL + '/Notes/samu', {
+      method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => setNotes(data))
+    setNoteModalVisible(true);
   };
 
   const handleHistory = async () => {
@@ -62,43 +82,60 @@ const About = () => {
       Linking.openURL('mailto:ataieb3342@gmail.com?subject=Ticket');
     };
 
-  return (
-    <ScrollView style={{backgroundColor: darkMode ? 'black' : 'white'}}>
-      <View style={[styles.container]}>
-      <View style={styles.header}>
-        <Image source={logo} style={styles.logo} />
-      </View> 
-        <Text style={styles.h1}>Bonjour {GlobalLogin} !</Text>
-        <TouchableOpacity style={styles.buttonInfo} onPress={handleHistory}>
-          <Icon name="history" size={20} color={darkMode ? 'white' : 'black'}/>
-          <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Votre historique des trajets</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonInfo} onPress={toggleDarkMode}>
-          <Icon name={icon} size={20} color={darkMode ? 'white' : 'black'} />
-          <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>{text}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonInfo} onPress={()=>setInfoModalVisible(true)}>
-          <Icon name="info" size={20} color={darkMode ? 'white' : 'black'}/>
-          <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Conditions legales</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonInfo} onPress={handleTiket}>
-          <Icon name="send" size={20} color={darkMode ? 'white' : 'black'}/>
-          <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Envoyer un ticket</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonInfo} onPress={logout}>
-          <Icon name="sign-out" size={20} color={darkMode ? 'white' : 'black'}/>
-          <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Se déconnecter</Text>
-        </TouchableOpacity>
-      </View>
-      <InfoModal visible={infoModalVisible} onClose={() => setInfoModalVisible(false)} />
-      <TripShowModal
-          visible={listModalVisible}
-          onClose={() => setListModalVisible(false)}
-          trips={trips}
-          handleTripPress={handleTripPress}
-          text="Historique"/>
-    </ScrollView>
-  );
+    return (
+      <ScrollView style={{backgroundColor: darkMode ? 'black' : 'white'}}>
+        <View style={[styles.container]}>
+          <View style={styles.header}>
+            <Image source={logo} style={styles.logo} />
+          </View> 
+          <Text style={styles.h1}>Bonjour {GlobalLogin ? GlobalLogin : 'Samuel'} !</Text>
+          <View>
+            <Text>
+            {[...Array(5)].map((_, i) => (
+              <Ionicons
+                name={i < Math.floor(noteAverage) ? 'star' : 'star-outline'}
+                style={[i < Math.floor(noteAverage) ? styles.filledStar : styles.emptyStar, { fontSize: 30 }]}
+                key={i}
+              />
+            ))}
+            </Text>
+          </View>
+          <View style={{marginTop:10, width:'100%', alignItems:'center'}}>
+          <TouchableOpacity style={styles.buttonInfo} onPress={handleHistory}>
+            <Icon name="history" size={20} color={darkMode ? 'white' : 'black'}/>
+            <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Votre historique des trajets</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonInfo} onPress={handleNotes}>
+            <Icon name="star" size={20} color={darkMode ? 'white' : 'black'}/>
+            <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Vos notes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonInfo} onPress={toggleDarkMode}>
+            <Icon name={icon} size={20} color={darkMode ? 'white' : 'black'} />
+            <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>{text}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonInfo} onPress={()=>setInfoModalVisible(true)}>
+            <Icon name="info" size={20} color={darkMode ? 'white' : 'black'}/>
+            <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Conditions legales</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonInfo} onPress={handleTiket}>
+            <Icon name="send" size={20} color={darkMode ? 'white' : 'black'}/>
+            <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Envoyer un ticket</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonInfo} onPress={logout}>
+            <Icon name="sign-out" size={20} color={darkMode ? 'white' : 'black'}/>
+            <Text style={[styles.buttonInfoText, { color: darkMode ? 'white' : 'black' }]}>Se déconnecter</Text>
+          </TouchableOpacity>
+        </View>
+        </View>
+        <InfoModal visible={infoModalVisible} onClose={() => setInfoModalVisible(false)} />
+        <TripShowModal
+            visible={listModalVisible}
+            onClose={() => setListModalVisible(false)}
+            trips={trips}
+            handleTripPress={handleTripPress}
+            text="Historique"/>
+      </ScrollView>
+    );    
 };
 
 export default About;

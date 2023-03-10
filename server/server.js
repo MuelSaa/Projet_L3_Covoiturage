@@ -74,9 +74,9 @@ app.delete('/Users/:login', users.deleteUsers);
 
 app.get('/Trajet', trajet.getAllTrajet);
 app.get('/Trajet/:trajetID', trajet.getAllTrajetPassager);
-app.get('/FindTrajetDepart', trajet.findTrajetDepart);
 app.get('/FindTrajetRetours', trajet.findTrajetRetours);
 
+app.post('/FindTrajetDepart', trajet.findTrajetDepart);
 app.post('/Trajet', trajet.addTrajet);
 
 app.delete('/Trajet/:trajetID', trajet.deleteTrajet);

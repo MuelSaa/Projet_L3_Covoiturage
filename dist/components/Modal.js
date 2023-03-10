@@ -81,7 +81,7 @@ export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text})
         transparent={false}
         visible={visible}
       >
-        <View style={styles.modalContainer}>
+        <View style={modalStyles.modalContainerG}>
         <Text style={{color:'#1C6E8C', fontWeight:"bold", fontSize:27, marginBottom:30, fontStyle:"italic", textAlign:'center'}}>{text}</Text>
           <ScrollView>
             {trips.map((trip, index) => (
@@ -95,6 +95,28 @@ export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text})
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Text style={styles.closeButtonText}>Fermer</Text>
           </TouchableOpacity>
+        </View>
+      </Modal>
+  );
+};
+
+export const TripDetailModal = ({ visible, onClose, selectedTrip}) => {
+  return (
+  <Modal
+        animationType="slide"
+        transparent={true}
+        visible={visible}
+        onRequestClose={onClose}>
+        <View style={modalStyles.infoModalContainer}>
+          <View style={modalStyles.modalView}>
+            <Text style={{fontSize:30, color:'black', paddingBottom:15, fontWeight:'bold', fontStyle:'italic'}}>Votre trajet</Text>
+            <View style={styles.info}><Text style={styles.label}>Depart : </Text><Text style={styles.tripText}>{selectedTrip ? selectedTrip[0].departAdresse : ''}</Text></View>
+            <View style={styles.info}><Text style={styles.label}>Arrivée : </Text><Text style={styles.tripText}>{selectedTrip ? selectedTrip[0].destinationAdresse : ''}</Text></View>
+            <Text style={styles.tripText}>{selectedTrip? moment(selectedTrip.departHeure).format('DD/MM/YYYY - HH:mm') : ''}</Text>
+            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+              <Text style={styles.closeButtonText}>Fermer</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
   );
