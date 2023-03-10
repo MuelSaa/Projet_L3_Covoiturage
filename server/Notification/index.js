@@ -3,6 +3,16 @@ const { Client } = require('pg');
 var {client, connectionString} = require("../config/serverConnection");
 //
 
+
+/*
+passager:
+j= veut rejoindre ton trajet
+l = est supprimer du trajet
+a = accepter dans le trajet
+r = refuser dans le trajet
+
+*/
+
 const Joi = require('joi');
 
 const postSchema = Joi.object({

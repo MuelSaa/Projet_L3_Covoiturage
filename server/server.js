@@ -107,7 +107,7 @@ app.get('/PassagerID/:passagerID',passager.getTrajetPassagerID);
 
 app.post('/Passager',passager.postWantToJoin);
 
-app.put('/Passager/:trajetID/:passagerID/:accepted',passager.updatePassagerStatus);
+app.put('/Passager/:trajetID/:passagerID/:accepted/:oldNotificationID',passager.updatePassagerStatus);
 
 app.delete('/Passager/:trajetID/:passagerID',passager.deletePassagerFromTrajet);
 
