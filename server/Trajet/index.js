@@ -83,30 +83,28 @@ exports.getAllTrajet = (req, res) => {
 exports.getAllTrajetPassager = async (req, res) => {
     console.log("Recu : GET /Trajet/"+req.params.trajetID);
     res.setHeader("Content-type", "application/json");
-    //const client = new Client(connectionString);
-  try {
-    client.connect();
-    const dbRes = await client.query('SELECT * , "departHeure" || \' - \' || "arriverHeure" as "heureTrajet" FROM "Trajet" WHERE "Trajet"."trajetID" = $1', [req.params.trajetID]);
-    const trajets = await Promise.all(
-      dbRes.rows.map(async (trajet) => {
-        console.log(trajet.conducteur);
-        const dbResNote = await client.query(
-            'SELECT * FROM "Notes" WHERE "noterLogin" = $1 AND "trajetID"= $2',
-            [trajet.conducteur, trajet.trajetID]
-          );
-
-
+    const client = new Client(connectionString);
+    try {
+        client.connect();
+        const dbRes = await client.query('SELECT * , "departHeure" || \' - \' || "arriverHeure" as "heureTrajet" FROM "Trajet" WHERE "Trajet"."trajetID" = $1', [req.params.trajetID]);
+        const trajets = await Promise.all(
+            dbRes.rows.map(async (trajet) => {
+            console.log(trajet.conducteur);
+            const dbResNote = await client.query(
+                'SELECT * FROM "Notes" WHERE "noterLogin" = $1 AND "trajetID"= $2',
+                [trajet.conducteur, trajet.trajetID]
+                );
         trajet.note = dbResNote.rows;
         return trajet;
-      })
+        })
     );
     res.json(trajets);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(JSON.stringify('Internal Server Error'));
-  } finally {
-    await client.end();
-  }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send(JSON.stringify('Internal Server Error'));
+    } finally {
+        await client.end();
+    }
   };
 
 
