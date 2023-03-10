@@ -98,7 +98,7 @@ exports.getAllTrajetPassager = async (req, res) => {
         return trajet;
         })
     );
-    res.json(trajets);
+    res.json(trajets[0]);
     } catch (error) {
         console.error(error);
         res.status(500).send(JSON.stringify('Internal Server Error'));

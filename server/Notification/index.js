@@ -6,7 +6,7 @@ var {client, connectionString} = require("../config/serverConnection");
 
 /*
 passager:
-j= veut rejoindre ton trajet
+j = veut rejoindre ton trajet
 l = est supprimer du trajet
 a = accepter dans le trajet
 r = refuser dans le trajet
