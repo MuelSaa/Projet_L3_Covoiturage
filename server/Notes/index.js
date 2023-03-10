@@ -23,18 +23,20 @@ const Joi = require('joi');
     });
       };
     //Moyenne GET 
-       exports.getNotesByConducteurAndTrajet = (req, res) => {
-        const conducteur = req.params.noterLogin;
+  
+      exports.getNotesByConducteurAndTrajet = (req, res) => {
+        const trajetId = req.params.trajetID;
         res.setHeader('Content-type', 'application/json');
-       // client = new Client(connectionString);
-        //client.connect();
+        console.log(trajetId)
+        client = new Client(connectionString);
+        client.connect();
         client.query(
-          'SELECT AVG(note) as moyenne FROM "Notes" WHERE "noterLogin" = $1',
-          [conducteur],
+          'SELECT AVG(note) as moyenne FROM "Notes" WHERE "trajetID" = $1',
+          [trajetId],
           (err, result) => {
             if (err) {
               console.error(err);
-              res.status(500).send('Internal Server Error');
+              res.status(500).send(JSON.stringify('Internal Server Error'));
               client.end();
               return;
             }
@@ -42,13 +44,12 @@ const Joi = require('joi');
             const moyenne = result.rows[0].moyenne;
       
             client.query(
-              'SELECT * FROM "Notes" WHERE "noterLogin" = $1',
-              [conducteur],
+              'SELECT * FROM "Notes" WHERE "trajetID" = $1',
+              [trajetId],
               (err, result) => {
                 if (err) {
                   console.error(err);
-                  res.status(500).send('Internal Server Error');
-                  client.end();
+                  res.status(500).send(JSON.stringify('Internal Server Error'));
                   return;
                 }
       
@@ -57,7 +58,11 @@ const Joi = require('joi');
                   note: note,
                 }));
       
-                res.send({ moyenne, notes });
+                if (!notes.length) {
+                  res.send(JSON.stringify('Special'));
+                } else {
+                  res.send({ moyenne: moyenne , notes });
+                }
                 client.end();
                 return;
               }
