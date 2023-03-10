@@ -16,7 +16,7 @@ const Notifs = () => {
   const [getReadNotifications, setReadNotifications] = useState([]);
   const [getUnreadNotifications, setUnreadNotifications] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [tripDetails, setTripDetails] = useState([]);
+  const [tripDetails, setTripDetails] = useState(undefined);
 
   const fetchNotifs = async () => {
     // Récupération des notifications non lues
@@ -64,7 +64,6 @@ const Notifs = () => {
 
  const displayTrip = async (notificationRelatedID) => {
   console.log(notificationRelatedID);
-  setModalVisible(true);
   const resp = await fetch(API_URL + '/Trajet/' + notificationRelatedID, {
     method: 'GET'
   }).catch((error) => {console.log(error)});
@@ -73,6 +72,7 @@ const Notifs = () => {
   if (dataTrip != undefined) {
     setTripDetails(dataTrip);
   }  
+  setModalVisible(true);
 };
 
   const renderNotification = (notification) => {
@@ -91,13 +91,18 @@ const Notifs = () => {
           </>
         )}
         {notification.type === 'a' && (
-          <TouchableOpacity style={styles.notifbutton} onPress={() => handleNotificationAction(notification)}>
-            <Ionicons name="checkmark-sharp" style={styles.notifbuttonIcon} />
+          <TouchableOpacity style={styles.notifmarker}>
+            <Ionicons name="checkmark-sharp" style={[styles.notifbuttonIcon, {color: 'green'}]} />
           </TouchableOpacity>
         )}
         {notification.type === 'r' && (
-          <TouchableOpacity style={styles.notifbutton} onPress={() => handleNotificationAction(notification)}>
-            <Ionicons name="close-sharp" style={styles.notifbuttonIcon} />
+          <TouchableOpacity style={styles.notifmarker}>
+            <Ionicons name="close-sharp" style={[styles.notifbuttonIcon, {color: 'red'}]} />
+          </TouchableOpacity>
+        )}
+        {notification.type === 'l' && (
+          <TouchableOpacity style={styles.notifmarker}>
+            <Ionicons name="close-sharp" style={[styles.notifbuttonIcon, {color: 'red'}]} />
           </TouchableOpacity>
         )}
         {notification.read === false && (

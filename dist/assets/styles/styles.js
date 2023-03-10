@@ -236,6 +236,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 5
   },
+  notifmarker: {
+    borderWidth: 2,
+    borderRadius: 20,
+    borderColor: '#1C6E8C',
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 5
+  },
   notifbuttonIcon: {
     color: 'white',
     fontSize: 24

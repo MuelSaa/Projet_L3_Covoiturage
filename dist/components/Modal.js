@@ -110,8 +110,8 @@ export const TripDetailModal = ({ visible, onClose, selectedTrip}) => {
         <View style={modalStyles.infoModalContainer}>
           <View style={modalStyles.modalView}>
             <Text style={{fontSize:30, color:'black', paddingBottom:15, fontWeight:'bold', fontStyle:'italic'}}>Votre trajet</Text>
-            <View style={styles.info}><Text style={styles.label}>Depart : </Text><Text style={styles.tripText}>{selectedTrip ? selectedTrip[0].departAdresse : ''}</Text></View>
-            <View style={styles.info}><Text style={styles.label}>Arrivée : </Text><Text style={styles.tripText}>{selectedTrip ? selectedTrip[0].destinationAdresse : ''}</Text></View>
+            <View style={styles.info}><Text style={styles.label}>Depart : </Text><Text style={styles.tripText}>{selectedTrip ? selectedTrip.departAdresse : ''}</Text></View>
+            <View style={styles.info}><Text style={styles.label}>Arrivée : </Text><Text style={styles.tripText}>{selectedTrip ? selectedTrip.destinationAdresse : ''}</Text></View>
             <Text style={styles.tripText}>{selectedTrip? moment(selectedTrip.departHeure).format('DD/MM/YYYY - HH:mm') : ''}</Text>
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
               <Text style={styles.closeButtonText}>Fermer</Text>

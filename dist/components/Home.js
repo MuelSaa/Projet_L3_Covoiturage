@@ -155,24 +155,19 @@ export default function Home() {
     else if(addHolder == 'adresse inconnue') alert("vous n'avez pas choisi une adresse valide...");
     else {
       console.log(dateFormat);
-      const resp = await fetch(API_URL + '/FindTrajetDepart', {
-        method: 'POST',
+      console.log(`${API_URL}/FindTrajetDepart?departLat=${checked === 'depart' ? 47.244505 : latitude}&departLon=${checked === 'depart' ? 5.987401 : longitude}&arriverLat=${checked === 'depart' ? latitude : 47.244505}&arriverLon=${checked === 'depart' ? longitude : 5.987401}&date=${dateFormat}`);
+      const resp = await fetch(`${API_URL}/FindTrajetDepart?departLat=${checked === 'depart' ? 47.244505 : latitude}&departLon=${checked === 'depart' ? 5.987401 : longitude}&arriverLat=${checked === 'depart' ? latitude : 47.244505}&arriverLon=${checked === 'depart' ? longitude : 5.987401}&heure=${dateFormat}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-           departLat:checked == 'depart' ? 47.244505 : latitude,
-           departLon:checked == 'depart' ? 5.987401 : longitude,
-           arriverLat:checked == 'depart' ? latitude : 47.244505,
-           arriverLon:checked == 'depart' ? longitude : 5.987401,
-           date:dateFormat,
-         })
+        }
       })
       .then(response => response.json())
       .then(data => setTrips(data))
       setListModalVisible(true);
     }
-  };  
+  };
+  
     
   const onChangeDate = (event, selectedDate) => {
     const currentDate = selectedDate || date;
