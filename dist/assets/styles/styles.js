@@ -176,6 +176,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#1C6E8C',
   },
+  notiflabel: {
+    textAlign: 'center',
+    fontSize: 20,
+    marginRight: 5,
+    position: 'relative',
+    left:0,
+    fontWeight: 'bold',
+    color: 'black',
+  },
   buttonContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -211,6 +220,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
   },
+  notifbuttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    textAlign: 'center',
+    justifyContent: 'center',
+    marginTop: 10
+  },
+  notifbutton: {
+    backgroundColor: '#1C6E8C',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 5
+  },
+  notifbuttonIcon: {
+    color: 'white',
+    fontSize: 24
+  }
 
   
 });
