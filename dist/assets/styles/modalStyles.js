@@ -16,7 +16,7 @@ const getModalStyles = (darkmode) => {
       alignContent: 'center',
       alignSelf: 'center',
       width: '95%',
-      height: '95%',
+      height: '92%',
 
     },
     modalContainerG: {
@@ -36,7 +36,7 @@ const getModalStyles = (darkmode) => {
       color: 'green',
     },
     modalContainerR: {
-      backgroundColor: 'white',
+      backgroundColor: darkmode ? 'black' : 'white',
       borderRadius: 8,
       padding: 20,
       margin: 30,
@@ -53,7 +53,7 @@ const getModalStyles = (darkmode) => {
     },
     message: {
       fontSize: 16,
-      color: 'black',
+      color: darkmode ? 'white' : 'black',
       textAlign: 'center',
     },
     closeButton: {
@@ -63,7 +63,7 @@ const getModalStyles = (darkmode) => {
       padding: 10,
     },
     closeButtonText: {
-      color: 'white',
+      color: darkmode ? 'white' : 'black',
       fontWeight: 'bold',
       fontSize: 30,
     },

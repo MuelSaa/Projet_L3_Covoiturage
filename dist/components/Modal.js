@@ -9,8 +9,7 @@ import moment from 'moment';
 
 
 
-export const InfoModal = ({ visible, onClose }) => {
-  const darkMode = useContext(ThemeContext);
+export const InfoModal = ({ visible, onClose, darkMode}) => {
   const modalStyles = getModalStyles(darkMode);
     return (
       <Modal
@@ -31,8 +30,7 @@ export const InfoModal = ({ visible, onClose }) => {
     );
 };
 
-export const AddTripModal = ({ visible, onClose }) => {
-  const darkMode = useContext(ThemeContext);
+export const AddTripModal = ({ visible, onClose, darkMode }) => {
   const modalStyles = getModalStyles(darkMode);
   return (
     <Modal
@@ -55,8 +53,7 @@ export const AddTripModal = ({ visible, onClose }) => {
   );
 };
 
-export const AddPassengerModal = ({ visible, onClose }) => {
-  const darkMode = useContext(ThemeContext);
+export const AddPassengerModal = ({ visible, onClose, darkMode }) => {
   const modalStyles = getModalStyles(darkMode);
   return (
     <Modal
@@ -110,8 +107,7 @@ export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text, 
   );
 };
 
-export const TripDetailModal = ({ visible, onClose, selectedTrip}) => {
-  const darkMode = useContext(ThemeContext);
+export const TripDetailModal = ({ visible, onClose, selectedTrip, darkMode}) => {
   const modalStyles = getModalStyles(darkMode);
   const styles = getStyles(darkMode);
   return (
@@ -135,8 +131,7 @@ export const TripDetailModal = ({ visible, onClose, selectedTrip}) => {
   );
 };
 
-export const MapShowModal = ({ visible, onClose, setCompleteLocation, homeLocation, latitude, longitude}) => {
-  const darkMode = useContext(ThemeContext);
+export const MapShowModal = ({ visible, onClose, setCompleteLocation, homeLocation, latitude, longitude, darkMode}) => {
   const modalStyles = getModalStyles(darkMode);
   return (
         <Modal
@@ -173,8 +168,7 @@ export const MapShowModal = ({ visible, onClose, setCompleteLocation, homeLocati
   );
 };
 
-export const RemoveTripModal = ({ visible, onClose }) => {
-  const darkMode = useContext(ThemeContext);
+export const RemoveTripModal = ({ visible, onClose, darkMode }) => {
   const modalStyles = getModalStyles(darkMode);
   return (
     <Modal
