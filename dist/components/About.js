@@ -3,8 +3,7 @@ import { Image, Text, View, TouchableOpacity, Linking, Alert } from 'react-nativ
 import { ThemeContext } from './AppProvider';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-import styles from '../assets/styles/styles';
+import getStyles from '../assets/styles/styles';
 import logo from '../assets/logo.png';
 import { ScrollView } from 'react-native-gesture-handler';
 import { InfoModal } from './Modal';
@@ -13,6 +12,7 @@ import { API_URL } from "./env";
 
 const About = () => {
   const { darkMode, toggleDarkMode, GlobalLogin, logout } = useContext(ThemeContext);
+  const styles = getStyles(darkMode);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [listModalVisible, setListModalVisible] = useState(false);
   const [trips, setTrips] = useState([]);
@@ -133,7 +133,8 @@ const About = () => {
             onClose={() => setListModalVisible(false)}
             trips={trips}
             handleTripPress={handleTripPress}
-            text="Historique"/>
+            text="Historique"
+            darkMode={darkMode}/>
       </ScrollView>
     );    
 };

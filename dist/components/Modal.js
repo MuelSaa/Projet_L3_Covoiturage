@@ -1,13 +1,17 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView, Button } from 'react-native';
+import { ThemeContext } from './AppProvider';
 import MapView, { Marker } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import modalStyles from '../assets/styles/modalStyles';
-import styles from '../assets/styles/styles';
+import getModalStyles from '../assets/styles/modalStyles';
+import getStyles from '../assets/styles/styles';
 import moment from 'moment';
 
 
+
 export const InfoModal = ({ visible, onClose }) => {
+  const darkMode = useContext(ThemeContext);
+  const modalStyles = getModalStyles(darkMode);
     return (
       <Modal
         visible={visible}
@@ -28,6 +32,8 @@ export const InfoModal = ({ visible, onClose }) => {
 };
 
 export const AddTripModal = ({ visible, onClose }) => {
+  const darkMode = useContext(ThemeContext);
+  const modalStyles = getModalStyles(darkMode);
   return (
     <Modal
       animationType="slide"
@@ -50,6 +56,8 @@ export const AddTripModal = ({ visible, onClose }) => {
 };
 
 export const AddPassengerModal = ({ visible, onClose }) => {
+  const darkMode = useContext(ThemeContext);
+  const modalStyles = getModalStyles(darkMode);
   return (
     <Modal
       animationType="slide"
@@ -73,17 +81,19 @@ export const AddPassengerModal = ({ visible, onClose }) => {
 
 
 
-export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text}) => {
-
+export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text, darkMode}) => {
+  const modalStyles = getModalStyles(darkMode);
+  const styles = getStyles(darkMode);
   return (
     <Modal
         animationType="slide"
-        transparent={false}
+        transparent={true}
         visible={visible}
       >
-        <View style={modalStyles.modalContainerG}>
-        <Text style={{color:'#1C6E8C', fontWeight:"bold", fontSize:27, marginBottom:30, fontStyle:"italic", textAlign:'center'}}>{text}</Text>
-          <ScrollView>
+        <View style={modalStyles.modalContainer}>
+        <Text style={{color:'#1C6E8C', fontWeight:"bold", fontSize:27, marginBottom:30, marginTop:20, fontStyle:"italic", textAlign:'center'}}>{text}</Text>
+          <ScrollView
+          style={{marginBottom:55}}>
             {trips.map((trip, index) => (
               <TouchableOpacity key={index} style={styles.tripTouchable} onPress={() => handleTripPress(trip)}>
                 <View style={styles.info}><Text style={styles.label}>Depart : </Text><Text style={styles.tripText} >{trip.departAdresse}</Text></View>
@@ -92,8 +102,8 @@ export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text})
               </TouchableOpacity>
             ))}
           </ScrollView>
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>Fermer</Text>
+          <TouchableOpacity style={modalStyles.mapCloseButton} onPress={onClose}>
+            <Text style={modalStyles.closeButtonText}>Fermer</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -101,6 +111,9 @@ export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text})
 };
 
 export const TripDetailModal = ({ visible, onClose, selectedTrip}) => {
+  const darkMode = useContext(ThemeContext);
+  const modalStyles = getModalStyles(darkMode);
+  const styles = getStyles(darkMode);
   return (
   <Modal
         animationType="slide"
@@ -123,6 +136,8 @@ export const TripDetailModal = ({ visible, onClose, selectedTrip}) => {
 };
 
 export const MapShowModal = ({ visible, onClose, setCompleteLocation, homeLocation, latitude, longitude}) => {
+  const darkMode = useContext(ThemeContext);
+  const modalStyles = getModalStyles(darkMode);
   return (
         <Modal
         animationType="slide"
@@ -159,6 +174,8 @@ export const MapShowModal = ({ visible, onClose, setCompleteLocation, homeLocati
 };
 
 export const RemoveTripModal = ({ visible, onClose }) => {
+  const darkMode = useContext(ThemeContext);
+  const modalStyles = getModalStyles(darkMode);
   return (
     <Modal
       animationType="slide"

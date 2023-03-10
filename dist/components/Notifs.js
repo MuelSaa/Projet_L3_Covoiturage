@@ -4,8 +4,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { API_URL } from "./env";
 import { ThemeContext } from './AppProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import modalStyles from '../assets/styles/modalStyles';
-import styles from '../assets/styles/styles';
+import getStyles from '../assets/styles/styles';
 import { TripDetailModal } from './Modal';
 
 const Tab = createMaterialTopTabNavigator();
@@ -17,6 +16,7 @@ const Notifs = () => {
   const [getUnreadNotifications, setUnreadNotifications] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [tripDetails, setTripDetails] = useState(undefined);
+  const styles = getStyles(darkMode);
 
   const fetchNotifs = async () => {
     // Récupération des notifications non lues
@@ -43,17 +43,32 @@ const Notifs = () => {
     fetchNotifs();
   }, []);
 
-  const markAsRead = (notificationID) => {
-    fetch(API_URL + "/Notification/" + notificationID, {
+  const markAsRead = async (notificationID) => {
+    await fetch(API_URL + "/Notification/" + notificationID, {
       method: 'PUT',
-    })
+    }).catch((error) => {console.log(error)});
+    fetchNotifs();
   };
 
-  const acceptRequest = (notificationID) => {
+  const deleteNotification = async (notificationID) => {
+    await fetch(API_URL + "/Notification/" + notificationID, {
+      method: 'DELETE',
+    }).catch((error) => {console.log(error)});
+    fetchNotifs();
   };
 
-  const rejectRequest = (notificationID) => {
-    // Code pour refuser la demande de trajet
+  const acceptRequest = async (notification) => {
+    await fetch(API_URL + "/Passager/" + notification.relatedID + "/samu/true/" + notification.notificationID, {
+      method: 'PUT',
+    }).catch((error) => {console.log(error)});
+    fetchNotifs();
+  };
+
+  const rejectRequest = async (notification) => {
+    await fetch(API_URL + "/Passager/" + notification.relatedID + "/samu/false/" + notification.notificationID, {
+      method: 'PUT',
+    }).catch((error) => {console.log(error)});
+    fetchNotifs();
   };
 
   const onRefresh = () => {
@@ -75,14 +90,14 @@ const Notifs = () => {
   setModalVisible(true);
 };
 
-  const renderNotification = (notification) => {
-      return (
-        <TouchableOpacity style={styles.tripTouchableTrajet} onPress={() => displayTrip(notification.relatedID)}>
-    <Text style={styles.notiflabel}>{notification.Content}</Text>
-    <View style={styles.notifbuttonContainer}>
+const renderNotification = (notification) => {
+  return (
+    <TouchableOpacity style={styles.tripTouchableTrajet} onPress={() => displayTrip(notification.relatedID)}>
+      <Text style={styles.notiflabel}>{notification.Content}</Text>
+      <View style={styles.notifbuttonContainer}>
         {notification.type === 'j' && (
           <>
-            <TouchableOpacity style={styles.notifbutton} onPress={() => acceptRequest(notification.notificationID)}>
+            <TouchableOpacity style={styles.notifbutton} onPress={() => acceptRequest(notification)}>
               <Ionicons name="checkmark-sharp" style={styles.notifbuttonIcon} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.notifbutton} onPress={() => rejectRequest(notification.notificationID)}>
@@ -100,21 +115,23 @@ const Notifs = () => {
             <Ionicons name="close-sharp" style={[styles.notifbuttonIcon, {color: 'red'}]} />
           </TouchableOpacity>
         )}
-        {notification.type === 'l' && (
-          <TouchableOpacity style={styles.notifmarker}>
+        {notification.type !== 'j' && (
+          <TouchableOpacity style={styles.notifbutton} onPress={() => deleteNotification(notification.notificationID)}>
             <Ionicons name="close-sharp" style={[styles.notifbuttonIcon, {color: 'red'}]} />
           </TouchableOpacity>
         )}
         {notification.read === false && (
           <>
-        <TouchableOpacity style={styles.notifbutton} onPress={() => markAsRead(notification.notificationID)}>
-          <Ionicons name="checkmark-done-sharp" style={styles.notifbuttonIcon} />
-        </TouchableOpacity>
-        </>)}
+            <TouchableOpacity style={styles.notifbutton} onPress={() => markAsRead(notification.notificationID)}>
+              <Ionicons name="checkmark-done-sharp" style={styles.notifbuttonIcon} />
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </TouchableOpacity>
-      );
-  };
+  );
+};
+
   const renderAllNotifications = (notifications) => {
   return (
     <View>
@@ -130,11 +147,11 @@ const Notifs = () => {
   const NotificationRead = () => {
     return (
       <ScrollView
+            style = {{backgroundColor: darkMode ? 'black' : 'white'}}
             refreshControl={
             <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={darkMode ? 'white' : 'black'}
           />
         }
       >
@@ -145,11 +162,11 @@ const Notifs = () => {
   const NotificationUnread = () => {
     return (
       <ScrollView
+            style = {{backgroundColor: darkMode ? 'black' : 'white'}}
             refreshControl={
             <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={darkMode ? 'white' : 'black'}
           />
         }
       >
@@ -169,8 +186,8 @@ const Notifs = () => {
                 borderColor: '#1C6E8C',
                 tabBarIndicatorStyle: {backgroundColor: '#1C6E8C'},
             }}>
-            <Tab.Screen name="Lue" component={NotificationRead}/>
             <Tab.Screen name="Non lue" component={NotificationUnread} />
+            <Tab.Screen name="Lue" component={NotificationRead}/>
             
         </Tab.Navigator>
     );

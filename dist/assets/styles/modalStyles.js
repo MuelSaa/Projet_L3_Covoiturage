@@ -1,10 +1,23 @@
 import { StyleSheet } from 'react-native';
 
-const modalStyles = StyleSheet.create({
+const getModalStyles = (darkmode) => {
+  return StyleSheet.create({
     container : {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    modalContainer : {
+      borderWidth: 2,
+      borderRadius: 15,
+      borderColor: darkmode ? 'white' : 'black',
+      margin: 30,
+      backgroundColor: darkmode ? 'black' : 'white',
+      alignContent: 'center',
+      alignSelf: 'center',
+      width: '95%',
+      height: '95%',
+
     },
     modalContainerG: {
       backgroundColor: 'white',
@@ -50,7 +63,7 @@ const modalStyles = StyleSheet.create({
       padding: 10,
     },
     closeButtonText: {
-      color: '#1C6E8C',
+      color: 'white',
       fontWeight: 'bold',
       fontSize: 30,
     },
@@ -122,11 +135,11 @@ const modalStyles = StyleSheet.create({
       color: '#2E282A',
     }, 
     mapCloseButton: {
+      backgroundColor: '#1C6E8C',
       position: 'absolute',
       justifyContent: 'center',
       flexDirection: 'row',
       bottom:0, 
-      backgroundColor: 'white',
       padding: 10,
       borderRadius: 10,
       width:'100%',
@@ -134,5 +147,6 @@ const modalStyles = StyleSheet.create({
       spaceBetween: 10,
     }
 });
+}
 
-export default modalStyles;
+export default getModalStyles;

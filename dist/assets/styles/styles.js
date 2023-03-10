@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
+const getStyles = (darkmode) =>{
+  return StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -81,10 +82,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   date: {
-    marginTop: 5,
-    paddingTop: 10,
+    marginTop: 7,
+    paddingTop: 13,
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 18,
     color: '#1C6E8C',
     height: 50,
     borderColor: '#1C6E8C',
@@ -132,6 +133,7 @@ const styles = StyleSheet.create({
   },
 
   tripText: {
+    color : darkmode ? 'white' : 'black',
     textAlign: 'center',
     fontSize: 15,
     lineHeight: 26,
@@ -151,7 +153,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   activeButton: {
-    backgroundColor: 'black',
+    backgroundColor: darkmode ? '#00ced1' : 'black',
   },
   activeButtonText: {
     color: '#1C6E8C',
@@ -183,7 +185,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     left:0,
     fontWeight: 'bold',
-    color: 'black',
+    color: darkmode ? 'white' : 'black',
   },
   buttonContainer: {
     display: 'flex',
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontSize: 30,
     fontWeight: 'bold',
-    color: 'black',
+    color: darkmode ? 'white' : 'black',
   },
   info: {
     flexDirection: 'row',
@@ -262,5 +264,6 @@ const styles = StyleSheet.create({
 
   
 });
+}
 
-export default styles;
+export default getStyles;

@@ -10,8 +10,8 @@ import moment from 'moment';
 import Dialog, { DialogContent } from 'react-native-popup-dialog';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { ThemeContext } from './AppProvider';
-import modalStyles from '../assets/styles/modalStyles';
-import styles from '../assets/styles/styles';
+import getModalStyles from '../assets/styles/modalStyles';
+import getStyles from '../assets/styles/styles';
 import { RemoveTripModal } from './Modal';
 
 import { API_URL } from "./env";
@@ -68,6 +68,8 @@ export function DriverTrips() {
     const [refreshing, setRefreshing] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [showRemoveTripModal, setShowRemoveTripModal] = useState(false);
+    const styles = getStyles(darkMode);
+    const modalStyles = getModalStyles(darkMode);
 
 
     const handleTripPressDriver = (trip) => {
@@ -133,11 +135,11 @@ export function DriverTrips() {
   
     return (
         <ScrollView
+            style={{backgroundColor: darkMode ? 'black' : 'white'}}
             refreshControl={
             <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={darkMode ? 'white' : 'black'}
           />
         }
       >
@@ -182,7 +184,7 @@ export function PassengerTrips() {
     const { darkMode } = useContext(ThemeContext);
     const [refreshing, setRefreshing] = useState(false);
     const [showRemoveTripModal, setShowRemoveTripModal] = useState(false);
-
+    const styles = getStyles(darkMode);
   
     const fetchTrips = async () => {
         try {
@@ -239,6 +241,7 @@ const handleTripPressPassenger = (trip) => {
   
     return (
         <ScrollView
+            style={{backgroundColor: darkMode ? 'black' : 'white'}}
             refreshControl={
             <RefreshControl
             refreshing={refreshing}

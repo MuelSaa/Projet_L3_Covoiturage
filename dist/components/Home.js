@@ -6,7 +6,7 @@ import Geocoder from 'react-native-geocoding';
 import * as Location from 'expo-location';
 import logo from '../assets/logo.png';
 import { ThemeContext } from './AppProvider';
-import styles from '../assets/styles/styles';
+import getStyles from '../assets/styles/styles';
 import { AddPassengerModal } from './Modal';
 import { TripShowModal } from './Modal';
 import { MapShowModal } from './Modal';
@@ -17,6 +17,7 @@ Geocoder.init(API_KEY, {language : "fr"});
 
 export default function Home() {
 
+  const { darkMode, toggleDarkMode, GlobalLogin, logout } = useContext(ThemeContext);
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
@@ -33,7 +34,7 @@ export default function Home() {
   const [addHolder, setHolder] = useState('choisir une adresse');
   const timeoutRef = useRef(null);
   const [showAddPassengerModal, setShowAddPassengerModal] = useState(false);
-  const { darkMode } = useContext(ThemeContext);
+  const styles = getStyles(darkMode);
 
 
   /**********************************************************************************************************
@@ -187,7 +188,7 @@ export default function Home() {
   /************************* AFFICHAGE DU FORMULAIRE **********************************************************/
     return (
       <ScrollView style={{backgroundColor: darkMode ? 'black' : 'white'}}>
-      <View style={[styles.container]}>
+      <View style={styles.container}>
       <View style={styles.header}>
         <Image source={logo} style={styles.logo} />
       </View> 
