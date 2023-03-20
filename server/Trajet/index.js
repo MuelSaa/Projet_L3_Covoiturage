@@ -117,12 +117,11 @@ exports.findTrajetDepart = (req, res) => {
     res.setHeader('Content-type', 'application/json');
 
     console.log("GET FindTrajetDepart : ",req.query);
-    console.log("bonne route");
     
     const result = findTrajetSchema.validate(req.query);
 
     if(result.error){
-        res.status(400).send({"error":result.error});
+        res.status(400).send(result.error);
         return;
     }
 
@@ -180,12 +179,81 @@ exports.findTrajetRetours = (req, res) => {
     const departLon = client.escapeLiteral(req.query.departLon);
     const arriverLat = client.escapeLiteral(req.query.arriverLat);
     const arriverLon = client.escapeLiteral(req.query.arriverLon);
-    const heure = client.escapeLiteral(req.query.heure);
+    var heure = req.query.heure;
+    let firstIndex = heure.indexOf(" ");
+    let secondIndex = heure.indexOf(" ", firstIndex + 1);
+
+    heure = heure.slice(0, secondIndex) + "+" + heure.slice(secondIndex + 1);
+    heure = client.escapeLiteral(heure);
 
     var whereClause = `(6371 * acos(cos(radians(${departLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${departLon})) + sin(radians(${departLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
         AND (6371 * acos(cos(radians(${arriverLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${arriverLon})) + sin(radians(${arriverLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
         AND date_trunc('day', "Trajet"."arriverHeure" AT TIME ZONE 'UTC') = date_trunc('day', ${heure}::timestamp with time zone AT TIME ZONE 'UTC')
         AND "Trajet"."arriverHeure"::time BETWEEN (${heure}::timestamp with time zone - interval '1 hour')::time AND ${heure}::time`;
+    
+    console.log(whereClause);
+    client.query(`SELECT *
+        FROM public."Trajet"
+        WHERE ${whereClause}`,
+        (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send( 'Internal Server Error');
+            return;
+        }
+        res.json(dbRes.rows);
+        client.end();
+        });
+}
+
+exports.TrajetConducteur = (req, res) => {
+    res.setHeader('Content-type', 'application/json');
+
+    console.log("GET TrajetConducteurHistorique : ", req.query);
+    
+    const client = new Client(connectionString);
+    client.connect();
+
+    const conducteur = client.escapeLiteral(req.query.conducteur);
+
+    const whereClause = `"Trajet"."conducteur" = ${conducteur} AND "Trajet"."arriverHeure" > NOW()`;
+    
+    const sqlQuery = `SELECT "Trajet".*, 
+                            COALESCE("PassagersAcceptes"."nbPassagersAcceptes", 0) AS "nbPassagers"
+                     FROM public."Trajet"
+                     LEFT JOIN (
+                         SELECT "trajetID", COUNT(*) AS "nbPassagersAcceptes"
+                         FROM public."Passager"
+                         WHERE "Passager"."status" = 'a'
+                         GROUP BY "trajetID"
+                     ) AS "PassagersAcceptes" ON "Trajet"."trajetID" = "PassagersAcceptes"."trajetID"
+                     WHERE ${whereClause}`;
+
+    console.log(sqlQuery);
+
+    client.query(sqlQuery, (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send('Internal Server Error');
+            return;
+        }
+        res.json(dbRes.rows);
+        client.end();
+    });
+}
+
+
+exports.TrajetConducteurHistorique = (req, res) => {
+    res.setHeader('Content-type', 'application/json');
+
+    console.log("GET TrajetConducteurHistorique : ",req.query);
+    
+    client = new Client(connectionString);
+    client.connect();
+
+    const conducteur = client.escapeLiteral(req.query.conducteur);
+
+    var whereClause = `"Trajet"."conducteur" = ${conducteur} AND "Trajet"."arriverHeure" < NOW()`;
     
     console.log(whereClause);
     client.query(`SELECT *
