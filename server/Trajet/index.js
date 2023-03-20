@@ -127,15 +127,12 @@ exports.findTrajetDepart = (req, res) => {
     client = new Client(connectionString);
     client.connect();
 
-    const departLat = client.escapeLiteral(req.query.departLat);
-    const departLon = client.escapeLiteral(req.query.departLon);
-    const arriverLat = client.escapeLiteral(req.query.arriverLat);
-    const arriverLon = client.escapeLiteral(req.query.arriverLon);
-    const heure = client.escapeLiteral(req.query.heure);
-    departLat = parseInt(req.query.departLat);
-    departLon = parseInt(req.query.departLon);
-    arriverLat = parseInt(req.query.arriverLat);
-    arriverLon = parseInt(req.query.arriverLon);
+    const departLat = parseInt(client.escapeLiteral(req.query.departLat));
+    const departLon = parseInt(client.escapeLiteral(req.query.departLon));
+    const arriverLat = parseInt(client.escapeLiteral(req.query.arriverLat));
+    const arriverLon = parseInt(client.escapeLiteral(req.query.arriverLon));
+    const heure = parseInt(client.escapeLiteral(req.query.heure));
+    
 
     var whereClause = `(6371 * acos(cos(radians(${departLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${departLon})) + sin(radians(${departLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
         AND (6371 * acos(cos(radians(${arriverLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${arriverLon})) + sin(radians(${arriverLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
