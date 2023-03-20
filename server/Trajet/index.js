@@ -127,11 +127,11 @@ exports.findTrajetDepart = (req, res) => {
     client = new Client(connectionString);
     client.connect();
 
-    const departLat = parseInt(client.escapeLiteral(req.query.departLat));
-    const departLon = parseInt(client.escapeLiteral(req.query.departLon));
-    const arriverLat = parseInt(client.escapeLiteral(req.query.arriverLat));
-    const arriverLon = parseInt(client.escapeLiteral(req.query.arriverLon));
-    const heure = parseInt(client.escapeLiteral(req.query.heure));
+    const departLat = client.escapeLiteral(req.query.departLat);
+    const departLon = client.escapeLiteral(req.query.departLon);
+    const arriverLat = client.escapeLiteral(req.query.arriverLat);
+    const arriverLon = client.escapeLiteral(req.query.arriverLon);
+    const heure = client.escapeLiteral(req.query.heure);
     
 
     var whereClause = `(6371 * acos(cos(radians(${departLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${departLon})) + sin(radians(${departLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
