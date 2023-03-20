@@ -56,7 +56,7 @@ const findTrajetSchema = Joi.object({
         .min(-180)
         .max(180)
         .required(),
-    heure: Joi.date()
+    heure: Joi.string()
         .optional()
 });
 
@@ -117,11 +117,13 @@ exports.findTrajetDepart = (req, res) => {
     res.setHeader('Content-type', 'application/json');
 
     console.log("GET FindTrajetDepart : ",req.query);
+    console.log("bonne route");
     
     const result = findTrajetSchema.validate(req.query);
 
     if(result.error){
-        res.status(400).send(result.error);
+        res.status(400).send({"error":result.error});
+        return;
     }
 
     client = new Client(connectionString);
@@ -131,8 +133,12 @@ exports.findTrajetDepart = (req, res) => {
     const departLon = client.escapeLiteral(req.query.departLon);
     const arriverLat = client.escapeLiteral(req.query.arriverLat);
     const arriverLon = client.escapeLiteral(req.query.arriverLon);
-    const heure = client.escapeLiteral(req.query.heure);
-    
+    var heure = req.query.heure;
+    let firstIndex = heure.indexOf(" ");
+    let secondIndex = heure.indexOf(" ", firstIndex + 1);
+
+    heure = heure.slice(0, secondIndex) + "+" + heure.slice(secondIndex + 1);
+    heure = client.escapeLiteral(heure);
 
     var whereClause = `(6371 * acos(cos(radians(${departLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${departLon})) + sin(radians(${departLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
         AND (6371 * acos(cos(radians(${arriverLat})) * cos(radians("Trajet"."departLat")) * cos(radians("Trajet"."departLon") - radians(${arriverLon})) + sin(radians(${arriverLat})) * sin(radians("Trajet"."departLat")))) <= ${config.DEFAULT_RAYON}
@@ -142,14 +148,16 @@ exports.findTrajetDepart = (req, res) => {
     console.log(whereClause);
     client.query(`SELECT *
         FROM public."Trajet"
-        WHERE ${whereClause}`,
-        (dbERR, dbRes) => {
+        WHERE ${whereClause}`, (dbERR, dbRes) => {
         if (dbERR) {
+            console.log("erreur");
             console.error(dbERR);
             res.status(500).send( 'Internal Server Error');
             return;
         }
-        res.json(dbRes.rows);
+        console.log("ok :");
+        console.log(dbRes.rows);
+        res.status(200).send(dbRes.rows);
         client.end();
         });
 }

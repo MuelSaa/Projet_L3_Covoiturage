@@ -163,7 +163,7 @@ const handleTripPressPassenger = (trip) => {
         <TouchableOpacity key={index} style={styles.tripTouchableTrajet} onPress={boolean ? () => handleTripPressDriver(trip) : () => handleTripPressPassenger(trip)}>
           <View style={styles.info}><Text style={styles.label}>Depart : </Text><Text style={styles.tripText}>{trip.departAdresse}</Text></View>
           <View style={styles.info}><Text style={styles.label}>Destination : </Text><Text style={styles.tripText}>{trip.destinationAdresse}</Text></View>
-          <View style={styles.info}><Text style={styles.label}>Date : </Text><Text style={styles.tripText}>{moment(trip.departHeure).format('DD/MM/YYYY - HH:mm')}</Text></View>
+          <View style={styles.info}><Text style={styles.label}>Date : </Text><Text style={styles.tripText}>{encodeURIComponent(trip.departHeure)}</Text></View>
           {boolean === true && (<View style={styles.info}><Text style={styles.label}>Places restantes : </Text><Text style={styles.tripText}>{trip.placeDisponible}</Text></View>)}
         </TouchableOpacity>
       ))}
