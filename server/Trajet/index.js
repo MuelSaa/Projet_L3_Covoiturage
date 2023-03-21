@@ -216,7 +216,7 @@ exports.TrajetConducteur = (req, res) => {
 
     const conducteur = client.escapeLiteral(req.params.conducteur);
 
-    const whereClause = `"Trajet"."conducteur" = ${conducteur} AND "Trajet"."arriverHeure" > NOW()`;
+    const whereClause = `"Trajet"."conducteur" = ${conducteur} AND "Trajet"."departHeure" > NOW()`;
     
     const sqlQuery = `SELECT "Trajet".*, 
                             COALESCE("PassagersAcceptes"."nbPassagersAcceptes", 0) AS "nbPassagers"
@@ -259,6 +259,58 @@ exports.TrajetConducteurHistorique = (req, res) => {
     client.query(`SELECT *
         FROM public."Trajet"
         WHERE ${whereClause}`,
+        (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send( 'Internal Server Error');
+            return;
+        }
+        res.json(dbRes.rows);
+        client.end();
+        });
+}
+exports.TrajetPassager = (req, res) => {
+    res.setHeader('Content-type', 'application/json');
+
+    console.log("GET TrajetPassager : ",req.params.passagerID);
+    
+    client = new Client(connectionString);
+    client.connect();
+
+    const passager = client.escapeLiteral(req.params.passagerID);
+
+    var whereClause = `"Passager"."passagerID" = ${passager} AND "Passager"."status" = 'a' AND "Trajet"."departHeure" > NOW()`;
+    
+    console.log(whereClause);
+    client.query(`SELECT "Trajet".*
+    FROM public."Trajet" INNER JOIN public."Passager" ON "Passager"."trajetID" = "Trajet"."trajetID"
+    WHERE ${whereClause}`,
+        (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send( 'Internal Server Error');
+            return;
+        }
+        res.json(dbRes.rows);
+        client.end();
+        });
+}
+exports.TrajetPassagerHistorique = (req, res) => {
+    res.setHeader('Content-type', 'application/json');
+
+    console.log("GET TrajetConducteurHistorique : ",req.params.passagerID);
+    
+    client = new Client(connectionString);
+    client.connect();
+
+    const passager = client.escapeLiteral(req.params.passagerID);
+
+    var whereClause = `"Passager"."passagerID" = ${passager} AND "Passager"."status" = 'a' AND "Trajet"."arriverHeure" < NOW()`;
+    
+    console.log(whereClause);
+    client.query(`SELECT "Trajet".*
+    FROM public."Trajet" INNER JOIN public."Passager" ON "Passager"."trajetID" = "Trajet"."trajetID"
+    WHERE ${whereClause}`,
         (dbERR, dbRes) => {
         if (dbERR) {
             console.error(dbERR);
