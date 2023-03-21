@@ -90,8 +90,8 @@ export default function Add() {
 
   const add = async () => {
     if(!dateFormat) alert("vous n'avez pas choisi de date..."); 
-    if (!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
-    if(addHolder == 'adresse inconnue') alert("vous n'avez pas choisi une adresse valide...");
+    else if (!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
+    else if(addHolder == 'adresse inconnue') alert("vous n'avez pas choisi une adresse valide...");
     else {
       setShowAddTripModal(true);
       if (checked === 'depart') {

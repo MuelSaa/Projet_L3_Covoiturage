@@ -25,34 +25,14 @@ const About = () => {
   const text = darkMode ? 'Mode sombre activé' : 'Mode sombre désactivé';
 
   useEffect(() => {
-    fetch(API_URL + '/MNotes/samu', { 
+    fetch(API_URL + '/MNotes/' + GlobalLogin ? GlobalLogin : 'samu', { 
       method: 'GET',
     }).then(response => response.json())
     .then(data => setNoteAverage(data));
   }, []);
 
-  const handleTripPress = (trip) => {
-    Alert.alert(
-        'Que souhaitez-vous faire ?',
-        '',
-        [
-            {
-                text: 'Information sur le trajet',
-                onPress: () => {
-                },
-                style: 'default',
-            },
-            {
-                text: 'Annuler',
-                onPress: () => {},
-                style: 'cancel',
-            },
-        ],
-    );
-  };
-
   const handleNotes = async () => {
-    const resp = await fetch(API_URL + '/Notes/samu', {
+    const resp = await fetch(API_URL + '/Notes/' + GlobalLogin ? GlobalLogin : 'samu', {
       method: 'GET'
     })
     .then(response => response.json())
@@ -65,15 +45,7 @@ const About = () => {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json'
-        },
-        // body: JSON.stringify({
-        //   departLat:,
-        //   departLon:,
-        //   arriverLat:,
-        //   arriverLon:,
-        //   date:,
-        //   heure:,
-        // })
+        }
       })
       .then(response => response.json())
       .then(data => setTrips(data))
@@ -139,7 +111,7 @@ const About = () => {
             visible={listModalVisible}
             onClose={() => setListModalVisible(false)}
             trips={trips}
-            handleTripPress={handleTripPress}
+            handleTripPress={() => {}}
             text="Historique"
             darkMode={darkMode}/>
       </ScrollView>

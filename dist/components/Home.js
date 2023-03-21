@@ -164,6 +164,7 @@ export default function Home() {
         }
       })
       .then(response => response.json())
+      console.log(response)
       .then(data => setTrips(data))
       setListModalVisible(true);
     }
