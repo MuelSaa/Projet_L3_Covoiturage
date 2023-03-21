@@ -130,6 +130,25 @@ const Joi = require('joi');
         });
       };
 
+       exports.getNoteurLoginNote = async (req, res) => {
+        res.setHeader('Content-type', 'application/json');
+        client = new Client(connectionString);
+        client.connect();
+          const  login  = req.params.index;
+          console.log(login)
+          client.query('SELECT note, "noteurLogin" FROM "Notes" WHERE "noterLogin" = $1', [login], (err, result) => {
+            if (err) {
+              console.error(err);
+              res.status(500).send(JSON.stringify('Internal Server Error'));
+              client.end();
+              return;
+            }
+            res.send(result.rows);
+            client.end();
+            return;
+          });
+        };
+
       exports.getNotesByTrajetId = (req, res) => {
         const trajetId = req.params.TrajetID;
         res.setHeader('Content-type', 'application/json');

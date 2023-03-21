@@ -76,6 +76,9 @@ app.get('/Trajet', trajet.getAllTrajet);
 app.get('/Trajet/:trajetID', trajet.getAllTrajetPassager);
 app.get('/FindTrajetRetours', trajet.findTrajetRetours);
 app.get('/FindTrajetDepart', trajet.findTrajetDepart);
+app.get('/TrajetConducteur', trajet.TrajetConducteur);
+app.get('/TrajetConducteurHistorique', trajet.TrajetConducteurHistorique);
+
 app.post('/Trajet', trajet.addTrajet);
 
 app.delete('/Trajet/:trajetID', trajet.deleteTrajet);
@@ -120,6 +123,8 @@ app.get('/Notes/:noteID',note.getNoteById);
 app.get('/Noteur/:noteurLogin',note.getNotesByNoteur);
 
 app.get('/MNotes/:noterLogin', note.getNotesByConducteurAndTrajet);
+
+app.get('/NotesC/:index',note.getNoteurLoginNote);
 
 app.get('/NoteTrajet/:TrajetID',note.getNotesByTrajetId );
 
