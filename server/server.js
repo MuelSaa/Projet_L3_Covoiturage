@@ -76,8 +76,8 @@ app.get('/Trajet', trajet.getAllTrajet);
 app.get('/Trajet/:trajetID', trajet.getAllTrajetPassager);
 app.get('/FindTrajetRetours', trajet.findTrajetRetours);
 app.get('/FindTrajetDepart', trajet.findTrajetDepart);
-app.get('/TrajetConducteur', trajet.TrajetConducteur);
-app.get('/TrajetConducteurHistorique', trajet.TrajetConducteurHistorique);
+app.get('/TrajetConducteur/:conducteur', trajet.TrajetConducteur);
+app.get('/TrajetConducteurHistorique/:conducteur', trajet.TrajetConducteurHistorique);
 
 app.post('/Trajet', trajet.addTrajet);
 

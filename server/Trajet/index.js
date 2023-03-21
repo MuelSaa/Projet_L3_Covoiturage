@@ -209,12 +209,12 @@ exports.findTrajetRetours = (req, res) => {
 exports.TrajetConducteur = (req, res) => {
     res.setHeader('Content-type', 'application/json');
 
-    console.log("GET TrajetConducteurHistorique : ", req.query);
+    console.log("GET TrajetConducteurHistorique : ", req.params.conducteur);
     
     const client = new Client(connectionString);
     client.connect();
 
-    const conducteur = client.escapeLiteral(req.query.conducteur);
+    const conducteur = client.escapeLiteral(req.params.conducteur);
 
     const whereClause = `"Trajet"."conducteur" = ${conducteur} AND "Trajet"."arriverHeure" > NOW()`;
     
@@ -246,12 +246,12 @@ exports.TrajetConducteur = (req, res) => {
 exports.TrajetConducteurHistorique = (req, res) => {
     res.setHeader('Content-type', 'application/json');
 
-    console.log("GET TrajetConducteurHistorique : ",req.query);
+    console.log("GET TrajetConducteurHistorique : ",req.params.conducteur);
     
     client = new Client(connectionString);
     client.connect();
 
-    const conducteur = client.escapeLiteral(req.query.conducteur);
+    const conducteur = client.escapeLiteral(req.params.conducteur);
 
     var whereClause = `"Trajet"."conducteur" = ${conducteur} AND "Trajet"."arriverHeure" < NOW()`;
     
