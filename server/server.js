@@ -133,6 +133,8 @@ app.get('/NoteTrajet/:TrajetID',note.getNotesByTrajetId );
 
 app.post('/Notes',note.createNote);
 
+app.post('/NotesC',note.createNoteNotif);
+
 //app.put('/Unote/:NoteID',note.updateNote)
 
 app.delete('/Notes/:NoteID',note.deleteNote);
