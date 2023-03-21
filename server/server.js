@@ -124,6 +124,8 @@ app.get('/Noteur/:noteurLogin',note.getNotesByNoteur);
 
 app.get('/MNotes/:noterLogin', note.getNotesByConducteurAndTrajet);
 
+app.get('/NotesC/:index',note.getNoteurLoginNote);
+
 app.get('/NoteTrajet/:TrajetID',note.getNotesByTrajetId );
 
 app.post('/Notes',note.createNote);
