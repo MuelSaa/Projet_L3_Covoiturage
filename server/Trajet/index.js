@@ -79,6 +79,61 @@ exports.getAllTrajet = (req, res) => {
         client.end();
         });
 }
+exports.trajetEffectue = async (req, res) => {
+    
+    //client = new Client(connectionString);
+  //client.connect();
+    res.setHeader("Content-type", "application/json");
+    try {
+      await client.connect();
+      const dbRes = await client.query(
+        'SELECT "trajetID", "departHeure", "arriverHeure", conducteur, "GroupeTrajet" FROM "Trajet" WHERE "departHeure" < NOW()',
+
+      );
+  
+      const trajets = dbRes.rows;
+  
+      if (!trajets) {
+        res.status(404).send(JSON.stringify("Trajet non trouvé"));
+        return;
+      }   
+      for (const trajet of trajets) {
+        const conducteur = trajet.conducteur;
+        const trajetID = trajet.trajetID;
+        
+      // Envoyer une notification à tous les passagers du trajet
+    // Envoyer une notification à tous les passagers du trajet
+       // Sélectionner tous les passagers du trajet
+       const passagersQuery = 'SELECT "passagerID" FROM "Passager" WHERE "trajetID" = $1';
+       const passagersValues = [trajetID];
+       const passagersResult = await client.query(passagersQuery, passagersValues);
+   
+       // Créer une notification pour chaque passager demandant s'il souhaite noter le conducteur
+       const notificationContent = `Le trajet ${trajetID} que vous avez réservé avec ${conducteur} a été effectué.`;
+       const createNotificationQuery = 'INSERT INTO "Notification" ("Content", "read", "login") VALUES ($1, $2, $3)';
+   
+       for (const passager of passagersResult.rows) {
+         // Vérifier si la notification existe déjà pour ce passager
+         const checkNotificationQuery = 'SELECT * FROM "Notification" WHERE "Content" = $1 AND "read" = $2 AND "login" = $3';
+         const checkNotificationValues = [notificationContent, false, passager.passagerID];
+         const checkNotificationResult = await client.query(checkNotificationQuery, checkNotificationValues);
+   
+         // Si la notification n'existe pas encore, la créer
+         if (checkNotificationResult.rowCount === 0) {
+           const createNotificationValues = [notificationContent, false, passager.passagerID];
+           await client.query(createNotificationQuery, createNotificationValues);
+         }
+        }
+    }  
+    res.json({ message: `Tout les trajets ont recu une notification.` });     
+    } catch (error) {
+        console.error(error);
+        res.status(500).send(JSON.stringify("Internal Server Error"));
+    } finally {
+            // await client.end();
+    }
+ };
+
 
 exports.getAllTrajetPassager = async (req, res) => {
   console.log("Recu : GET /Trajet/"+req.params.trajetID);
