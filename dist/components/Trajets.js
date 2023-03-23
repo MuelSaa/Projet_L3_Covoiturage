@@ -62,7 +62,7 @@ const Trajets = () => {
 
   const fetchTrips = async () => {
     try {
-      const resp = await fetch(API_URL + '/Trajet', { method: 'GET' });
+      const resp = await fetch(API_URL + '/TrajetConducteurHistorique/' + user, { method: 'GET' });
       const data = await resp.json();
       setTripsDriver(data);
     } catch (error) {
@@ -163,13 +163,8 @@ const handleTripPressPassenger = (trip) => {
         <TouchableOpacity key={index} style={styles.tripTouchableTrajet} onPress={boolean ? () => handleTripPressDriver(trip) : () => handleTripPressPassenger(trip)}>
           <View style={styles.info}><Text style={styles.label}>Depart : </Text><Text style={styles.tripText}>{trip.departAdresse}</Text></View>
           <View style={styles.info}><Text style={styles.label}>Destination : </Text><Text style={styles.tripText}>{trip.destinationAdresse}</Text></View>
-<<<<<<< HEAD
           <View style={styles.info}><Text style={styles.label}>Date : </Text><Text style={styles.tripText}>{moment(trip.departHeure).format('DD/MM/YYYY - HH:mm')}</Text></View>
           {boolean === true && (<View style={styles.info}><Text style={styles.label}>Places restantes : </Text><Text style={styles.tripText}>{trip.placeDisponible - trip.nbPassagersAcceptes}</Text></View>)}
-=======
-          <View style={styles.info}><Text style={styles.label}>Date : </Text><Text style={styles.tripText}>{encodeURIComponent(trip.departHeure)}</Text></View>
-          {boolean === true && (<View style={styles.info}><Text style={styles.label}>Places restantes : </Text><Text style={styles.tripText}>{trip.placeDisponible}</Text></View>)}
->>>>>>> 016bbf8b7c993fcb012087ab83ced53ee58c4864
         </TouchableOpacity>
       ))}
       <RemoveTripModal visible={showRemoveTripModal} onClose={() => setShowRemoveTripModal(false)} darkMode={darkMode}/>

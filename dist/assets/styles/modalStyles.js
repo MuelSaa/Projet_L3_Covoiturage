@@ -145,6 +145,27 @@ const getModalStyles = (darkmode) => {
       width:'100%',
       height:'8%', 
       spaceBetween: 10,
+    }, 
+    noteContainer: {
+      padding: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: '#ddd',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    noteText: {
+      color : darkmode ? 'white' : 'black',
+      fontSize: 20,
+      fontWeight: 'bold'
+    },
+    ratingContainer: {
+      flexDirection: 'row'
+    },
+    starIcon: {
+      color: '#FFD700',
+      fontSize: 20,
+      marginRight: 5
     }
 });
 }

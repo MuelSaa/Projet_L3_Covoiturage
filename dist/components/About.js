@@ -8,6 +8,7 @@ import logo from '../assets/logo.png';
 import { ScrollView } from 'react-native-gesture-handler';
 import { InfoModal } from './Modal';
 import { TripShowModal } from './Modal';
+import { NoteShowModal } from './Modal';
 import { API_URL } from "./env";
 import {useNavigation} from 'react-navigation-hooks'
 
@@ -17,6 +18,7 @@ const About = () => {
   const styles = getStyles(darkMode);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [listModalVisible, setListModalVisible] = useState(false);
+  const [noteModalVisible, setNoteModalVisible] = useState(false);
   const [trips, setTrips] = useState([]);
   const [noteAverage, setNoteAverage] = useState(0);
   const [notes, setNotes] = useState([]);
@@ -32,16 +34,20 @@ const About = () => {
   }, []);
 
   const handleNotes = async () => {
-    const resp = await fetch(API_URL + '/Notes/' + GlobalLogin ? GlobalLogin : 'samu', {
-      method: 'GET'
+    fetch(API_URL + '/NotesC/Aleen80', {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json'
+        }
     })
     .then(response => response.json())
     .then(data => setNotes(data))
+    console.log(notes);
     setNoteModalVisible(true);
   };
 
   const handleHistory = async () => {
-    const resp = await fetch(API_URL + '/Trajet', {
+    fetch(API_URL + '/Trajet', {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json'
@@ -113,6 +119,11 @@ const About = () => {
             trips={trips}
             handleTripPress={() => {}}
             text="Historique"
+            darkMode={darkMode}/>
+        <NoteShowModal
+            visible={noteModalVisible}
+            onClose={() => setNoteModalVisible(false)}
+            notes={notes}
             darkMode={darkMode}/>
       </ScrollView>
     );    

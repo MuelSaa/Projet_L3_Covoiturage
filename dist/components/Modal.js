@@ -76,6 +76,39 @@ export const AddPassengerModal = ({ visible, onClose, darkMode }) => {
   );
 };
 
+export const NoteShowModal = ({ visible, onClose, onPress, darkMode, notes }) => {
+  const modalStyles = getModalStyles(darkMode);
+  const styles = getStyles(darkMode);
+  return (
+    <Modal
+        animationType="slide"
+        transparent={true}
+        visible={visible}
+      >
+        <View style={modalStyles.modalContainer}>
+        <Text style={{color:'#1C6E8C', fontWeight:"bold", fontSize:27, marginBottom:30, marginTop:20, fontStyle:"italic", textAlign:'center'}}>Vos notes obtenues</Text>
+          <ScrollView style={{marginBottom:55}}>
+            {notes.map((note, index) => (
+              <TouchableOpacity key={index} style={modalStyles.noteContainer}>
+                <Text style={modalStyles.noteText}>{note.noteurLogin}</Text>
+                  <View style={modalStyles.ratingContainer}>
+                    {[...Array(note.note)].map((_, i) => (
+                      <Icon key={i} name="star" style={modalStyles.starIcon} />
+                    ))}
+                    {[...Array(5 - note.note)].map((_, i) => (
+                      <Icon key={i} name="star-o" style={modalStyles.starIcon} />
+                    ))}
+                  </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <TouchableOpacity style={modalStyles.mapCloseButton} onPress={onClose}>
+            <Text style={modalStyles.closeButtonText}>Fermer</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>  
+  );
+};
 
 
 export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text, darkMode}) => {
@@ -103,7 +136,7 @@ export const TripShowModal = ({ visible, onClose, trips, handleTripPress, text, 
             <Text style={modalStyles.closeButtonText}>Fermer</Text>
           </TouchableOpacity>
         </View>
-      </Modal>
+      </Modal>  
   );
 };
 
