@@ -81,8 +81,8 @@ exports.getAllTrajet = (req, res) => {
 }
 exports.trajetEffectue = async (req, res) => {
     
-    //client = new Client(connectionString);
-  //client.connect();
+    client = new Client(connectionString);
+    client.connect();
     res.setHeader("Content-type", "application/json");
     try {
       await client.connect();
