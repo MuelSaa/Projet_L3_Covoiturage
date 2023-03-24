@@ -203,12 +203,13 @@ exports.createNote = (req, res) => {
   });
 };
 
- // POST /notes - crée une nouvelle note
- exports.createNoteNotif = (req, res) => {
-      client = new Client(connectionString);
-      client.connect();
+   // POST /notes - crée une nouvelle note
+    exports.createNoteNotif = (req, res) => {
+    // client = new Client(connectionString);
+      //client.connect();
       // Schéma de validation pour les notes
       const createNoteSchema = Joi.object({
+        noteID: Joi.number().integer().required(),
         trajetID: Joi.number().integer().required(),
         commentaire: Joi.string().required(),
         note: Joi.number().integer().required(),
@@ -221,11 +222,12 @@ exports.createNote = (req, res) => {
         return res.status(400).send(JSON.stringify(error.details[0].message));
       }
 
-      const { trajetID, commentaire, note, noteurLogin, noterLogin } = value;
-            const insertQuery = `INSERT INTO "Notes" ("note", "trajetID", "commentaire", "noteurLogin", "noterLogin") 
-                                  VALUES ($1, $2, $3, $4, $5) 
-                                  RETURNING "noteID"`;
-      client.query(insertQuery, [note, trajetID, commentaire, noteurLogin, noterLogin], (err, result) => {
+      const { noteID, trajetID, commentaire, note, noteurLogin, noterLogin } = value;
+
+      const insertQuery = `INSERT INTO "Notes" ("note", "noteID", "trajetID", "commentaire", "noteurLogin", "noterLogin") 
+                           VALUES ($1, $2, $3, $4, $5, $6) 
+                           RETURNING *`;
+      client.query(insertQuery, [note, noteID, trajetID, commentaire, noteurLogin, noterLogin], (err, result) => {
         if (err) {
           console.error(err);
           return res.status(500).send(JSON.stringify('Internal Server Error'));
@@ -249,7 +251,6 @@ exports.createNote = (req, res) => {
       });
       });
     };
-
 /*****************************************************
  *                      UPDATE
  *****************************************************/
