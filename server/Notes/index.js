@@ -3,6 +3,24 @@ const { Client } = require('pg');
 var {client, connectionString} = require("../config/serverConnection");
 //
 const Joi = require('joi');
+
+function postNotification(content,login,type,relatedID) {
+    
+  client = new Client(connectionString);
+  client.connect();
+  const contentValue = client.escapeLiteral(content);
+  console.log(`INSERT INTO public."Notification"("Content", read, login, type, "relatedID")
+  VALUES (${contentValue}, false, '${login}', '${type}','${relatedID}') RETURNING *`);
+  client.query(`INSERT INTO public."Notification"("Content", read, login, type, "relatedID")
+  VALUES (${contentValue}, false, '${login}', '${type}','${relatedID}') RETURNING *`, (dbERR, dbRes) => {
+      if (dbERR) {
+          console.error(dbERR);
+          return;
+      }
+      console.log("POST Notification ADD ajouter : ",dbRes.rows);
+      client.end();
+  });
+}
 /*****************************************************
  *                      GET
  *****************************************************/
@@ -24,52 +42,28 @@ const Joi = require('joi');
       };
     //Moyenne GET 
   
-      exports.getNotesByConducteurAndTrajet = (req, res) => {
-        const trajetId = req.params.trajetID;
-        res.setHeader('Content-type', 'application/json');
-        console.log(trajetId)
-        client = new Client(connectionString);
-        client.connect();
-        client.query(
-          'SELECT AVG(note) as moyenne FROM "Notes" WHERE "trajetID" = $1',
-          [trajetId],
-          (err, result) => {
-            if (err) {
-              console.error(err);
-              res.status(500).send(JSON.stringify('Internal Server Error'));
-              client.end();
-              return;
-            }
-      
-            const moyenne = result.rows[0].moyenne;
-      
-            client.query(
-              'SELECT * FROM "Notes" WHERE "trajetID" = $1',
-              [trajetId],
-              (err, result) => {
-                if (err) {
-                  console.error(err);
-                  res.status(500).send(JSON.stringify('Internal Server Error'));
-                  return;
-                }
-      
-                const notes = result.rows.map((note) => ({
-                  passager: note.passagerLogin,
-                  note: note,
-                }));
-      
-                if (!notes.length) {
-                  res.send(JSON.stringify('Special'));
-                } else {
-                  res.send({ moyenne: moyenne , notes });
-                }
-                client.end();
-                return;
-              }
-            );
+    exports.getMoyenneNotes = (req, res) => {
+      client = new Client(connectionString);
+      client.connect();
+      const login = req.params.noterLogin;
+      client.query(
+        'SELECT ROUND(COALESCE(AVG(note), 0)) as moyenne FROM "Notes" WHERE "noterLogin" = $1',
+        [login],
+        (err, result) => {
+          if (err) {
+            console.error(err);
+            res.status(500).send('Internal Server Error');
+            return;
           }
-        );
-      };
+    
+          const moyenne = result.rows[0].moyenne;
+    
+          res.send({ moyenne });
+          client.end();
+        }
+      );
+    };
+    
     
     // GET /notes/:id - renvoie une note avec l'id spécifié
     exports.getNoteById = (req, res) => {
@@ -218,36 +212,20 @@ exports.createNote = (req, res) => {
       
       const { error, value } = createNoteSchema.validate(req.body);
       if (error) {
+        console.log(error)
         return res.status(400).send(JSON.stringify(error.details[0].message));
       }
 
       const { trajetID, commentaire, note, noteurLogin, noterLogin } = value;
             const insertQuery = `INSERT INTO "Notes" ("note", "trajetID", "commentaire", "noteurLogin", "noterLogin") 
-                                  VALUES ($1, $2, $3, $4, $5) 
-                                  RETURNING "noteID"`;
+                                  VALUES ($1, $2, $3, $4, $5)`;
       client.query(insertQuery, [note, trajetID, commentaire, noteurLogin, noterLogin], (err, result) => {
         if (err) {
           console.error(err);
           return res.status(500).send(JSON.stringify('Internal Server Error'));
         }
-    // Envoie une notification au conducteur
-    const notificationMessage = `Vous avez reçu une nouvelle note pour le trajet n°${trajetID} : ${note}/5 par ${noteurLogin}`;
-    const notificationQuery = 'INSERT INTO "Notification" ("Content", "type", "relatedID") VALUES ($1,$2,$3) RETURNING *';
-    const notificationValues = [notificationMessage,'n', trajetID];
-
-    client.query(notificationQuery, notificationValues, (err, result) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send(JSON.stringify('Internal Server Error'));
-        return;
-      }
-
-      console.log(`Notification envoyée au conducteur ${noterLogin}: ${notificationMessage}`);
-
-      res.send({notificationMessage});
-      return;
       });
-      });
+      postNotification(`${noteurLogin} a noté votre dernier trajet`,`${noterLogin}`,"a",trajetID);
     };
 
 /*****************************************************

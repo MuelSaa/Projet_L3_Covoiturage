@@ -50,6 +50,14 @@ app.use(
     })
   )
 
+  const intervalTime = 60 * 60 * 1000; // intervalle de 1 heure en millisecondes
+
+  // Démarrez l'intervalle
+  setInterval(() => {
+    // Appeler la fonction trajetEffectue
+    trajet.trajetEffectue();
+  }, intervalTime);
+
   // app.use(cors({
   //   origin: 'http://localhost:8080',
   //   methods: ['GET', 'POST'],
@@ -73,7 +81,7 @@ app.delete('/Users/:login', users.deleteUsers);
  *****************************************************/
 
 app.get('/Trajet', trajet.getAllTrajet);
-app.get('/Trajet/:trajetID', trajet.getAllTrajetPassager);
+app.get('/Trajet/:trajetID', trajet.getOneTrajet);
 app.get('/FindTrajetRetours', trajet.findTrajetRetours);
 app.get('/FindTrajetDepart', trajet.findTrajetDepart);
 app.get('/FindTrajetEffectue', trajet.trajetEffectue);
@@ -126,7 +134,7 @@ app.get('/Notes/:noteID',note.getNoteById);
 
 app.get('/Noteur/:noteurLogin',note.getNotesByNoteur);
 
-app.get('/MNotes/:noterLogin', note.getNotesByConducteurAndTrajet);
+app.get('/MNotes/:noterLogin', note.getMoyenneNotes);
 
 app.get('/NotesC/:index',note.getNoteurLoginNote);
 
@@ -134,7 +142,7 @@ app.get('/NoteTrajet/:TrajetID',note.getNotesByTrajetId );
 
 app.post('/Notes',note.createNote);
 
-app.post('/NotesC',note.createNoteNotif);
+app.post('/NoteC',note.createNoteNotif);
 
 //app.put('/Unote/:NoteID',note.updateNote)
 

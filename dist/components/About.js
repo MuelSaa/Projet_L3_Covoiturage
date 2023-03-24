@@ -27,11 +27,15 @@ const About = () => {
   const text = darkMode ? 'Mode sombre activé' : 'Mode sombre désactivé';
 
   useEffect(() => {
-    fetch(API_URL + '/MNotes/' + GlobalLogin ? GlobalLogin : 'samu', { 
+    const data = fetch(API_URL + '/MNotes/' + (GlobalLogin ? GlobalLogin : 'Aleen80'), { 
       method: 'GET',
     }).then(response => response.json())
-    .then(data => setNoteAverage(data));
+      .then(data => {
+        setNoteAverage(data.moyenne);
+        console.log(data.moyenne);
+      });
   }, []);
+  
 
   const handleNotes = async () => {
     fetch(API_URL + '/NotesC/Aleen80', {

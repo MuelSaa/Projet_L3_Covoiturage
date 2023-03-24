@@ -250,7 +250,7 @@ const getStyles = (darkmode) =>{
   },
   notifbuttonIcon: {
     color: 'white',
-    fontSize: 24
+    fontSize: 24,
   },
   star: {
     color: '#FFD700',
@@ -260,8 +260,21 @@ const getStyles = (darkmode) =>{
   },
   emptyStar: {
     color: '#D3D3D3',
-  }
-
+  },
+  notifbuttonLabel: {
+    fontSize: 12,
+    color: 'gray',
+    textAlign: 'center',
+    marginTop: 5,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+  },
+  ratingStar: {
+    fontSize: 30,
+    color: '#FFD700',
+    marginRight: 5,
+  },
   
 });
 }

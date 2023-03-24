@@ -17,11 +17,16 @@ const Notifs = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [tripDetails, setTripDetails] = useState(undefined);
   const styles = getStyles(darkMode);
+  const [selectedStars, setSelectedStars] = useState({});
+  const handleStarClick = (notificationID, stars) => {
+    setSelectedStars({ ...selectedStars, [notificationID]: stars });
+  };
+
 
   const fetchNotifs = async () => {
     // Récupération des notifications non lues
     try {
-      const resp = await fetch(API_URL + "/NotificationUnread/samu");
+      const resp = await fetch(API_URL + "/NotificationUnread/Aleen80");
       const data = await resp.json();
       setUnreadNotifications(data);
     } catch (error) {
@@ -96,31 +101,51 @@ const renderNotification = (notification) => {
             <TouchableOpacity style={styles.notifbutton} onPress={() => acceptRequest(notification)}>
               <Ionicons name="checkmark-sharp" style={styles.notifbuttonIcon} />
             </TouchableOpacity>
+            <Text style={styles.notifbuttonLabel}>Accepter</Text>
             <TouchableOpacity style={styles.notifbutton} onPress={() => rejectRequest(notification.notificationID)}>
               <Ionicons name="close-sharp" style={styles.notifbuttonIcon} />
             </TouchableOpacity>
+            <Text style={styles.notifbuttonLabel}>Refuser</Text>
           </>
         )}
         {notification.type === 'a' && (
           <TouchableOpacity style={styles.notifmarker}>
             <Ionicons name="checkmark-sharp" style={[styles.notifbuttonIcon, {color: 'green'}]} />
           </TouchableOpacity>
+
         )}
         {notification.type === 'r' && (
           <TouchableOpacity style={styles.notifmarker}>
             <Ionicons name="close-sharp" style={[styles.notifbuttonIcon, {color: 'red'}]} />
           </TouchableOpacity>
         )}
-        {notification.type !== 'j' && (
+        {(notification.type !== 'j' && notification.type !== 'n') && (
+          <>
           <TouchableOpacity style={styles.notifbutton} onPress={() => deleteNotification(notification.notificationID)}>
             <Ionicons name="close-sharp" style={[styles.notifbuttonIcon, {color: 'red'}]} />
           </TouchableOpacity>
+          <Text style={styles.notifbuttonLabel}>Supprimer</Text>
+          </>
+        )}
+        
+        {notification.type === 'n' && (
+          <View style={styles.ratingContainer}>
+            {[1, 2, 3, 4, 5].map((value) => (
+              <TouchableOpacity key={value} onPress={() => handleStarClick(notification.notificationID, value)}>
+                <Ionicons
+                  name={value <= selectedStars[notification.notificationID] ? 'star-sharp' : 'star-outline'}
+                  style={styles.ratingStar}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
         )}
         {notification.read === false && (
           <>
             <TouchableOpacity style={styles.notifbutton} onPress={() => markAsRead(notification.notificationID)}>
               <Ionicons name="checkmark-done-sharp" style={styles.notifbuttonIcon} />
             </TouchableOpacity>
+            <Text style={styles.notifbuttonLabel}>Marquer lu</Text>
           </>
         )}
       </View>

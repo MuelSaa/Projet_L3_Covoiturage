@@ -33,7 +33,7 @@
     "react-datepicker": "^4.8.0",
     "react-day-picker": "^8.4.1",
     "react-dom": "18.2.0",
-    "react-native": "0.71.3",
+    "react-native": "^0.71.4",
     "react-native-appearance": "^0.0.0",
     "react-native-asset": "^2.0.1",
     "react-native-config": "^1.5.0",
