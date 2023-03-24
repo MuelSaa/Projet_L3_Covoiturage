@@ -24,15 +24,16 @@ const Joi = require('joi');
       };
     //Moyenne GET 
   
-      exports.getNotesByConducteurAndTrajet = (req, res) => {
-        const trajetId = req.params.trajetID;
+       exports.getNotesByConducteurAndTrajet = (req, res) => {
+        const noterLogin = req.params.noterLogin;
         res.setHeader('Content-type', 'application/json');
-        console.log(trajetId)
-        client = new Client(connectionString);
-        client.connect();
+        console.log(noterLogin)
+       //client = new Client(connectionString);
+      //client.connect();
+
         client.query(
-          'SELECT AVG(note) as moyenne FROM "Notes" WHERE "trajetID" = $1',
-          [trajetId],
+          'SELECT AVG(note) as moyenne FROM "Notes" WHERE "noterLogin" = $1',
+          [noterLogin],
           (err, result) => {
             if (err) {
               console.error(err);
@@ -44,8 +45,8 @@ const Joi = require('joi');
             const moyenne = result.rows[0].moyenne;
       
             client.query(
-              'SELECT * FROM "Notes" WHERE "trajetID" = $1',
-              [trajetId],
+              'SELECT * FROM "Notes" WHERE "noterLogin" = $1',
+              [noterLogin],
               (err, result) => {
                 if (err) {
                   console.error(err);
@@ -61,7 +62,7 @@ const Joi = require('joi');
                 if (!notes.length) {
                   res.send(JSON.stringify('Special'));
                 } else {
-                  res.send({ moyenne: moyenne , notes });
+                  res.send({ moyenne: moyenne ||0, notes });
                 }
                 client.end();
                 return;
