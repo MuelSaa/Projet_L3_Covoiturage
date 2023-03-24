@@ -142,7 +142,7 @@ app.get('/NoteTrajet/:TrajetID',note.getNotesByTrajetId );
 
 app.post('/Notes',note.createNote);
 
-app.post('/NoteConducteur',note.createNoteNotif);
+app.post('/NoteC',note.createNoteNotif);
 
 //app.put('/Unote/:NoteID',note.updateNote)
 
