@@ -42,27 +42,52 @@ function postNotification(content,login,type,relatedID) {
       };
     //Moyenne GET 
   
-    exports.getMoyenneNotes = (req, res) => {
-      client = new Client(connectionString);
-      client.connect();
-      const login = req.params.noterLogin;
-      client.query(
-        'SELECT ROUND(COALESCE(AVG(note), 0)) as moyenne FROM "Notes" WHERE "noterLogin" = $1',
-        [login],
-        (err, result) => {
-          if (err) {
-            console.error(err);
-            res.status(500).send('Internal Server Error');
-            return;
+      exports.getNotesByConducteurAndTrajet = (req, res) => {
+        const trajetId = req.params.trajetID;
+        res.setHeader('Content-type', 'application/json');
+        console.log(trajetId)
+        client = new Client(connectionString);
+        client.connect();
+        client.query(
+          'SELECT AVG(note) as moyenne FROM "Notes" WHERE "trajetID" = $1',
+          [trajetId],
+          (err, result) => {
+            if (err) {
+              console.error(err);
+              res.status(500).send(JSON.stringify('Internal Server Error'));
+              client.end();
+              return;
+            }
+      
+            const moyenne = result.rows[0].moyenne;
+      
+            client.query(
+              'SELECT * FROM "Notes" WHERE "trajetID" = $1',
+              [trajetId],
+              (err, result) => {
+                if (err) {
+                  console.error(err);
+                  res.status(500).send(JSON.stringify('Internal Server Error'));
+                  return;
+                }
+      
+                const notes = result.rows.map((note) => ({
+                  passager: note.passagerLogin,
+                  note: note,
+                }));
+      
+                if (!notes.length) {
+                  res.send(JSON.stringify('Special'));
+                } else {
+                  res.send({ moyenne: moyenne , notes });
+                }
+                client.end();
+                return;
+              }
+            );
           }
-    
-          const moyenne = result.rows[0].moyenne;
-    
-          res.send({ moyenne });
-          client.end();
-        }
-      );
-    };
+        );
+      };
     
     
     // GET /notes/:id - renvoie une note avec l'id spécifié
@@ -197,12 +222,13 @@ exports.createNote = (req, res) => {
   });
 };
 
- // POST /notes - crée une nouvelle note
- exports.createNoteNotif = (req, res) => {
-      client = new Client(connectionString);
-      client.connect();
+   // POST /notes - crée une nouvelle note
+    exports.createNoteNotif = (req, res) => {
+    // client = new Client(connectionString);
+      //client.connect();
       // Schéma de validation pour les notes
       const createNoteSchema = Joi.object({
+        noteID: Joi.number().integer().required(),
         trajetID: Joi.number().integer().required(),
         commentaire: Joi.string().required(),
         note: Joi.number().integer().required(),
@@ -218,7 +244,8 @@ exports.createNote = (req, res) => {
 
       const { trajetID, commentaire, note, noteurLogin, noterLogin } = value;
             const insertQuery = `INSERT INTO "Notes" ("note", "trajetID", "commentaire", "noteurLogin", "noterLogin") 
-                                  VALUES ($1, $2, $3, $4, $5)`;
+                                  VALUES ($1, $2, $3, $4, $5) 
+                                  RETURNING "noteID"`;
       client.query(insertQuery, [note, trajetID, commentaire, noteurLogin, noterLogin], (err, result) => {
         if (err) {
           console.error(err);
@@ -227,7 +254,6 @@ exports.createNote = (req, res) => {
       });
       postNotification(`${noteurLogin} a noté votre dernier trajet`,`${noterLogin}`,"a",trajetID);
     };
-
 /*****************************************************
  *                      UPDATE
  *****************************************************/
