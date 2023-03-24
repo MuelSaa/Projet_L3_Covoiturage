@@ -203,55 +203,52 @@ exports.createNote = (req, res) => {
   });
 };
 
-// POST /notes - crée une nouvelle note
-exports.createNoteNotif = (req, res) => {
-  client = new Client(connectionString);
-  client.connect();
-  // Schéma de validation pour les notes
-  const createNoteSchema = Joi.object({
-    noteID: Joi.number().integer().required(),
-    trajetID: Joi.number().integer().required(),
-    commentaire: Joi.string().required(),
-    note: Joi.number().integer().required(),
-    noteurLogin: Joi.string().required(),
-    noterLogin: Joi.string().required()
-  });
-  
-  const { error, value } = createNoteSchema.validate(req.body);
-  if (error) {
-    return res.status(400).send(JSON.stringify(error.details[0].message));
-  }
+ // POST /notes - crée une nouvelle note
+ exports.createNoteNotif = (req, res) => {
+      client = new Client(connectionString);
+      client.connect();
+      // Schéma de validation pour les notes
+      const createNoteSchema = Joi.object({
+        trajetID: Joi.number().integer().required(),
+        commentaire: Joi.string().required(),
+        note: Joi.number().integer().required(),
+        noteurLogin: Joi.string().required(),
+        noterLogin: Joi.string().required()
+      });
+      
+      const { error, value } = createNoteSchema.validate(req.body);
+      if (error) {
+        return res.status(400).send(JSON.stringify(error.details[0].message));
+      }
 
-  const { noteID, trajetID, commentaire, note, noteurLogin, noterLogin } = value;
+      const { trajetID, commentaire, note, noteurLogin, noterLogin } = value;
+            const insertQuery = `INSERT INTO "Notes" ("note", "trajetID", "commentaire", "noteurLogin", "noterLogin") 
+                                  VALUES ($1, $2, $3, $4, $5) 
+                                  RETURNING "noteID"`;
+      client.query(insertQuery, [note, trajetID, commentaire, noteurLogin, noterLogin], (err, result) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).send(JSON.stringify('Internal Server Error'));
+        }
+    // Envoie une notification au conducteur
+    const notificationMessage = `Vous avez reçu une nouvelle note pour le trajet n°${trajetID} : ${note}/5 par ${noteurLogin}`;
+    const notificationQuery = 'INSERT INTO "Notification" ("Content", "type", "relatedID") VALUES ($1,$2,$3) RETURNING *';
+    const notificationValues = [notificationMessage,'n', trajetID];
 
-  const insertQuery = `INSERT INTO "Notes" ("note","noteID","trajetID", "commentaire", "noteurLogin", "noterLogin") 
-                       VALUES ($1, $2, $3, $4, $5, $6) 
-                       RETURNING *`;
+    client.query(notificationQuery, notificationValues, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send(JSON.stringify('Internal Server Error'));
+        return;
+      }
 
-  client.query(insertQuery, [note, noteID, trajetID, commentaire, noteurLogin, noterLogin], (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send(JSON.stringify('Internal Server Error'));
-    }
-// Envoie une notification au conducteur
-const notificationMessage = `Vous avez reçu une nouvelle note pour le trajet n°${trajetID} : ${note}/5 par ${noteurLogin}`;
-const notificationQuery = 'INSERT INTO "Notification" ("Content", "read", "login") VALUES ($1,FALSE,$2) RETURNING *';
-const notificationValues = [notificationMessage, noterLogin];
+      console.log(`Notification envoyée au conducteur ${noterLogin}: ${notificationMessage}`);
 
-client.query(notificationQuery, notificationValues, (err, result) => {
-  if (err) {
-    console.error(err);
-    res.status(500).send(JSON.stringify('Internal Server Error'));
-    return;
-  }
-
-  console.log(`Notification envoyée au conducteur ${noterLogin}: ${notificationMessage}`);
-
-  res.send({notificationMessage});
-  return;
-  });
-  });
-};
+      res.send({notificationMessage});
+      return;
+      });
+      });
+    };
 
 /*****************************************************
  *                      UPDATE
