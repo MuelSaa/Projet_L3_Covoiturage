@@ -18,15 +18,74 @@ const Notifs = () => {
   const [tripDetails, setTripDetails] = useState(undefined);
   const styles = getStyles(darkMode);
   const [selectedStars, setSelectedStars] = useState({});
-  const handleStarClick = (notificationID, stars) => {
-    setSelectedStars({ ...selectedStars, [notificationID]: stars });
+  const [conducteur, setConducteur] = useState('');
+
+  const login = GlobalLogin ? GlobalLogin : "Aleen80";
+
+  const handleStarClick = async (notification, stars) => {
+    const id = notification.notificationID;
+    setSelectedStars({ ...selectedStars, [id]: stars });
+    try {
+      await fetch(API_URL + "/Notification/" + id, {
+        method: 'DELETE',
+      });
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+    const trajetID = notification.relatedID;
+    const commentaire = "none";
+  
+    try {
+      const resp = await fetch(API_URL + '/Trajet/' + trajetID, {
+        method: 'GET',
+      }).catch((error) => { console.log(error) });
+      const response = await resp.json();
+      const conducteur = response[0]['conducteur'];
+      console.log(conducteur);
+  
+      // Nouvelle fonction pour envoyer la requête POST
+      await sendPostRequest(conducteur, stars, trajetID, login);
+  
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  
+    fetchNotifs();
   };
+  
+  const sendPostRequest = async (conducteur, stars, trajetID, noteurLogin) => {
+    const data = { note: stars, trajetID: trajetID, commentaire: 'none', noteurLogin: conducteur, noterLogin: noteurLogin };
+    const url = API_URL + '/NoteC';
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+  
+      if (!response.ok) {
+        throw new Error('Une erreur est survenue.');
+      }
+  
+      const responseData = await response.json();
+      console.log(responseData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  
+  
 
 
   const fetchNotifs = async () => {
     // Récupération des notifications non lues
     try {
-      const resp = await fetch(API_URL + "/NotificationUnread/Aleen80");
+      const resp = await fetch(API_URL + "/NotificationUnread/"+login);
       const data = await resp.json();
       setUnreadNotifications(data);
     } catch (error) {
@@ -34,7 +93,7 @@ const Notifs = () => {
     }
     // Récupération des notifications lues
     try {
-      const resp = await fetch(API_URL + "/NotificationRead/samu");
+      const resp = await fetch(API_URL + "/NotificationRead/"+login);
       const data = await resp.json();
       setReadNotifications(data);
     } catch (error) {
@@ -61,14 +120,14 @@ const Notifs = () => {
   };
 
   const acceptRequest = async (notification) => {
-    await fetch(API_URL + "/Passager/" + notification.relatedID + "/samu/true/" + notification.notificationID, {
+    await fetch(API_URL + "/Passager/" + notification.relatedID + "/"+login+"/true/" + notification.notificationID, {
       method: 'PUT',
     }).catch((error) => {console.log(error)});
     fetchNotifs();
   };
 
   const rejectRequest = async (notification) => {
-    await fetch(API_URL + "/Passager/" + notification.relatedID + "/samu/false/" + notification.notificationID, {
+    await fetch(API_URL + "/Passager/" + notification.relatedID + "/"+login+"/false/" + notification.notificationID, {
       method: 'PUT',
     }).catch((error) => {console.log(error)});
     fetchNotifs();
@@ -131,7 +190,7 @@ const renderNotification = (notification) => {
         {notification.type === 'n' && (
           <View style={styles.ratingContainer}>
             {[1, 2, 3, 4, 5].map((value) => (
-              <TouchableOpacity key={value} onPress={() => handleStarClick(notification.notificationID, value)}>
+              <TouchableOpacity key={value} onPress={() => handleStarClick(notification, value)}>
                 <Ionicons
                   name={value <= selectedStars[notification.notificationID] ? 'star-sharp' : 'star-outline'}
                   style={styles.ratingStar}

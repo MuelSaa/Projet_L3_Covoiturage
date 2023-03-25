@@ -198,7 +198,7 @@ exports.createNote = (req, res) => {
 };
 
  // POST /notes - crée une nouvelle note
- exports.createNoteNotif = (req, res) => {
+ exports.createNoteNotif = (req, res) => {      
       client = new Client(connectionString);
       client.connect();
       // Schéma de validation pour les notes

@@ -92,6 +92,7 @@ exports.getOneTrajet = (req, res) => {
             return;
         }
         res.json(dbRes.rows);
+        console.log(dbRes.rows);
         client.end();
         });
 }
