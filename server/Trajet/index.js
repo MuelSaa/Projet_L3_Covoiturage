@@ -56,7 +56,7 @@ const findTrajetSchema = Joi.object({
         .min(-180)
         .max(180)
         .required(),
-    heure: Joi.string()
+    date: Joi.string()
         .optional()
 });
 
@@ -169,7 +169,7 @@ exports.findTrajetDepart = (req, res) => {
     const departLon = client.escapeLiteral(req.query.departLon);
     const arriverLat = client.escapeLiteral(req.query.arriverLat);
     const arriverLon = client.escapeLiteral(req.query.arriverLon);
-    var heure = req.query.heure;
+    var heure = req.query.date;
     let firstIndex = heure.indexOf(" ");
     let secondIndex = heure.indexOf(" ", firstIndex + 1);
 
@@ -216,7 +216,7 @@ exports.findTrajetRetours = (req, res) => {
     const departLon = client.escapeLiteral(req.query.departLon);
     const arriverLat = client.escapeLiteral(req.query.arriverLat);
     const arriverLon = client.escapeLiteral(req.query.arriverLon);
-    var heure = req.query.heure;
+    var heure = req.query.date;
     let firstIndex = heure.indexOf(" ");
     let secondIndex = heure.indexOf(" ", firstIndex + 1);
 
