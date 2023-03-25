@@ -56,7 +56,7 @@ const findTrajetSchema = Joi.object({
         .min(-180)
         .max(180)
         .required(),
-    heure: Joi.string()
+    date: Joi.string()
         .optional()
 });
 
@@ -117,6 +117,7 @@ exports.trajetEffectue = async (req, res) => {
         // Pour chaque trajet, on récupère les informations nécessaires et on crée une notification pour chaque passager
         for (const trajet of trajets) {
             const trajetId = trajet.trajetID;
+            const conducteur = trajet.conducteur;
           
             const passagersQuery = 'SELECT "passagerID" FROM "Passager" WHERE "trajetID" = $1';
             const passagersValues = [trajetId];
@@ -125,7 +126,7 @@ exports.trajetEffectue = async (req, res) => {
           
             for (const passager of passagers) {
                 const login = passager.passagerID;
-                const notificationContent = `Notez votre trajet précédent !`;
+                const notificationContent = `Notez votre trajet précédent avec avec le conducteur ${conducteur}  !`;
                 const createNotifQuery = 'INSERT INTO "Notification" ("Content", "create", "read", "login", "type", "relatedID") VALUES ($1, NOW(), false, $2, $3, $4)';
                 const createNotifValues = [notificationContent, login, 'n', trajetId];
                 await client.query(createNotifQuery, createNotifValues);
@@ -169,7 +170,7 @@ exports.findTrajetDepart = (req, res) => {
     const departLon = client.escapeLiteral(req.query.departLon);
     const arriverLat = client.escapeLiteral(req.query.arriverLat);
     const arriverLon = client.escapeLiteral(req.query.arriverLon);
-    var heure = req.query.heure;
+    var heure = req.query.date;
     let firstIndex = heure.indexOf(" ");
     let secondIndex = heure.indexOf(" ", firstIndex + 1);
 
@@ -216,7 +217,7 @@ exports.findTrajetRetours = (req, res) => {
     const departLon = client.escapeLiteral(req.query.departLon);
     const arriverLat = client.escapeLiteral(req.query.arriverLat);
     const arriverLon = client.escapeLiteral(req.query.arriverLon);
-    var heure = req.query.heure;
+    var heure = req.query.date;
     let firstIndex = heure.indexOf(" ");
     let secondIndex = heure.indexOf(" ", firstIndex + 1);
 
