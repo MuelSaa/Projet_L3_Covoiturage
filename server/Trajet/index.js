@@ -244,111 +244,26 @@ exports.findTrajetRetours = (req, res) => {
         });
 }
 
-exports.TrajetConducteur = (req, res) => {
+
+
+exports.TrajetHistorique = (req, res) => {
     res.setHeader('Content-type', 'application/json');
 
-    console.log("GET TrajetConducteurHistorique : ", req.params.conducteur);
-    
-    const client = new Client(connectionString);
-    client.connect();
-
-    const conducteur = client.escapeLiteral(req.params.conducteur);
-
-    const whereClause = `"Trajet"."conducteur" = ${conducteur} AND "Trajet"."departHeure" > NOW()`;
-    
-    const sqlQuery = `SELECT "Trajet".*, 
-                            COALESCE("PassagersAcceptes"."nbPassagersAcceptes", 0) AS "nbPassagers"
-                     FROM public."Trajet"
-                     LEFT JOIN (
-                         SELECT "trajetID", COUNT(*) AS "nbPassagersAcceptes"
-                         FROM public."Passager"
-                         WHERE "Passager"."status" = 'a'
-                         GROUP BY "trajetID"
-                     ) AS "PassagersAcceptes" ON "Trajet"."trajetID" = "PassagersAcceptes"."trajetID"
-                     WHERE ${whereClause}`;
-
-    console.log(sqlQuery);
-
-    client.query(sqlQuery, (dbERR, dbRes) => {
-        if (dbERR) {
-            console.error(dbERR);
-            res.status(500).send('Internal Server Error');
-            return;
-        }
-        res.json(dbRes.rows);
-        client.end();
-    });
-}
-
-
-exports.TrajetConducteurHistorique = (req, res) => {
-    res.setHeader('Content-type', 'application/json');
-
-    console.log("GET TrajetConducteurHistorique : ",req.params.conducteur);
+    console.log("GET TrajetHistorique : ",req.params.users);
     
     client = new Client(connectionString);
     client.connect();
 
-    const conducteur = client.escapeLiteral(req.params.conducteur);
+    const users = client.escapeLiteral(req.params.users);
 
-    var whereClause = `"Trajet"."conducteur" = ${conducteur} AND "Trajet"."arriverHeure" < NOW()`;
+    var whereClause = `("Trajet"."conducteur" = ${users} AND "Trajet"."arriverHeure" < NOW() )OR 
+        ("Passager"."passagerID" = ${users} AND "Passager"."status" = 'a' AND "Trajet"."arriverHeure" < NOW())`;
     
     console.log(whereClause);
-    client.query(`SELECT *
-        FROM public."Trajet"
+    client.query(`SELECT "Trajet".* 
+        FROM public."Trajet" 
+        LEFT JOIN public."Passager" ON "Trajet"."trajetID" = "Passager"."trajetID" 
         WHERE ${whereClause}`,
-        (dbERR, dbRes) => {
-        if (dbERR) {
-            console.error(dbERR);
-            res.status(500).send( 'Internal Server Error');
-            return;
-        }
-        res.json(dbRes.rows);
-        client.end();
-        });
-}
-exports.TrajetPassager = (req, res) => {
-    res.setHeader('Content-type', 'application/json');
-
-    console.log("GET TrajetPassager : ",req.params.passagerID);
-    
-    client = new Client(connectionString);
-    client.connect();
-
-    const passager = client.escapeLiteral(req.params.passagerID);
-
-    var whereClause = `"Passager"."passagerID" = ${passager} AND "Passager"."status" = 'a' AND "Trajet"."departHeure" > NOW()`;
-    
-    console.log(whereClause);
-    client.query(`SELECT "Trajet".*
-    FROM public."Trajet" INNER JOIN public."Passager" ON "Passager"."trajetID" = "Trajet"."trajetID"
-    WHERE ${whereClause}`,
-        (dbERR, dbRes) => {
-        if (dbERR) {
-            console.error(dbERR);
-            res.status(500).send( 'Internal Server Error');
-            return;
-        }
-        res.json(dbRes.rows);
-        client.end();
-        });
-}
-exports.TrajetPassagerHistorique = (req, res) => {
-    res.setHeader('Content-type', 'application/json');
-
-    console.log("GET TrajetConducteurHistorique : ",req.params.passagerID);
-    
-    client = new Client(connectionString);
-    client.connect();
-
-    const passager = client.escapeLiteral(req.params.passagerID);
-
-    var whereClause = `"Passager"."passagerID" = ${passager} AND "Passager"."status" = 'a' AND "Trajet"."arriverHeure" < NOW()`;
-    
-    console.log(whereClause);
-    client.query(`SELECT "Trajet".*
-    FROM public."Trajet" INNER JOIN public."Passager" ON "Passager"."trajetID" = "Trajet"."trajetID"
-    WHERE ${whereClause}`,
         (dbERR, dbRes) => {
         if (dbERR) {
             console.error(dbERR);
@@ -421,24 +336,28 @@ exports.addTrajet = async (req, res) => {
  *                      DELETE
  *****************************************************/
 
-exports.deleteTrajet = (req, res) => {
+exports.deleteTrajet = async (req, res) => {
     console.log("Recu : DELETE /Trajet/"+req.params.trajetID);
     res.setHeader('Content-type', 'application/json');
     client = new Client(connectionString);
     client.connect();
-    client.query(`DELETE FROM public."Trajet" WHERE "Trajet"."trajetID" = ${req.params.trajetID} returning *`, (dbERR, dbRes) => {
-        if (dbERR) {
-            console.error(dbERR);
-            res.status(500).send('Internal Server Error');
-            return;
+    const trajetID = req.params.trajetID
+    try {
+
+        const heure = await client.query('SELECT "arriverHeure" < NOW() AS estPasse FROM public."Trajet" WHERE "trajetID" = $1', [trajetID]);
+        if (heure.rows[0].estPasse) {
+            res.status(400).send({"message":"Impossible de supprimer un trajet déjà passé"});
+        }
+        const notes = await client.query('SELECT EXISTS (SELECT 1 FROM public."Notes" WHERE "Notes"."trajetID" = $1) AS "notesExist"', [trajetID]);
+        if (notes.rows[0].notesExist) {
+            res.status(400).send({"message":"Impossible de supprimer un trajet avec des notes"});
         }
 
-        if(dbRes.rowCount!=0) {
-            res.status(200).send(`Trajet DELETED ${dbRes.rows[0].trajetID}`);
-        }else{
-            res.status(200).send(`No trajet DELETED`);
-        }
-
+        await client.query('DELETE FROM public."Passager" WHERE "trajetID" = $1', [trajetID]);
+        const deletedTrajetRes = await client.query('DELETE FROM public."Trajet" WHERE "trajetID" = $1 RETURNING *', [trajetID]);
+        return deletedTrajetRes.rows[0];
+      } finally {
         client.end();
-        });
+
+    }
 }
