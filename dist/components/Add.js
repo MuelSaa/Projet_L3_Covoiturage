@@ -111,6 +111,20 @@ export default function Add() {
         setchamp6('universite');
       }
       try {
+        console.log({
+          conducteur: 'samu',
+          //token: '',
+          departAdresse:champ5,
+          destinationAdresse:champ6,
+          departLat: champ1,
+          departLon: champ2,
+          destinationLat: champ3,
+          destinationLon: champ4,
+          departHeure: dateFormat,
+          arriverHeure: dateFormat2,
+          placeDisponible: passengers,
+          //recurrence:0,
+        });
         const response = await fetch(API_URL + '/Trajet', {
           method: 'POST',
           headers: {
@@ -143,8 +157,8 @@ export default function Add() {
     let tempDate = new Date(currentDate);
     let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
     let fTime = tempDate.getHours() + 'h ' + tempDate.getMinutes() + 'm';
-    setDateFormat(tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + "-" + tempDate.getDate() + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds() + '+00');
-    setDateFormat2(tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + "-" + tempDate.getDate() + ' ' + (tempDate.getHours() + 1) + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds() + '+00');
+    setDateFormat(tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + "-" + tempDate.getDate() + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds() + '+02');
+    setDateFormat2(tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + "-" + tempDate.getDate() + ' ' + (tempDate.getHours() + 1) + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds() + '+02');
     setText(fDate + ' ' + fTime);
     setShow(false)
   }
@@ -198,7 +212,7 @@ export default function Add() {
             <Text style={styles.buttonText}>Date</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.button, { backgroundColor: '#1C6E8C' }]} onPress = { () => showMode('time')}>
-            <Text style={styles.buttonText}>Time</Text>
+            <Text style={styles.buttonText}>Heure</Text>
           </TouchableOpacity>
 
         </View>

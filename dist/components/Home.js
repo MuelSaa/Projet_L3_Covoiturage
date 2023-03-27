@@ -104,12 +104,6 @@ export default function Home() {
                 style: 'default',
             },
             {
-                text: 'Information sur le trajet',
-                onPress: () => {
-                },
-                style: 'default',
-            },
-            {
                 text: 'Annuler',
                 onPress: () => {},
                 style: 'cancel',
@@ -155,18 +149,17 @@ export default function Home() {
     else if(!homeLocation) alert("vous n'avez pas choisi d'emplacement de domicile...");
     else if(addHolder == 'adresse inconnue') alert("vous n'avez pas choisi une adresse valide...");
     else {
-      console.log(dateFormat);
       console.log(`${API_URL}/FindTrajetDepart?departLat=${checked === 'depart' ? 47.244505 : latitude}&departLon=${checked === 'depart' ? 5.987401 : longitude}&arriverLat=${checked === 'depart' ? latitude : 47.244505}&arriverLon=${checked === 'depart' ? longitude : 5.987401}&date=${dateFormat}`);
-      const resp = await fetch(`${API_URL}/FindTrajetDepart?departLat=${checked === 'depart' ? 47.244505 : latitude}&departLon=${checked === 'depart' ? 5.987401 : longitude}&arriverLat=${checked === 'depart' ? latitude : 47.244505}&arriverLon=${checked === 'depart' ? longitude : 5.987401}&heure=${dateFormat}`, {
+      const response = await fetch(`${API_URL}/FindTrajetDepart?departLat=${checked === 'depart' ? 47.244505 : latitude}&departLon=${checked === 'depart' ? 5.987401 : longitude}&arriverLat=${checked === 'depart' ? latitude : 47.244505}&arriverLon=${checked === 'depart' ? longitude : 5.987401}&date=${dateFormat}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
         }
       })
-      .then(response => response.json())
-      console.log(response)
-      .then(data => setTrips(data))
-      setListModalVisible(true);
+      const data = await response.json();
+      console.log(data);
+      setTrips(data);
+      setListModalVisible(true); 
     }
   };
   
@@ -177,7 +170,7 @@ export default function Home() {
     let tempDate = new Date(currentDate);
     let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
     let fTime = tempDate.getHours() + 'h ' + tempDate.getMinutes() + 'm';
-    setDateFormat(tempDate.getFullYear()+'-'+(tempDate.getMonth() + 1)+"-"+tempDate.getDate()+' '+tempDate.getHours()+':'+tempDate.getMinutes()+':'+tempDate.getSeconds()+'+00');
+    setDateFormat(tempDate.getFullYear()+'-'+(tempDate.getMonth() + 1)+"-"+tempDate.getDate()+'%20'+tempDate.getHours()+':'+tempDate.getMinutes()+':'+tempDate.getSeconds()+'+00');
     setText(fDate + ' ' + fTime);
     setShow (false)
   }
@@ -233,7 +226,7 @@ export default function Home() {
             <Text style={styles.buttonText}>Date</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.button, { backgroundColor: '#1C6E8C' }]} onPress = { () => showMode('time')}>
-            <Text style={styles.buttonText}>Time</Text>
+            <Text style={styles.buttonText}>Heure</Text>
           </TouchableOpacity>
 
         </View>

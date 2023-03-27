@@ -51,7 +51,7 @@ const About = () => {
   };
 
   const handleHistory = async () => {
-    fetch(API_URL + '/Trajet', {
+    fetch(API_URL + '/TrajetHistorique/' + (GlobalLogin ? GlobalLogin : 'samu'), {
       method: 'GET',
       headers: {
           'Content-Type': 'application/json'

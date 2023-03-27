@@ -28,6 +28,7 @@ const Trajets = () => {
   const user = globalLogin ? globalLogin : 'samu';
 
   useEffect(() => {
+    console.log('tk =' + token);
     fetchTrips();
   }, []);
 
@@ -46,24 +47,23 @@ const Trajets = () => {
     } catch (error) {
         console.error(error);
     }
-    fetchTrips();
   }
 
   const handleUnscribeTrip = async (id) => { 
-    try {
-        const resp = await fetch(API_URL + "/Passager/" + id + '/' + user,{
-          method: 'DELETE'
-       });
-    } catch (error) {
-         console.error(error);
-    }
-    fetchTrips();
+      try {
+          const resp = await fetch(API_URL + "/Passager/" + id + '/' + user,{
+              method: 'DELETE'
+          });
+      } catch (error) {
+          console.error(error);
+      }
   }
 
   const fetchTrips = async () => {
     try {
-      const resp = await fetch(API_URL + '/TrajetConducteurHistorique/' + user, { method: 'GET' });
+      const resp = await fetch(API_URL + '/Trajet', { method: 'GET' });
       const data = await resp.json();
+      console.log(data);
       setTripsDriver(data);
     } catch (error) {
       console.error(error);
@@ -71,6 +71,7 @@ const Trajets = () => {
     try {
       const resp = await fetch(API_URL + '/PassagerID/' + user, { method: 'GET' });
       const data = await resp.json();
+      console.log(data);
       setTripsPassenger(data);
     } catch (error) {
       console.error(error);
@@ -96,7 +97,7 @@ const handleTripPressPassenger = (trip) => {
               onPress: () => {
                   setShowRemoveTripModal(true);
                   handleUnscribeTrip(trip.trajetID)
-                  fetchTrips();
+                  console.log(`Supprimer le trajet ${trip.trajetID}`);
               },
               style: 'destructive',
           },
@@ -121,6 +122,7 @@ const handleTripPressPassenger = (trip) => {
                           try {
                             const resp = await fetch(API_URL + '/Passager/' + trip.trajetID, { method: 'GET' });
                             const data = await resp.json();
+                            console.log(data);
                             if(data != undefined)
                             setPassengers(data);
                           } catch (error) {
@@ -135,7 +137,7 @@ const handleTripPressPassenger = (trip) => {
                   onPress: () => {
                       setShowRemoveTripModal(true);
                       handleRemoveTrip(trip.trajetID)
-                      fetchTrips();
+                      console.log(`Supprimer le trajet ${trip.trajetID}`);
                   },
                   style: 'destructive',
               },
@@ -164,7 +166,7 @@ const handleTripPressPassenger = (trip) => {
           <View style={styles.info}><Text style={styles.label}>Depart : </Text><Text style={styles.tripText}>{trip.departAdresse}</Text></View>
           <View style={styles.info}><Text style={styles.label}>Destination : </Text><Text style={styles.tripText}>{trip.destinationAdresse}</Text></View>
           <View style={styles.info}><Text style={styles.label}>Date : </Text><Text style={styles.tripText}>{moment(trip.departHeure).format('DD/MM/YYYY - HH:mm')}</Text></View>
-          {boolean === true && (<View style={styles.info}><Text style={styles.label}>Places restantes : </Text><Text style={styles.tripText}>{trip.placeDisponible - trip.nbPassagersAcceptes}</Text></View>)}
+          {boolean === true && (<View style={styles.info}><Text style={styles.label}>Places restantes : </Text><Text style={styles.tripText}>{trip.placeDisponible}</Text></View>)}
         </TouchableOpacity>
       ))}
       <RemoveTripModal visible={showRemoveTripModal} onClose={() => setShowRemoveTripModal(false)} darkMode={darkMode}/>
