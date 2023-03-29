@@ -339,25 +339,62 @@ exports.addTrajet = async (req, res) => {
 exports.deleteTrajet = async (req, res) => {
     console.log("Recu : DELETE /Trajet/"+req.params.trajetID);
     res.setHeader('Content-type', 'application/json');
-    client = new Client(connectionString);
+    //const client = new Client(connectionString);
     client.connect();
-    const trajetID = req.params.trajetID
-    try {
-
-        const heure = await client.query('SELECT "arriverHeure" < NOW() AS estPasse FROM public."Trajet" WHERE "trajetID" = $1', [trajetID]);
-        if (heure.rows[0].estPasse) {
-            res.status(400).send({"message":"Impossible de supprimer un trajet déjà passé"});
+ 
+    const SelectTrajet = `SELECT * FROM public."Trajet" WHERE "trajetID" = $1`;
+    const trajetID = req.params.trajetID; // convertir en nombre entier pour éviter les injections SQL
+    client.query(SelectTrajet, [trajetID], (dbERR, dbRes) => {
+        if (dbERR) {
+            console.error(dbERR);
+            res.status(500).send(JSON.stringify('Internal Server Error'));
+            return;
         }
-        const notes = await client.query('SELECT EXISTS (SELECT 1 FROM public."Notes" WHERE "Notes"."trajetID" = $1) AS "notesExist"', [trajetID]);
-        if (notes.rows[0].notesExist) {
-            res.status(400).send({"message":"Impossible de supprimer un trajet avec des notes"});
-        }
+        if(dbRes.rowCount!=0) {    
+            const deleteQuery = `DELETE FROM public."Notes" WHERE "trajetID" = $1`;
+            client.query(deleteQuery, [trajetID], (dbERR, NotesRes) => {
+                if (dbERR) {
+                    console.error(dbERR);
+                    res.status(500).send(JSON.stringify('Internal Server Error'));
+                    return;
+                }
+                console.log(`${NotesRes.rowCount} Notes DELETED for trajet ${trajetID}`);
+            });
+            // Supprimer les notifications liées au trajet
+                const deleteNotifsQuery = `DELETE FROM public."Notification" WHERE "relatedID" = $1`;
+                client.query(deleteNotifsQuery, [trajetID], (notifsErr, notifsRes) => {
+                if (notifsErr) {
+                    console.error(notifsErr);
+                    res.status(500).send(JSON.stringify('Internal Server Error'));
+                    return;
+                }
+                console.log(`${notifsRes.rowCount} notifications DELETED for trajet ${trajetID}`);
+                });
+                 // Supprimer les passagers du trajet 
+                const deletePassagerQuery = `DELETE FROM public."Passager" WHERE "trajetID" = $1 returning *`;
+                client.query(deletePassagerQuery, [trajetID], (passErr, passRes) => {
+                if (passErr) {
+                    console.error(passErr);
+                    res.status(500).send(JSON.stringify('Internal Server Error'));
+                    return;
+                }
+                     console.log(`${passRes.rowCount} Passager DELETED for trajet ${trajetID}`);
+                });
 
-        await client.query('DELETE FROM public."Passager" WHERE "trajetID" = $1', [trajetID]);
-        const deletedTrajetRes = await client.query('DELETE FROM public."Trajet" WHERE "trajetID" = $1 RETURNING *', [trajetID]);
-        return deletedTrajetRes.rows[0];
-      } finally {
+                 // Supprimer le trajet
+                const deleteTrajetQuery = `DELETE FROM public."Trajet" WHERE "trajetID" = $1 returning *`;
+                client.query(deleteTrajetQuery, [trajetID], (notesErr, trajetRes) => {
+                if (notesErr) {
+                    console.error(notesErr);
+                    res.status(500).send(JSON.stringify('Internal Server Error'));
+                    return;
+                }
+                     console.log(`${trajetRes.rowCount} Trajet DELETED for trajet ${trajetID}`);
+                });
+        res.status(200).send(`Trajet DELETED ${trajetID}`);
+        }else{
+            res.status(200).send(`No trajet DELETED`);
+        }
         client.end();
-
-    }
-}
+    });
+};
